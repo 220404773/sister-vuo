@@ -1,0 +1,90 @@
+{
+  "id": "abdominal_pain",
+  "order": 1,
+  "title": "Abdominal pain in a woman of childbearing age",
+  "setting": "Community health clinic triage room, mid-morning",
+  "difficulty": "Intermediate",
+  "description": "A 27-year-old woman presents with worsening left-sided lower abdominal pain and dizziness.",
+  "speaker": {
+    "name": "Naledi Mokoena",
+    "role": "the patient",
+    "language": "English; she also speaks Sesotho",
+    "style": "Polite and anxious. She answers questions but is initially private about her sexual and menstrual history. She downplays her dizziness until asked directly."
+  },
+  "patient": {
+    "name": "Naledi Mokoena",
+    "age": 27,
+    "age_unit": "years",
+    "sex": "female",
+    "occupation": "Supermarket cashier",
+    "living_situation": "Lives with her partner in a nearby township"
+  },
+  "presenting_complaint": "Sharp pain in the left lower abdomen since this morning, getting worse, with light-headedness.",
+  "opening_line": "Sister, this pain in my tummy is getting worse. It is here on the left, low down, and I feel a bit light-headed.",
+  "personality": "Anxious, polite, and guarded about sensitive history. She becomes more forthcoming when treated respectfully and given privacy.",
+  "history": {
+    "onset": "Sudden onset about six hours ago while she was at work; the pain has steadily worsened.",
+    "character": "Sharp, stabbing left lower abdominal pain, severity 8 out of 10. Nothing relieves it; paracetamol did not help.",
+    "radiation": "The pain sometimes spreads to her left shoulder tip.",
+    "associated_symptoms": [
+      "nausea",
+      "one episode of feeling faint",
+      "light-headedness",
+      "small amount of vaginal spotting",
+      "missed period for about seven weeks"
+    ],
+    "pertinent_negatives": [
+      "no fever",
+      "no vomiting",
+      "no diarrhoea",
+      "no burning when passing urine",
+      "no heavy vaginal bleeding"
+    ],
+    "menstrual_history": "Usually regular. Last period was about seven weeks ago. She has not done a pregnancy test.",
+    "sexual_history": "Sexually active with one partner. No contraception, or inconsistent condom use. She is not sure whether she could be pregnant.",
+    "past_medical_history": "No chronic illness, no previous surgery, no previous pregnancies.",
+    "medications": "Paracetamol taken earlier today. No regular medication.",
+    "allergies": "No known allergies.",
+    "social_history": "Non-smoker. Occasional alcohol. Works as a cashier and lives with her partner."
+  },
+  "ground_truth": {
+    "diagnosis": "Suspected ectopic pregnancy, possibly leaking or ruptured",
+    "forbidden_patient_terms": [
+      "ectopic pregnancy",
+      "ectopic",
+      "pregnancy outside the womb",
+      "fallopian tube pregnancy",
+      "ruptured tube"
+    ],
+    "differentials": [
+      "ovarian torsion",
+      "ruptured ovarian cyst",
+      "pelvic inflammatory disease",
+      "appendicitis",
+      "urinary tract infection"
+    ],
+    "red_flags": [
+      "missed period with possible pregnancy",
+      "sudden severe unilateral lower abdominal pain",
+      "left shoulder-tip pain",
+      "dizziness or near-syncope",
+      "vaginal spotting",
+      "possible haemodynamic compromise"
+    ],
+    "expected_actions": [
+      "treat as an obstetric emergency",
+      "urgent referral or ambulance to an emergency department with obstetric cover",
+      "check observations including pulse, blood pressure, and level of consciousness",
+      "urine pregnancy test if available",
+      "keep the patient nil by mouth and monitor while awaiting transfer",
+      "privacy and sensitive, non-judgemental communication",
+      "clear safety-netting and do not send home"
+    ]
+  },
+  "learning_objectives": [
+    "Take a focused abdominal and pregnancy history",
+    "Recognise the red flags of an obstetric emergency",
+    "Prioritise urgent escalation over routine assessment",
+    "Discuss sensitive history with privacy and empathy"
+  ]
+}

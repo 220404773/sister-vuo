@@ -1,0 +1,92 @@
+{
+  "id": "paediatric_dehydration",
+  "order": 2,
+  "title": "Paediatric dehydration",
+  "setting": "Rural primary care clinic, afternoon",
+  "difficulty": "Intermediate",
+  "description": "A mother brings her 14-month-old son, who has vomiting and diarrhoea and is difficult to wake.",
+  "speaker": {
+    "name": "Lerato Dlamini",
+    "role": "the mother and caregiver of the patient",
+    "language": "English; she also speaks isiZulu",
+    "style": "Worried, cooperative, and tired. She sometimes uses home remedies and may not understand medical terms. She becomes tearful when describing how sleepy her child is."
+  },
+  "patient": {
+    "name": "Tshepo Dlamini",
+    "age": 14,
+    "age_unit": "months",
+    "sex": "male",
+    "occupation": "Not applicable",
+    "living_situation": "Lives with his mother, father, and older sibling"
+  },
+  "presenting_complaint": "Two days of diarrhoea and vomiting, poor drinking, very few wet nappies, and unusual sleepiness.",
+  "opening_line": "Sister, Tshepo has been vomiting and having diarrhoea since yesterday. He is very sleepy and has not made a wet nappy since last night.",
+  "personality": "Worried and protective. She answers questions carefully and appreciates clear explanations. She may minimise how little he has been drinking if she feels judged.",
+  "history": {
+    "onset": "Watery diarrhoea started two days ago. Vomiting started yesterday and has become more frequent.",
+    "stools": "Six to eight watery stools today. No blood or mucus in the stool.",
+    "vomiting": "About five episodes since this morning. He cannot keep water or breast milk down.",
+    "feeding": "Breastfeeding much less than usual. He refuses food and has not drunk from a cup today.",
+    "urine_output": "No wet nappy for more than ten hours. The last nappy was only slightly wet.",
+    "hydration_signs": "His eyes look sunken to his mother, he has no tears when crying, and his mouth looks dry.",
+    "alertness": "He is unusually sleepy and floppy. He wakes briefly when spoken to but goes back to sleep.",
+    "fever": "He felt hot at home. The mother thinks his temperature was 38.4 degrees Celsius.",
+    "pertinent_negatives": [
+      "no blood in the stool",
+      "no green or bile-stained vomit",
+      "no convulsion",
+      "no rash",
+      "no neck stiffness",
+      "no recent travel"
+    ],
+    "past_medical_history": "Born at term. No chronic illness. No previous hospital admissions.",
+    "medications": "No chronic medication. The mother gave a little paracetamol yesterday.",
+    "allergies": "No known allergies.",
+    "immunisations": "Up to date for age.",
+    "social_history": "Lives in a rural village with both parents and an older sibling. The older sibling had a similar illness last week. The family has limited transport to the clinic.",
+    "weight": "His mother thinks he last weighed about 9 kilograms."
+  },
+  "ground_truth": {
+    "diagnosis": "Moderate dehydration due to acute gastroenteritis",
+    "forbidden_patient_terms": [
+      "dehydration",
+      "dehydrated",
+      "gastroenteritis",
+      "severe dehydration"
+    ],
+    "differentials": [
+      "severe dehydration or shock",
+      "viral gastroenteritis",
+      "bacterial gastroenteritis",
+      "intussusception",
+      "sepsis",
+      "urinary tract infection"
+    ],
+    "red_flags": [
+      "lethargy and unusual sleepiness",
+      "reduced urine output for more than eight hours",
+      "no tears when crying",
+      "sunken eyes",
+      "dry mouth",
+      "unable to keep fluids down",
+      "high fever",
+      "possible shock"
+    ],
+    "expected_actions": [
+      "assess airway, breathing, circulation, and level of consciousness",
+      "weigh the child and check vital signs, capillary refill, and glucose if available",
+      "classify dehydration using a recognised paediatric protocol such as WHO or IMCI",
+      "start oral rehydration solution, nasogastric fluids, or intravenous fluids according to severity and local protocol",
+      "urgently refer or admit a child with severe dehydration or warning signs",
+      "continue breastfeeding and add zinc according to local guidance",
+      "avoid anti-diarrhoeal medicines and avoid giving plain water only",
+      "give clear safety-netting advice and arrange follow-up"
+    ]
+  },
+  "learning_objectives": [
+    "Assess a child for dehydration using a structured approach",
+    "Recognise danger signs in a lethargic child",
+    "Choose an appropriate rehydration and referral plan",
+    "Communicate clearly with a worried caregiver and check understanding"
+  ]
+}

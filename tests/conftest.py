@@ -1,0 +1,99 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.config import PROJECT_ROOT, Settings
+from app.llm import LLMUpstreamError
+from app.main import create_app
+from app.models import DomainScores, Evaluation
+
+
+class FakeLLM:
+    def __init__(self) -> None:
+        self.patient_calls: list[list[dict[str, str]]] = []
+        self.evaluation_calls = 0
+        self.evaluation_failures = 0
+        self.default_reply = "The pain started this morning and it is getting worse."
+
+    async def patient_reply(self, scenario, transcript):
+        self.patient_calls.append(transcript)
+        return self.default_reply
+
+    async def evaluate(self, scenario, transcript):
+        self.evaluation_calls += 1
+        if self.evaluation_failures > 0:
+            self.evaluation_failures -= 1
+            raise LLMUpstreamError("simulated evaluator failure")
+        return Evaluation(
+            overall_score=4.0,
+            domain_scores=DomainScores(
+                history_taking=4,
+                clinical_reasoning=4,
+                communication_empathy=4,
+                language_accessibility=4,
+                safety_referral=4,
+            ),
+            strengths=["Used open questions and acknowledged the patient's worry."],
+            missed_red_flags=["Did not ask about shoulder-tip pain."],
+            unsafe_actions=[],
+            recommended_learning=["Ask directly about pregnancy and syncope."],
+            feedback_to_student=(
+                "You built rapport and asked a clear opening question. "
+                "Next time, explore the red flags earlier and explain your escalation plan."
+            ),
+        )
+
+    async def close(self) -> None:
+        return None
+
+
+class FakeWhatsApp:
+    def __init__(self) -> None:
+        self.sent: list[tuple[str, str]] = []
+
+    async def send_text(self, to: str, body: str) -> None:
+        self.sent.append((to, body))
+
+    async def close(self) -> None:
+        return None
+
+
+@pytest.fixture
+def settings(tmp_path: Path) -> Settings:
+    return Settings(
+        llm_base_url="http://llm.test/v1",
+        llm_api_key="test-key",
+        llm_model="test-model",
+        scenario_dir=PROJECT_ROOT / "scenarios",
+        prompt_dir=PROJECT_ROOT / "prompts",
+        static_dir=PROJECT_ROOT / "app" / "static",
+        log_dir=tmp_path / "logs",
+        whatsapp_verify_token="verify-token",
+        whatsapp_access_token="access-token",
+        whatsapp_phone_number_id="phone-id",
+        whatsapp_app_secret="app-secret",
+    )
+
+
+@pytest.fixture
+def fake_llm() -> FakeLLM:
+    return FakeLLM()
+
+
+@pytest.fixture
+def fake_whatsapp() -> FakeWhatsApp:
+    return FakeWhatsApp()
+
+
+@pytest.fixture
+def client(settings: Settings, fake_llm: FakeLLM, fake_whatsapp: FakeWhatsApp):
+    app = create_app(
+        settings_obj=settings,
+        llm_service=fake_llm,
+        whatsapp_client=fake_whatsapp,
+    )
+    with TestClient(app) as test_client:
+        yield test_client

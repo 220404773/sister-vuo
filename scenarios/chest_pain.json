@@ -1,0 +1,95 @@
+{
+  "id": "chest_pain",
+  "order": 3,
+  "title": "Chest pain in an older adult",
+  "setting": "Community clinic consultation room, late afternoon",
+  "difficulty": "Advanced",
+  "description": "A 72-year-old man presents with heavy central chest pain that started while he was resting.",
+  "speaker": {
+    "name": "Johannes van der Merwe",
+    "role": "the patient",
+    "language": "English; he is more comfortable speaking Afrikaans",
+    "style": "Stoic and private. He tends to minimise his pain and may say he is fine even when he is clearly sweating and uncomfortable. He is worried about troubling his wife."
+  },
+  "patient": {
+    "name": "Johannes van der Merwe",
+    "age": 72,
+    "age_unit": "years",
+    "sex": "male",
+    "occupation": "Retired farmer",
+    "living_situation": "Lives with his wife on a smallholding outside town"
+  },
+  "presenting_complaint": "Heavy central chest pain at rest, radiating to the left arm and jaw, with sweating, nausea, and shortness of breath.",
+  "opening_line": "Sister, my chest feels heavy, like something is pressing on it. It started while I was sitting, and now my arm and jaw are sore. I also feel sweaty and a little sick.",
+  "personality": "Stoic, polite, and reluctant to complain. He downplays symptoms and may need gentle direct questions. He is anxious about his wife being left alone.",
+  "history": {
+    "onset": "About 45 minutes ago while he was sitting and watching television. It has not eased with rest.",
+    "character": "Heavy, crushing central chest pain, severity 9 out of 10. He says it feels like a weight on his chest.",
+    "radiation": "The pain spreads to the left arm and jaw.",
+    "associated_symptoms": [
+      "cold sweats",
+      "nausea",
+      "shortness of breath",
+      "feeling of impending doom"
+    ],
+    "previous_episode": "He had a similar but milder episode last week that lasted a few minutes and went away. He did not seek care.",
+    "pertinent_negatives": [
+      "no sharp pleuritic pain",
+      "no cough",
+      "no fever",
+      "no recent trauma",
+      "no calf pain or swelling",
+      "no recent long-distance travel"
+    ],
+    "past_medical_history": "High blood pressure for about fifteen years. Type 2 diabetes for ten years. High cholesterol.",
+    "medications": "Amlodipine 10 mg daily, metformin 1 g twice daily, and atorvastatin 20 mg daily. He does not take aspirin.",
+    "allergies": "No known allergies.",
+    "social_history": "Ex-smoker with a 20 pack-year history, quit ten years ago. Occasional brandy. Retired farmer. Lives with his wife."
+  },
+  "ground_truth": {
+    "diagnosis": "Suspected acute coronary syndrome, possibly myocardial infarction",
+    "forbidden_patient_terms": [
+      "heart attack",
+      "myocardial infarction",
+      "acute coronary syndrome",
+      "coronary thrombosis",
+      "stemi",
+      "nstemi",
+      "blocked artery",
+      "angina"
+    ],
+    "differentials": [
+      "acute coronary syndrome",
+      "aortic dissection",
+      "pulmonary embolism",
+      "pericarditis",
+      "musculoskeletal chest pain",
+      "gastro-oesophageal reflux"
+    ],
+    "red_flags": [
+      "central crushing chest pain lasting more than twenty minutes at rest",
+      "radiation to the left arm and jaw",
+      "cold sweats",
+      "shortness of breath",
+      "nausea",
+      "older age with diabetes and hypertension",
+      "previous similar episode"
+    ],
+    "expected_actions": [
+      "call emergency services or activate the local emergency response immediately",
+      "keep the patient seated or lying comfortably and do not send him home",
+      "check observations, oxygen saturation, and blood glucose",
+      "obtain a twelve-lead ECG within ten minutes if available",
+      "give aspirin 300 mg chewed if there is no contraindication and local protocol allows",
+      "give oxygen only if hypoxic according to local protocol",
+      "consider glyceryl trinitrate if protocol allows and there are no contraindications",
+      "reassure the patient, explain the plan in plain language, and arrange urgent transfer"
+    ]
+  },
+  "learning_objectives": [
+    "Recognise the red flags of a time-critical cardiac emergency",
+    "Prioritise immediate emergency escalation",
+    "Apply protocol-based initial management safely",
+    "Communicate urgency and reassurance to a stoic older patient"
+  ]
+}
