@@ -75,6 +75,11 @@ def settings(tmp_path: Path) -> Settings:
         whatsapp_access_token="access-token",
         whatsapp_phone_number_id="phone-id",
         whatsapp_app_secret="app-secret",
+        # Pinned so a developer's real .env (APP_API_KEY, limits) cannot change test results.
+        app_api_key="",
+        session_ttl_minutes=120,
+        max_active_sessions=200,
+        llm_json_mode=False,
     )
 
 
