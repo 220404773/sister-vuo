@@ -8,7 +8,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(PROJECT_ROOT / ".env")
+# override=True: the project's .env wins over variables already set in the shell. A stale
+# LLM_BASE_URL left in a terminal (for example from copying an example command) otherwise
+# silently replaces the real value. Hosts without a .env file are unaffected.
+load_dotenv(PROJECT_ROOT / ".env", override=True)
 
 
 def _env_int(name: str, default: int) -> int:
