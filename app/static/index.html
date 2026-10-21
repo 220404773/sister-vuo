@@ -454,6 +454,9 @@
       font-style: italic;
     }
 
+    .key-form { margin-bottom: 18px; }
+    .key-form[hidden] { display: none; }
+
     .error-banner {
       display: flex;
       align-items: center;
@@ -772,6 +775,12 @@
 
     <main class="layout">
       <aside class="panel setup-panel">
+        <form id="keyForm" class="key-form" hidden>
+          <div class="eyebrow">Access key</div>
+          <label class="field-label" for="apiKeyInput">Enter the access key to continue</label>
+          <input id="apiKeyInput" type="password" autocomplete="off" placeholder="Access key">
+          <button class="primary" type="submit">Unlock</button>
+        </form>
         <div class="eyebrow">Scenario</div>
         <form id="startForm">
           <label class="sr-only" for="scenarioSelect">Scenario</label>
@@ -893,7 +902,9 @@
       overallScore: document.getElementById("overallScore"),
       domainScores: document.getElementById("domainScores"),
       evalSections: document.getElementById("evalSections"),
-      newSessionButton: document.getElementById("newSessionButton")
+      newSessionButton: document.getElementById("newSessionButton"),
+      keyForm: document.getElementById("keyForm"),
+      apiKeyInput: document.getElementById("apiKeyInput")
     };
 
     const API_KEY_STORAGE = "sisterVuoApiKey";
@@ -906,23 +917,15 @@
       }
     }
 
-    async function api(path, options = {}, retried = false) {
+    async function api(path, options = {}) {
       const headers = { ...(options.headers || {}) };
       const key = storedApiKey();
       if (key) {
         headers["X-API-Key"] = key;
       }
       const response = await fetch(path, { ...options, headers });
-      if (response.status === 401 && !retried) {
-        const entered = window.prompt("Enter the Sister Vuo access key:");
-        if (entered) {
-          try {
-            localStorage.setItem(API_KEY_STORAGE, entered.trim());
-          } catch (error) {
-            // Storage unavailable: the key only lasts for this request.
-          }
-          return api(path, { ...options, headers: { ...headers, "X-API-Key": entered.trim() } }, true);
-        }
+      if (response.status === 401) {
+        showKeyForm();
       }
       let data = null;
       try {
@@ -938,6 +941,11 @@
         throw new Error(detail || `Request failed (${response.status})`);
       }
       return data;
+    }
+
+    function showKeyForm() {
+      els.keyForm.hidden = false;
+      els.apiKeyInput.focus();
     }
 
     function showError(message) {
@@ -1281,6 +1289,22 @@
       }
     }
 
+    els.keyForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const value = els.apiKeyInput.value.trim();
+      if (!value) {
+        return;
+      }
+      try {
+        localStorage.setItem(API_KEY_STORAGE, value);
+      } catch (error) {
+        // Storage unavailable: the key is lost on reload.
+      }
+      els.apiKeyInput.value = "";
+      els.keyForm.hidden = true;
+      hideError();
+      loadScenarios();
+    });
     els.scenarioSelect.addEventListener("change", renderScenarioMeta);
     els.startForm.addEventListener("submit", startSession);
     els.composer.addEventListener("submit", sendMessage);

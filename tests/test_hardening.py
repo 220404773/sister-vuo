@@ -136,3 +136,12 @@ def test_deduper_is_bounded() -> None:
     assert len(deduper._seen) == 3
     assert deduper.seen("wamid.9")
     assert not deduper.seen("wamid.0")
+
+
+def test_ui_asks_for_access_key_in_page_not_with_a_popup(settings: Settings) -> None:
+    # window.prompt() is blocked in embedded browsers such as VS Code's, so the key form
+    # must be part of the page.
+    with make_client(settings, app_api_key="secret-key") as client:
+        html = client.get("/").text
+        assert 'id="keyForm"' in html and 'id="apiKeyInput"' in html
+        assert "prompt(" not in html
