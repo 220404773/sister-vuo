@@ -295,6 +295,9 @@ class LLMService:
             try:
                 response = await client.post(self.chat_url, headers=headers, json=payload)
             except (httpx.TimeoutException, httpx.RequestError) as exc:
+                logger.warning(
+                    "LLM request failed (attempt %d): %s: %s", attempt + 1, type(exc).__name__, exc
+                )
                 if attempt == 0:
                     await asyncio.sleep(0.5)
                     continue
