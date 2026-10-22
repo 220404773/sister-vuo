@@ -9,12 +9,25 @@ from typing import Any
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 
+from .clinical import (
+    ActionAlreadyDone,
+    ActionUnavailable,
+    UnknownAction,
+    action_options,
+    hints_enabled,
+)
 from .config import Settings, get_settings
+from .guidelines import GuidelineHintsUnavailable, load_guidelines
 from .llm import LLMConfigurationError, LLMError, LLMService
 from .models import (
+    ActionRequest,
+    ActionResponse,
     EndResponse,
+    HintRequest,
+    HintResponse,
     MessageRequest,
     MessageResponse,
+    MonitorView,
     ScenarioSummary,
     SessionSnapshot,
     StartRequest,
@@ -22,6 +35,8 @@ from .models import (
 )
 from .sessions import (
     ActiveSessionExists,
+    HintsDisabled,
+    NoHintsRemaining,
     ScenarioNotFound,
     ScenarioRepository,
     SessionCapacityReached,
@@ -47,14 +62,21 @@ def create_app(
     scenarios = ScenarioRepository(app_settings.scenario_dir)
     transcripts = TranscriptLogger(app_settings.log_dir)
     llm = llm_service or LLMService(app_settings)
-    manager = SessionManager(app_settings, scenarios, llm, transcripts)
+    guidelines = load_guidelines(app_settings.guidelines_path)
+    manager = SessionManager(app_settings, scenarios, llm, transcripts, guidelines)
     whatsapp = whatsapp_client or WhatsAppClient(app_settings)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
-        if not app_settings.llm_configured:
-            logger.warning(
-                "LLM is not configured. Set LLM_BASE_URL, LLM_API_KEY, and LLM_MODEL in .env."
+        config_issues = app_settings.llm_config_issues()
+        if config_issues:
+            logger.error("LLM configuration is incomplete: %s", " ".join(config_issues))
+        else:
+            logger.info(
+                "LLM configured: base_url=%s model=%s timeout=%ss",
+                app_settings.llm_base_url,
+                app_settings.llm_model,
+                app_settings.llm_timeout_seconds,
             )
         if not app_settings.whatsapp_configured:
             logger.warning(
@@ -80,6 +102,7 @@ def create_app(
     )
     app.state.settings = app_settings
     app.state.scenarios = scenarios
+    app.state.guidelines = guidelines
     app.state.manager = manager
     app.state.whatsapp = whatsapp
     app.state.whatsapp_dedupe = MessageDeduper()
@@ -107,6 +130,32 @@ def create_app(
     @app.exception_handler(SessionCapacityReached)
     async def handle_capacity(_: Request, exc: SessionCapacityReached) -> JSONResponse:
         return JSONResponse(status_code=503, content={"detail": str(exc)})
+
+    @app.exception_handler(UnknownAction)
+    async def handle_unknown_action(_: Request, exc: UnknownAction) -> JSONResponse:
+        return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+    @app.exception_handler(ActionUnavailable)
+    async def handle_action_unavailable(_: Request, exc: ActionUnavailable) -> JSONResponse:
+        return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+    @app.exception_handler(ActionAlreadyDone)
+    async def handle_action_done(_: Request, exc: ActionAlreadyDone) -> JSONResponse:
+        return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+    @app.exception_handler(HintsDisabled)
+    async def handle_hints_disabled(_: Request, exc: HintsDisabled) -> JSONResponse:
+        return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+    @app.exception_handler(NoHintsRemaining)
+    async def handle_no_hints(_: Request, exc: NoHintsRemaining) -> JSONResponse:
+        return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+    @app.exception_handler(GuidelineHintsUnavailable)
+    async def handle_guideline_hints_unavailable(
+        _: Request, exc: GuidelineHintsUnavailable
+    ) -> JSONResponse:
+        return JSONResponse(status_code=404, content={"detail": str(exc)})
 
     @app.exception_handler(LLMConfigurationError)
     async def handle_llm_config(_: Request, exc: LLMConfigurationError) -> JSONResponse:
@@ -136,15 +185,40 @@ def create_app(
         return request.app.state.scenarios.list_summaries()
 
     @app.get("/health")
-    async def health(request: Request) -> dict[str, Any]:
+    async def health(request: Request, probe: bool = False) -> dict[str, Any]:
+        """Fast status by default; probe=true makes one tiny model call."""
         settings: Settings = request.app.state.settings
         manager: SessionManager = request.app.state.manager
-        return {
+        payload: dict[str, Any] = {
             "status": "ok",
             "llm_configured": settings.llm_configured,
+            "llm_config_issues": settings.llm_config_issues(),
             "whatsapp_configured": settings.whatsapp_configured,
             "scenarios": len(manager.scenarios.list_summaries()),
             "active_sessions": manager.active_count(),
+            "guidelines": manager.guidelines.mode,
+        }
+        if probe:
+            await require_api_key(request)
+            result = await llm.probe()
+            payload["llm_base_url"] = settings.llm_base_url
+            payload["llm_model"] = settings.llm_model
+            payload["llm"] = result
+            if not result["ok"]:
+                payload["status"] = "degraded"
+        return payload
+
+    @app.get("/health/llm", dependencies=protected)
+    async def health_llm(request: Request) -> dict[str, Any]:
+        """Dedicated deep check: always makes one tiny model call."""
+        settings: Settings = request.app.state.settings
+        result = await llm.probe()
+        return {
+            "status": "ok" if result["ok"] else "degraded",
+            "llm_configured": settings.llm_configured,
+            "llm_base_url": settings.llm_base_url,
+            "llm_model": settings.llm_model,
+            "llm": result,
         }
 
     @app.post("/session/start", response_model=StartResponse, dependencies=protected)
@@ -155,6 +229,7 @@ def create_app(
             payload.scenario_id,
             channel="web",
             student_name=payload.student_name,
+            difficulty=payload.difficulty,
         )
         summary = manager.scenarios.summary(str(session.scenario["id"]))
         return StartResponse(
@@ -165,6 +240,11 @@ def create_app(
             max_student_turns=settings.max_student_turns,
             turns_remaining=settings.max_student_turns - session.student_turns,
             status=session.status,
+            difficulty=session.difficulty,  # type: ignore[arg-type]
+            hints_enabled=hints_enabled(session.difficulty),
+            monitor=await manager.monitor(session.id),
+            actions=action_options(session.scenario),
+            guideline=session.guideline.view() if session.guideline else None,
         )
 
     @app.post(
@@ -186,7 +266,64 @@ def create_app(
             auto_evaluated=outcome.auto_evaluated,
             evaluation=outcome.evaluation,
             evaluation_error=outcome.evaluation_error,
+            monitor=outcome.monitor,
+            hint=outcome.hint,
         )
+
+    @app.post(
+        "/session/{session_id}/action",
+        response_model=ActionResponse,
+        dependencies=protected,
+    )
+    async def clinical_action(
+        session_id: str,
+        payload: ActionRequest,
+        request: Request,
+    ) -> ActionResponse:
+        manager: SessionManager = request.app.state.manager
+        outcome = await manager.action(session_id, payload.action_id)
+        return ActionResponse(
+            session_id=outcome.session_id,
+            action_id=outcome.action_id,
+            action_label=outcome.action_label,
+            result=outcome.result,
+            warning=outcome.warning,
+            monitor=outcome.monitor,
+            status=outcome.status,  # type: ignore[arg-type]
+            student_turns=outcome.student_turns,
+            turns_remaining=outcome.turns_remaining,
+            actions_taken=outcome.actions_taken,
+        )
+
+    @app.post(
+        "/session/{session_id}/hint",
+        response_model=HintResponse,
+        dependencies=protected,
+    )
+    async def supervisor_hint(
+        session_id: str, request: Request, payload: HintRequest | None = None
+    ) -> HintResponse:
+        manager: SessionManager = request.app.state.manager
+        outcome = await manager.hint(session_id, payload.question if payload else "")
+        return HintResponse(
+            session_id=outcome.session_id,
+            hint=outcome.hint,
+            question=outcome.question,
+            step_ids=outcome.step_ids,
+            hints_used=outcome.hints_used,
+            hint_penalty=outcome.hint_penalty,
+            hints_remaining=outcome.hints_remaining,
+            monitor=outcome.monitor,
+        )
+
+    @app.get(
+        "/session/{session_id}/monitor",
+        response_model=MonitorView,
+        dependencies=protected,
+    )
+    async def get_monitor(session_id: str, request: Request) -> MonitorView:
+        manager: SessionManager = request.app.state.manager
+        return await manager.monitor(session_id)
 
     @app.post("/session/{session_id}/end", response_model=EndResponse, dependencies=protected)
     async def end_session(session_id: str, request: Request) -> EndResponse:

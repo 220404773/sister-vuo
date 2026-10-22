@@ -22,29 +22,142 @@
   "presenting_complaint": "Heavy central chest pain at rest, radiating to the left arm and jaw, with sweating, nausea, and shortness of breath.",
   "opening_line": "Sister, my chest feels heavy, like something is pressing on it. It started while I was sitting, and now my arm and jaw are sore. I also feel sweaty and a little sick.",
   "personality": "Stoic, polite, and reluctant to complain. He downplays symptoms and may need gentle direct questions. He is anxious about his wife being left alone.",
-  "history": {
-    "onset": "About 45 minutes ago while he was sitting and watching television. It has not eased with rest.",
-    "character": "Heavy, crushing central chest pain, severity 9 out of 10. He says it feels like a weight on his chest.",
-    "radiation": "The pain spreads to the left arm and jaw.",
-    "associated_symptoms": [
-      "cold sweats",
-      "nausea",
-      "shortness of breath",
-      "feeling of impending doom"
+  "case_file": {
+    "history": {
+      "onset": "About 45 minutes ago while he was sitting and watching television. It has not eased with rest.",
+      "character": "Heavy, crushing central chest pain, severity 9 out of 10. He says it feels like a weight on his chest.",
+      "radiation": "The pain spreads to the left arm and jaw.",
+      "associated_symptoms": [
+        "cold sweats",
+        "nausea",
+        "shortness of breath",
+        "feeling of impending doom"
+      ],
+      "previous_episode": "He had a similar but milder episode last week that lasted a few minutes and went away. He did not seek care.",
+      "pertinent_negatives": [
+        "no sharp pleuritic pain",
+        "no cough",
+        "no fever",
+        "no recent trauma",
+        "no calf pain or swelling",
+        "no recent long-distance travel"
+      ],
+      "past_medical_history": "High blood pressure for about fifteen years. Type 2 diabetes for ten years. High cholesterol.",
+      "medications": "Amlodipine 10 mg daily, metformin 1 g twice daily, and atorvastatin 20 mg daily. He does not take aspirin.",
+      "allergies": "No known allergies.",
+      "social_history": "Ex-smoker with a 20 pack-year history, quit ten years ago. Occasional brandy. Retired farmer. Lives with his wife."
+    },
+    "risk_factors": [
+      "age 72 years",
+      "hypertension",
+      "type 2 diabetes",
+      "hyperlipidaemia",
+      "previous tobacco use",
+      "previous similar episode last week"
     ],
-    "previous_episode": "He had a similar but milder episode last week that lasted a few minutes and went away. He did not seek care.",
-    "pertinent_negatives": [
-      "no sharp pleuritic pain",
-      "no cough",
-      "no fever",
-      "no recent trauma",
-      "no calf pain or swelling",
-      "no recent long-distance travel"
-    ],
-    "past_medical_history": "High blood pressure for about fifteen years. Type 2 diabetes for ten years. High cholesterol.",
-    "medications": "Amlodipine 10 mg daily, metformin 1 g twice daily, and atorvastatin 20 mg daily. He does not take aspirin.",
-    "allergies": "No known allergies.",
-    "social_history": "Ex-smoker with a 20 pack-year history, quit ten years ago. Occasional brandy. Retired farmer. Lives with his wife."
+    "baseline_vitals": {
+      "heart_rate": 96,
+      "systolic_bp": 148,
+      "diastolic_bp": 92,
+      "spo2": 94,
+      "respiratory_rate": 22,
+      "pain_score": 9,
+      "temperature": 36.8
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 10,
+        "systolic_bp": -9,
+        "diastolic_bp": -5,
+        "spo2": -2,
+        "respiratory_rate": 3,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 15,
+      "acceleration_multiplier": 1.5
+    },
+    "escalation_target_minutes": 10,
+    "required_actions": ["vitals", "ecg", "aspirin"],
+    "critical_actions": ["call_ambulance"],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "Onset and duration",
+        "triggers": ["when", "start", "begin", "how long", "happen"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "character",
+        "label": "Pain character and severity",
+        "triggers": ["describe", "feel like", "what kind", "character", "pain like", "heavy", "crushing"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "radiation",
+        "label": "Radiation of the pain",
+        "triggers": ["radiat", "spread", "arm", "jaw", "shoulder", "anywhere else"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "associated_symptoms",
+        "label": "Associated symptoms",
+        "triggers": ["other symptom", "else", "sweat", "nausea", "breath", "vomit", "dizzy", "faint", "doom"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "previous_episode",
+        "label": "Previous similar episode",
+        "triggers": ["before", "previous", "again", "last week", "similar", "ever had"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "pertinent_negatives",
+        "label": "Pertinent negatives",
+        "triggers": ["fever", "cough", "trauma", "calf", "travel", "pleuritic", "sharp"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "past_medical_history",
+        "label": "Past medical history",
+        "triggers": ["medical history", "condition", "health", "blood pressure", "diabetes", "cholesterol", "background", "history"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications",
+        "triggers": ["medication", "tablet", "pill", "medicine", "take daily", "prescription"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": ["allerg"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "social_history",
+        "label": "Social history",
+        "triggers": ["smoke", "drink", "alcohol", "live", "work", "occupation", "farm"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "risk_factors",
+        "label": "Cardiac risk factors",
+        "triggers": ["risk", "family history", "heart disease", "stroke"],
+        "weight": 1,
+        "required": false
+      }
+    ]
   },
   "ground_truth": {
     "diagnosis": "Suspected acute coronary syndrome, possibly myocardial infarction",
@@ -84,6 +197,104 @@
       "give oxygen only if hypoxic according to local protocol",
       "consider glyceryl trinitrate if protocol allows and there are no contraindications",
       "reassure the patient, explain the plan in plain language, and arrange urgent transfer"
+    ]
+  },
+  "clinical_actions": {
+    "ecg": {
+      "minutes": 5,
+      "result": "12-lead ECG: ST-segment elevation in leads II, III and aVF, with reciprocal depression in I and aVL. Show this tracing to the doctor immediately."
+    },
+    "oxygen": {
+      "result": "Oxygen started at 2 L/min via nasal prongs."
+    },
+    "aspirin": {
+      "result": "Aspirin 300 mg chewed. No known allergy.",
+      "deterioration_factor": 0.85
+    },
+    "iv_access": {
+      "result": "IV cannula sited in the left cubital fossa. Bloods taken for troponin, glucose and renal function.",
+      "effects": {
+        "systolic_bp": 4,
+        "heart_rate": -2
+      }
+    },
+    "call_ambulance": {
+      "result": "Emergency ambulance requested for urgent transfer. Estimated arrival 12 minutes."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR. Urgent review and transfer plan requested."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Central crushing chest pain at rest",
+        "triggers": ["crushing", "heavy", "pressure", "weight on", "chest pain"],
+        "actions": []
+      },
+      {
+        "flag": "Radiation to the left arm or jaw",
+        "triggers": ["radiat", "spread", "arm", "jaw"],
+        "actions": []
+      },
+      {
+        "flag": "Cold sweats",
+        "triggers": ["sweat", "clammy"],
+        "actions": []
+      },
+      {
+        "flag": "Shortness of breath",
+        "triggers": ["breath", "short of breath"],
+        "actions": []
+      },
+      {
+        "flag": "Nausea",
+        "triggers": ["nausea", "sick", "vomit"],
+        "actions": []
+      },
+      {
+        "flag": "Cardiac risk factors",
+        "triggers": ["diabetes", "hypertension", "blood pressure", "cholesterol", "smoke", "age"],
+        "actions": []
+      },
+      {
+        "flag": "Previous similar episode",
+        "triggers": ["before", "previous", "last week", "similar", "ever had"],
+        "actions": []
+      },
+      {
+        "flag": "Immediate emergency escalation",
+        "triggers": ["ambulance", "emergency", "refer"],
+        "actions": ["call_ambulance", "escalate_doctor"]
+      }
+    ]
+  },
+  "hints": [
+    "Start with an open question, then ask about onset, character, radiation and associated symptoms.",
+    "Ask about past medical history, medications and allergies. They change the risk assessment.",
+    "A 12-lead ECG and aspirin are time-critical in this presentation. What is your escalation plan?",
+    "Recheck observations after each intervention and hand over using SBAR."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Assess ABCDE and record a full set of observations immediately, including oxygen saturation, blood glucose and pain score.",
+      "Obtain a 12-lead ECG within 10 minutes and show it to the doctor.",
+      "Give aspirin 300 mg chewed unless there is a true allergy or another contraindication.",
+      "Give oxygen only if the saturation is below the local threshold; document the response.",
+      "Secure IV access, take bloods, and give analgesia or glyceryl trinitrate according to local protocol.",
+      "Activate emergency transfer immediately. Do not send the patient home or leave him waiting alone.",
+      "Reassure the patient in plain language, explain each step, and use SBAR for handover."
+    ],
+    "model_answer": "Mr van der Merwe is a 72-year-old man with 45 minutes of crushing central chest pain at rest, radiating to the left arm and jaw, with cold sweats, nausea and breathlessness. He has hypertension, type 2 diabetes and hyperlipidaemia, and had a similar episode last week. First observations are HR 96, BP 148/92, SpO2 94%, RR 22 and pain 9/10. This is a time-critical suspected acute coronary syndrome until proven otherwise. Immediate priorities are emergency activation, a 12-lead ECG within 10 minutes, aspirin 300 mg if not contraindicated, oxygen only if hypoxic, IV access, analgesia and continuous monitoring. SBAR handover: Situation - suspected acute coronary syndrome; Background - risk factors and current medications; Assessment - observations, ECG and pain; Recommendation - urgent transfer and ongoing monitoring.",
+    "reflection_questions": [
+      "Which single action would have made the biggest difference to this patient's outcome, and how quickly did you take it?",
+      "How did you balance the need for a full history against the need to escalate immediately?",
+      "What would you say to a stoic patient who keeps telling you he is fine?"
+    ],
+    "references": [
+      "National Department of Health. Standard Treatment Guidelines and Essential Medicines List for South Africa: Hospital Level, Adults. Latest edition.",
+      "European Society of Cardiology. 2023 ESC Guidelines for the management of acute coronary syndromes.",
+      "Resuscitation Council of Southern Africa. Advanced Cardiovascular Life Support guidelines."
     ]
   },
   "learning_objectives": [

@@ -13,10 +13,20 @@ import httpx
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query, Request
 from fastapi.responses import PlainTextResponse
 
+from .clinical import (
+    ActionAlreadyDone,
+    ActionUnavailable,
+    UnknownAction,
+    action_command_map,
+    monitor_text,
+)
 from .config import Settings
-from .models import Evaluation
+from .guidelines import GuidelineHintsUnavailable
+from .models import Evaluation, GuidelineView
 from .sessions import (
     ActiveSessionExists,
+    HintsDisabled,
+    NoHintsRemaining,
     ScenarioNotFound,
     SessionCapacityReached,
     SessionCompleted,
@@ -30,11 +40,12 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["whatsapp"])
 
 DOMAIN_LABELS = {
-    "history_taking": "History taking",
-    "clinical_reasoning": "Clinical reasoning",
+    "red_flag_recognition": "Red flag recognition",
+    "history_completeness": "History completeness",
+    "prioritisation": "Prioritisation",
+    "safety": "Safety",
     "communication_empathy": "Communication and empathy",
-    "language_accessibility": "Language accessibility",
-    "safety_referral": "Safety and referral",
+    "time_to_escalation": "Time to escalation",
 }
 
 
@@ -157,34 +168,84 @@ def _format_menu(manager: SessionManager) -> str:
     return "\n".join(lines)
 
 
-def _format_evaluation(evaluation: Evaluation) -> str:
+def _guideline_line(guideline: GuidelineView | None) -> str:
+    if guideline is None:
+        return ""
+    return f"\nGuideline: {guideline.name}, {guideline.edition_year}"
+
+
+def _format_evaluation(
+    evaluation: Evaluation, guideline: GuidelineView | None = None
+) -> str:
     lines = [
-        "Sister Vuo - session feedback",
+        "Sister Vuo - debrief",
         f"Overall score: {evaluation.overall_score:.1f}/5",
         "",
     ]
     for key, label in DOMAIN_LABELS.items():
         score = getattr(evaluation.domain_scores, key)
         lines.append(f"{label}: {score}/5")
+    if evaluation.hint_penalty:
+        lines.append(f"Supervisor hint penalty: -{evaluation.hint_penalty:.1f}")
+    debrief = evaluation.debrief
+    if debrief.time_to_escalation_minutes is not None:
+        lines.append(
+            f"Time to escalation: {debrief.time_to_escalation_minutes:.0f} min "
+            f"(target {debrief.escalation_target_minutes:.0f} min)"
+        )
+    else:
+        lines.append("Time to escalation: never escalated")
     lines.append("")
-    for title, items, empty in (
-        ("Strengths", evaluation.strengths, "None recorded."),
-        ("Missed red flags", evaluation.missed_red_flags, "None identified."),
-        ("Unsafe actions", evaluation.unsafe_actions, "None identified."),
-        ("Recommended learning", evaluation.recommended_learning, "None recorded."),
+    for title, items, empty, unsafe in (
+        ("What went well", evaluation.strengths, "None recorded.", False),
+        ("What was missed", debrief.what_was_missed, "None identified.", False),
+        ("Unsafe actions", evaluation.unsafe_actions, "None identified.", True),
+        ("Critical errors", evaluation.critical_errors, "None identified.", True),
+        ("Recommended learning", evaluation.recommended_learning, "None recorded.", False),
     ):
+        if unsafe and not items:
+            continue
         lines.append(f"{title}:")
         if items:
             lines.extend(f"- {item}" for item in items)
         else:
             lines.append(f"- {empty}")
         lines.append("")
+    if debrief.ideal_approach:
+        lines.append("Ideal approach:")
+        lines.extend(f"{index}. {item}" for index, item in enumerate(debrief.ideal_approach, 1))
+        lines.append("")
+    if debrief.model_answer:
+        lines.extend(["Model answer:", debrief.model_answer, ""])
+    if debrief.reflection_questions:
+        lines.append("Reflection questions:")
+        lines.extend(f"- {item}" for item in debrief.reflection_questions)
+        lines.append("")
+    if debrief.guideline_references:
+        lines.append("Guidelines:")
+        lines.extend(f"- {item}" for item in debrief.guideline_references)
+        lines.append("")
+    if guideline is not None:
+        lines.append(f"Guideline: {guideline.name}, {guideline.edition_year}")
+        lines.append(guideline.section_text)
+        if guideline.url:
+            lines.append(guideline.url)
+        if guideline.further_reading:
+            lines.append("Further reading:")
+            for item in guideline.further_reading:
+                suffix = f" - {item.url}" if item.url else ""
+                lines.append(f"- {item.title}, {item.edition_year}{suffix}")
+        if evaluation.protocol_steps:
+            lines.append("Protocol steps:")
+            for step in evaluation.protocol_steps:
+                lines.append(f"- {step.id}: {step.status}")
+        lines.append("")
     lines.extend(
         [
             "Feedback:",
             evaluation.feedback_to_student,
             "",
-            "This is simulation feedback for education only, not clinical advice.",
+            "This is a fictional education simulation, not clinical advice.",
         ]
     )
     return "\n".join(lines)
@@ -256,13 +317,18 @@ async def handle_whatsapp_message(
             )
             return
         summary = manager.scenarios.summary(str(session.scenario["id"]))
+        guideline_line = _guideline_line(
+            session.guideline.view() if session.guideline else None
+        )
         await client.send_text(
             sender,
             (
-                f"Simulation started: {summary.title}.\n\n"
+                f"Simulation started: {summary.title}.{guideline_line}\n\n"
                 "You are the student nurse. Take a history, identify red flags, and explain "
                 "your safety plan. Reply END to finish now; the session ends automatically "
                 "after 12 messages.\n\n"
+                "Clinical actions: VITALS, ECG, OXYGEN, ASPIRIN, IV, AMBULANCE, DOCTOR, "
+                "PREGNANCY TEST, HINT or HINT <question> or STATUS.\n\n"
                 "This is a fictional simulation. Do not send real patient data."
             ),
         )
@@ -282,11 +348,65 @@ async def handle_whatsapp_message(
                 "I could not generate feedback right now. Reply END to try again.",
             )
             return
-        await client.send_text(sender, _format_evaluation(evaluation))
+        guideline = active.guideline.view() if active.guideline else None
+        await client.send_text(sender, _format_evaluation(evaluation, guideline))
         return
 
     if active is None:
         await client.send_text(sender, f"There is no active session.\n\n{_format_menu(manager)}")
+        return
+
+    if upper == "STATUS":
+        await client.send_text(sender, monitor_text(await manager.monitor(active.id)))
+        return
+
+    if upper == "HINT" or upper.startswith("HINT "):
+        question = command[5:].strip() if upper.startswith("HINT ") else ""
+        if len(question) > 2000:
+            await client.send_text(sender, "Please keep your hint question under 2000 characters.")
+            return
+        try:
+            hint = await manager.hint(active.id, question)
+        except HintsDisabled as exc:
+            await client.send_text(sender, str(exc))
+            return
+        except NoHintsRemaining as exc:
+            await client.send_text(sender, str(exc))
+            return
+        except GuidelineHintsUnavailable as exc:
+            await client.send_text(sender, str(exc))
+            return
+        except SessionCompleted:
+            await client.send_text(sender, "This session has ended. Reply START to begin again.")
+            return
+        await client.send_text(
+            sender,
+            f"Supervisor hint ({hint.hint_penalty:.1f} point penalty, "
+            f"{hint.hints_remaining} left):\n{hint.hint}",
+        )
+        return
+
+    action_id = action_command_map().get(upper)
+    if action_id is not None:
+        try:
+            result = await manager.action(active.id, action_id)
+        except UnknownAction:
+            await client.send_text(sender, "That clinical action is not available.")
+            return
+        except ActionUnavailable as exc:
+            await client.send_text(sender, str(exc))
+            return
+        except ActionAlreadyDone as exc:
+            await client.send_text(sender, str(exc))
+            return
+        except SessionCompleted:
+            await client.send_text(sender, "This session has ended. Reply START to begin again.")
+            return
+        message = f"{result.action_label}: {result.result}"
+        if result.warning:
+            message += f"\n\nSafety note: {result.warning}"
+        message += f"\n\n{monitor_text(result.monitor)}"
+        await client.send_text(sender, message)
         return
 
     if len(command) > 2000:
@@ -306,11 +426,14 @@ async def handle_whatsapp_message(
         return
 
     await client.send_text(sender, outcome.reply)
+    if outcome.hint:
+        await client.send_text(sender, f"Beginner hint:\n{outcome.hint}")
     if outcome.evaluation is not None:
+        guideline = active.guideline.view() if active.guideline else None
         await client.send_text(
             sender,
             "Session complete after 12 student messages.\n\n"
-            f"{_format_evaluation(outcome.evaluation)}",
+            f"{_format_evaluation(outcome.evaluation, guideline)}",
         )
     elif outcome.evaluation_error:
         await client.send_text(

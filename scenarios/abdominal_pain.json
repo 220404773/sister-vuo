@@ -22,30 +22,141 @@
   "presenting_complaint": "Sharp pain in the left lower abdomen since this morning, getting worse, with light-headedness.",
   "opening_line": "Sister, this pain in my tummy is getting worse. It is here on the left, low down, and I feel a bit light-headed.",
   "personality": "Anxious, polite, and guarded about sensitive history. She becomes more forthcoming when treated respectfully and given privacy.",
-  "history": {
-    "onset": "Sudden onset about six hours ago while she was at work; the pain has steadily worsened.",
-    "character": "Sharp, stabbing left lower abdominal pain, severity 8 out of 10. Nothing relieves it; paracetamol did not help.",
-    "radiation": "The pain sometimes spreads to her left shoulder tip.",
-    "associated_symptoms": [
-      "nausea",
-      "one episode of feeling faint",
-      "light-headedness",
-      "small amount of vaginal spotting",
-      "missed period for about seven weeks"
+  "case_file": {
+    "history": {
+      "onset": "Sudden onset about six hours ago while she was at work; the pain has steadily worsened.",
+      "character": "Sharp, stabbing left lower abdominal pain, severity 8 out of 10. Nothing relieves it; paracetamol did not help.",
+      "radiation": "The pain sometimes spreads to her left shoulder tip.",
+      "associated_symptoms": [
+        "nausea",
+        "one episode of feeling faint",
+        "light-headedness",
+        "small amount of vaginal spotting",
+        "missed period for about seven weeks"
+      ],
+      "pertinent_negatives": [
+        "no fever",
+        "no vomiting",
+        "no diarrhoea",
+        "no burning when passing urine",
+        "no heavy vaginal bleeding"
+      ],
+      "menstrual_history": "Usually regular. Last period was about seven weeks ago. She has not done a pregnancy test.",
+      "sexual_history": "Sexually active with one partner. No contraception, or inconsistent condom use. She is not sure whether she could be pregnant.",
+      "past_medical_history": "No chronic illness, no previous surgery, no previous pregnancies.",
+      "medications": "Paracetamol taken earlier today. No regular medication.",
+      "allergies": "No known allergies.",
+      "social_history": "Non-smoker. Occasional alcohol. Works as a cashier and lives with her partner."
+    },
+    "risk_factors": [
+      "missed period for seven weeks",
+      "no contraception or inconsistent condom use",
+      "sudden unilateral pelvic pain",
+      "dizziness and near-syncope"
     ],
-    "pertinent_negatives": [
-      "no fever",
-      "no vomiting",
-      "no diarrhoea",
-      "no burning when passing urine",
-      "no heavy vaginal bleeding"
-    ],
-    "menstrual_history": "Usually regular. Last period was about seven weeks ago. She has not done a pregnancy test.",
-    "sexual_history": "Sexually active with one partner. No contraception, or inconsistent condom use. She is not sure whether she could be pregnant.",
-    "past_medical_history": "No chronic illness, no previous surgery, no previous pregnancies.",
-    "medications": "Paracetamol taken earlier today. No regular medication.",
-    "allergies": "No known allergies.",
-    "social_history": "Non-smoker. Occasional alcohol. Works as a cashier and lives with her partner."
+    "baseline_vitals": {
+      "heart_rate": 104,
+      "systolic_bp": 102,
+      "diastolic_bp": 64,
+      "spo2": 98,
+      "respiratory_rate": 20,
+      "pain_score": 8,
+      "temperature": 37.1
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 12,
+        "systolic_bp": -10,
+        "diastolic_bp": -6,
+        "spo2": -1,
+        "respiratory_rate": 2,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 10,
+      "acceleration_multiplier": 1.6
+    },
+    "escalation_target_minutes": 10,
+    "required_actions": ["vitals", "iv_access", "pregnancy_test"],
+    "critical_actions": ["call_ambulance"],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "Onset and duration",
+        "triggers": ["when", "start", "begin", "how long", "happen", "since"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "character",
+        "label": "Pain character and severity",
+        "triggers": ["describe", "feel like", "what kind", "character", "pain like", "sharp", "stabbing"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "radiation",
+        "label": "Radiation of the pain",
+        "triggers": ["radiat", "spread", "shoulder", "anywhere else"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "associated_symptoms",
+        "label": "Associated symptoms",
+        "triggers": ["other symptom", "else", "nausea", "faint", "dizzy", "light-headed", "spotting", "bleed"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "menstrual_history",
+        "label": "Menstrual history",
+        "triggers": ["period", "menstrual", "last period", "missed", "cycle"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "sexual_history",
+        "label": "Sexual and pregnancy history",
+        "triggers": ["sex", "partner", "contracept", "pregnan", "condom", "active"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "pertinent_negatives",
+        "label": "Pertinent negatives",
+        "triggers": ["fever", "vomit", "diarrhoea", "urine", "burning", "heavy bleeding"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "past_medical_history",
+        "label": "Past medical and surgical history",
+        "triggers": ["medical history", "condition", "health", "surgery", "operation", "previous pregnancy"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications",
+        "triggers": ["medication", "tablet", "pill", "medicine", "paracetamol", "prescription"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": ["allerg"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "social_history",
+        "label": "Social history",
+        "triggers": ["smoke", "drink", "alcohol", "live", "work", "occupation"],
+        "weight": 1,
+        "required": true
+      }
+    ]
   },
   "ground_truth": {
     "diagnosis": "Suspected ectopic pregnancy, possibly leaking or ruptured",
@@ -79,6 +190,109 @@
       "keep the patient nil by mouth and monitor while awaiting transfer",
       "privacy and sensitive, non-judgemental communication",
       "clear safety-netting and do not send home"
+    ]
+  },
+  "clinical_actions": {
+    "ecg": {
+      "available": false,
+      "unavailable_reason": "No ECG machine is available at this clinic; this patient needs urgent transfer, not an ECG.",
+      "minutes": 5,
+      "result": "No ECG machine is available at this clinic."
+    },
+    "oxygen": {
+      "result": "Oxygen started at 2 L/min via nasal prongs."
+    },
+    "aspirin": {
+      "unsafe": true,
+      "result": "Aspirin 300 mg given.",
+      "warning": "Aspirin is not indicated for suspected ectopic pregnancy and may increase bleeding."
+    },
+    "iv_access": {
+      "result": "IV cannula sited. Bloods taken and a 500 mL crystalloid bolus started per protocol.",
+      "effects": {
+        "systolic_bp": 4,
+        "heart_rate": -2
+      }
+    },
+    "call_ambulance": {
+      "result": "Emergency ambulance requested for transfer to a hospital with obstetric cover. Estimated arrival 15 minutes."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR. Urgent obstetric referral requested."
+    },
+    "pregnancy_test": {
+      "label": "Urine pregnancy test",
+      "description": "Perform a urine pregnancy test if available.",
+      "minutes": 2,
+      "category": "investigation",
+      "result": "Urine pregnancy test is positive."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Missed period or possible pregnancy",
+        "triggers": ["period", "menstrual", "pregnan", "last period"],
+        "actions": ["pregnancy_test"]
+      },
+      {
+        "flag": "Sudden severe unilateral lower abdominal pain",
+        "triggers": ["sudden", "severe", "left", "lower abdomen"],
+        "actions": []
+      },
+      {
+        "flag": "Left shoulder-tip pain",
+        "triggers": ["shoulder"],
+        "actions": []
+      },
+      {
+        "flag": "Dizziness or near-syncope",
+        "triggers": ["dizzy", "faint", "light-headed", "syncope"],
+        "actions": []
+      },
+      {
+        "flag": "Vaginal spotting",
+        "triggers": ["spotting", "bleeding", "discharge"],
+        "actions": []
+      },
+      {
+        "flag": "Possible haemodynamic compromise",
+        "triggers": [],
+        "actions": ["vitals"]
+      },
+      {
+        "flag": "Urgent obstetric escalation",
+        "triggers": ["ambulance", "emergency", "refer", "obstetric"],
+        "actions": ["call_ambulance", "escalate_doctor"]
+      }
+    ]
+  },
+  "hints": [
+    "Ask about the pain first, then about her menstrual cycle and the possibility of pregnancy. Offer privacy.",
+    "Dizziness and shoulder-tip pain are red flags, not minor symptoms. Check her observations now.",
+    "This clinic cannot manage this emergency. What is your referral plan, and what will you do while waiting?",
+    "Reassess after fluids, keep her nil by mouth, and hand over sensitively without judgement."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Assess ABCDE, record observations and check for signs of shock or haemodynamic compromise.",
+      "Take a focused abdominal, menstrual, sexual and pregnancy history with privacy and without judgement.",
+      "Perform a urine pregnancy test if available; a positive test changes this to an obstetric emergency.",
+      "Treat as a suspected ectopic pregnancy until proven otherwise and call an ambulance for a facility with obstetric cover.",
+      "Secure IV access, start fluids per protocol, keep the patient nil by mouth and monitor while awaiting transfer.",
+      "Do not give aspirin or other unnecessary treatment, and do not send her home.",
+      "Explain the plan in plain language, reassure her, and document the safety-netting and handover."
+    ],
+    "model_answer": "Ms Mokoena is a 27-year-old woman with six hours of sudden, severe left lower abdominal pain radiating to the left shoulder tip, associated with dizziness, vaginal spotting and a seven-week missed period. She is sexually active without reliable contraception. Observations show tachycardia and a low-normal blood pressure, and a urine pregnancy test is positive. This is a suspected ectopic pregnancy with possible rupture and haemodynamic compromise. Immediate priorities are urgent ambulance transfer to a facility with obstetric cover, IV access and fluids, nil by mouth, continuous monitoring, privacy and sensitive communication, and a clear SBAR handover. Do not send her home or give non-indicated treatment.",
+    "reflection_questions": [
+      "How did you create enough privacy and trust for her to disclose her sexual and menstrual history?",
+      "Why does left shoulder-tip pain matter in a woman with lower abdominal pain?",
+      "What would you do differently if she declined a pregnancy test or wanted to go home?"
+    ],
+    "references": [
+      "National Department of Health. Guidelines for Maternity Care in South Africa. Latest edition.",
+      "Royal College of Obstetricians and Gynaecologists. Green-top Guideline No. 21: Diagnosis and Management of Ectopic Pregnancy.",
+      "National Committee for Confidential Enquiries into Maternal Deaths. Saving Mothers Report. Latest edition."
     ]
   },
   "learning_objectives": [

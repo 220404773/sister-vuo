@@ -14,27 +14,44 @@ from app.models import DomainScores, Evaluation
 class FakeLLM:
     def __init__(self) -> None:
         self.patient_calls: list[list[dict[str, str]]] = []
+        self.revealed_calls: list[list[str]] = []
         self.evaluation_calls = 0
+        self.evaluation_contexts: list[dict | None] = []
         self.evaluation_failures = 0
+        self.protocol_steps = None
+        self.probe_calls = 0
+        self.probe_result: dict = {
+            "ok": True,
+            "model": "test-model",
+            "latency_ms": 1,
+            "reply": "OK",
+        }
         self.default_reply = "The pain started this morning and it is getting worse."
 
-    async def patient_reply(self, scenario, transcript):
+    async def probe(self) -> dict:
+        self.probe_calls += 1
+        return dict(self.probe_result)
+
+    async def patient_reply(self, scenario, transcript, revealed_topics=()):
         self.patient_calls.append(transcript)
+        self.revealed_calls.append(list(revealed_topics))
         return self.default_reply
 
-    async def evaluate(self, scenario, transcript):
+    async def evaluate(self, scenario, transcript, context=None):
         self.evaluation_calls += 1
+        self.evaluation_contexts.append(context)
         if self.evaluation_failures > 0:
             self.evaluation_failures -= 1
             raise LLMUpstreamError("simulated evaluator failure")
         return Evaluation(
             overall_score=4.0,
             domain_scores=DomainScores(
-                history_taking=4,
-                clinical_reasoning=4,
+                red_flag_recognition=4,
+                history_completeness=4,
+                prioritisation=4,
+                safety=4,
                 communication_empathy=4,
-                language_accessibility=4,
-                safety_referral=4,
+                time_to_escalation=4,
             ),
             strengths=["Used open questions and acknowledged the patient's worry."],
             missed_red_flags=["Did not ask about shoulder-tip pain."],
@@ -44,6 +61,7 @@ class FakeLLM:
                 "You built rapport and asked a clear opening question. "
                 "Next time, explore the red flags earlier and explain your escalation plan."
             ),
+            protocol_steps=self.protocol_steps,
         )
 
     async def close(self) -> None:
@@ -70,6 +88,7 @@ def settings(tmp_path: Path) -> Settings:
         scenario_dir=PROJECT_ROOT / "scenarios",
         prompt_dir=PROJECT_ROOT / "prompts",
         static_dir=PROJECT_ROOT / "app" / "static",
+        guidelines_path=tmp_path / "guidelines-missing.json",
         log_dir=tmp_path / "logs",
         whatsapp_verify_token="verify-token",
         whatsapp_access_token="access-token",

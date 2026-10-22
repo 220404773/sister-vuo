@@ -1,0 +1,49 @@
+{
+  "_note": "Template. Copy to guidelines.json (gitignored) and fill in. Write steps in your OWN short words: NDoH owns the guideline text and reproducing it needs written consent. There is deliberately no page-number field. A scenario with 0 steps runs in links-only mode (no hints, no protocol scoring). With 5-8 steps it runs in full mode. url may be null until you have checked the exact link.",
+  "documents": {
+    "apc_2026": {
+      "title": "Adult Primary Care Guide (APC) 2026",
+      "edition_year": "2026",
+      "publisher": "National Department of Health, Knowledge Hub",
+      "url": "https://knowledgehub.health.gov.za/elibrary/adult-primary-care-guide-apc-2026"
+    },
+    "paeds_hospital_stg_eml_2023": {
+      "title": "Hospital Level (Paediatric) Standard Treatment Guidelines (STGs) and Essential Medicines List (EML)",
+      "edition_year": "5th Edition, 2023",
+      "publisher": "National Department of Health, Knowledge Hub",
+      "url": null
+    },
+    "paeds_medicine_reviews_2023": {
+      "title": "Hospital Level (Paediatric) Medicine Reviews and Costing Reports",
+      "edition_year": "2023 Edition",
+      "publisher": "National Department of Health, Knowledge Hub",
+      "url": null
+    },
+    "notice_for_comment_2020_2024": {
+      "title": "Notice for comment for PHC, Adult and Paediatric Hospital Level STGs and EML, and Hospital Level (Adult) Medicine Reviews and Costing Reports",
+      "edition_year": "2020 to 2024",
+      "publisher": "National Department of Health, Knowledge Hub",
+      "url": null
+    }
+  },
+  "scenarios": {
+    "abdominal_pain": {
+      "primary_document": "apc_2026",
+      "section_text": "FILL IN: chapter or section title, exactly as it appears in the guide",
+      "steps": [],
+      "further_reading": ["apc_2026"]
+    },
+    "chest_pain": {
+      "primary_document": "apc_2026",
+      "section_text": "FILL IN: chapter or section title, exactly as it appears in the guide",
+      "steps": [],
+      "further_reading": ["apc_2026"]
+    },
+    "paediatric_dehydration": {
+      "primary_document": "paeds_hospital_stg_eml_2023",
+      "section_text": "FILL IN: chapter or section title, exactly as it appears in the guide",
+      "steps": [],
+      "further_reading": ["paeds_hospital_stg_eml_2023", "paeds_medicine_reviews_2023"]
+    }
+  }
+}

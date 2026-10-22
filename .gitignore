@@ -8,3 +8,6 @@ __pycache__/
 logs/
 .DS_Store
 Thumbs.db
+
+# Real guideline steps (NDoH-owned content; needs written consent before sharing). Commit only the .example file.
+guidelines.json

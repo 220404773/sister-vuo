@@ -41,6 +41,12 @@ def _env_bool(name: str, default: bool = False) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _env_path(name: str, default: str) -> Path:
+    raw = os.getenv(name, "").strip() or default
+    path = Path(raw).expanduser()
+    return path if path.is_absolute() else PROJECT_ROOT / path
+
+
 @dataclass(frozen=True, slots=True)
 class Settings:
     llm_base_url: str = field(default_factory=lambda: os.getenv("LLM_BASE_URL", "").strip())
@@ -67,6 +73,7 @@ class Settings:
     scenario_dir: Path = PROJECT_ROOT / "scenarios"
     prompt_dir: Path = PROJECT_ROOT / "prompts"
     static_dir: Path = PROJECT_ROOT / "app" / "static"
+    guidelines_path: Path = field(default_factory=lambda: _env_path("GUIDELINES_PATH", "guidelines.json"))
     log_dir: Path = PROJECT_ROOT / "logs" / "transcripts"
     whatsapp_verify_token: str = field(
         default_factory=lambda: os.getenv("WHATSAPP_VERIFY_TOKEN", "").strip()
@@ -90,6 +97,21 @@ class Settings:
     @property
     def llm_configured(self) -> bool:
         return bool(self.llm_base_url and self.llm_api_key and self.llm_model)
+
+    def llm_config_issues(self) -> list[str]:
+        """Human-readable configuration problems, without ever exposing the API key."""
+        issues: list[str] = []
+        if not self.llm_base_url:
+            issues.append("LLM_BASE_URL is not set.")
+        elif not self.llm_base_url.lower().startswith(("http://", "https://")):
+            issues.append("LLM_BASE_URL must start with http:// or https://.")
+        if not self.llm_api_key:
+            issues.append("LLM_API_KEY is not set.")
+        elif self.llm_api_key.lower() in {"replace-me", "changeme", "your-api-key"}:
+            issues.append("LLM_API_KEY still contains the example placeholder value.")
+        if not self.llm_model:
+            issues.append("LLM_MODEL is not set.")
+        return issues
 
     @property
     def whatsapp_configured(self) -> bool:

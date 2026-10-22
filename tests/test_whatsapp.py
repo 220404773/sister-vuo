@@ -137,8 +137,33 @@ def test_start_message_end_over_whatsapp(
     ended = post_payload(client, settings, make_payload(phone, "END", "wamid.end"))
     assert ended.status_code == 200
     assert len(fake_whatsapp.sent) == 4
-    assert "Overall score: 4.0/5" in fake_whatsapp.sent[3][1]
-    assert "Missed red flags" in fake_whatsapp.sent[3][1]
+    assert "Overall score:" in fake_whatsapp.sent[3][1]
+    assert "What was missed" in fake_whatsapp.sent[3][1]
+    assert "Time to escalation: never escalated" in fake_whatsapp.sent[3][1]
+
+
+def test_whatsapp_clinical_commands(
+    client: TestClient,
+    settings: Settings,
+    fake_whatsapp: FakeWhatsApp,
+) -> None:
+    phone = "27824444444"
+    post_payload(client, settings, make_payload(phone, "START 1", "wamid.commands.start"))
+    prior = len(fake_whatsapp.sent)
+
+    vitals = post_payload(client, settings, make_payload(phone, "VITALS", "wamid.commands.vitals"))
+    assert vitals.status_code == 200
+    assert len(fake_whatsapp.sent) == prior + 1
+    assert "Observations recorded" in fake_whatsapp.sent[-1][1]
+
+    status_message = post_payload(client, settings, make_payload(phone, "STATUS", "wamid.commands.status"))
+    assert status_message.status_code == 200
+    assert "Clinical time" in fake_whatsapp.sent[-1][1]
+
+    hint = post_payload(client, settings, make_payload(phone, "HINT", "wamid.commands.hint"))
+    assert hint.status_code == 200
+    assert "Supervisor hint" in fake_whatsapp.sent[-1][1]
+    assert "point penalty" in fake_whatsapp.sent[-1][1]
 
 
 def test_duplicate_webhook_delivery_is_ignored(

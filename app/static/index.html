@@ -119,7 +119,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 320px minmax(0, 1fr);
+      grid-template-columns: 300px minmax(0, 1fr) 320px;
       gap: 18px;
       align-items: start;
     }
@@ -258,6 +258,35 @@
       padding: 13px 16px;
     }
 
+    #healthButton {
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px 14px;
+    }
+
+    .health-result {
+      margin-top: 10px;
+      padding: 11px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink-soft);
+      background: var(--paper);
+      font-size: 0.8rem;
+      overflow-wrap: anywhere;
+    }
+
+    .health-result.ok {
+      border-color: #b7ddd3;
+      background: var(--teal-soft);
+      color: var(--teal-dark);
+    }
+
+    .health-result.fail {
+      border-color: #f2c7c0;
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
     .session-info {
       margin-top: 16px;
       padding: 14px;
@@ -274,6 +303,366 @@
       padding-top: 16px;
       border-top: 1px solid var(--line);
       color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .clinical-panel {
+      position: sticky;
+      top: 18px;
+      max-height: calc(100vh - 150px);
+      overflow-y: auto;
+      padding: 19px;
+    }
+
+    .clinical-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .clinical-head h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .clinical-time {
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--ink-soft);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      font-size: 0.76rem;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .monitor-stable {
+      color: var(--teal-dark);
+    }
+
+    .monitor-deteriorating {
+      color: var(--amber);
+    }
+
+    .monitor-critical {
+      color: var(--danger);
+    }
+
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .vital {
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+    }
+
+    .vital span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 750;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .vital strong {
+      display: block;
+      margin-top: 2px;
+      color: var(--ink);
+      font-size: 1.02rem;
+      letter-spacing: -0.02em;
+    }
+
+    .vital strong em {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .vital.alert {
+      border-color: #f0c2ba;
+      background: var(--danger-bg);
+    }
+
+    .vital.alert strong {
+      color: var(--danger);
+    }
+
+    .alerts {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 11px;
+    }
+
+    .alert-item {
+      padding: 8px 10px;
+      border: 1px solid #f0d6a5;
+      border-radius: 10px;
+      color: var(--amber);
+      background: var(--amber-bg);
+      font-size: 0.78rem;
+      font-weight: 650;
+    }
+
+    .clinical-meta {
+      display: grid;
+      gap: 6px;
+      margin-top: 13px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--white);
+      font-size: 0.78rem;
+    }
+
+    .clinical-meta div {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .clinical-meta span {
+      color: var(--muted);
+    }
+
+    .clinical-meta strong {
+      color: var(--ink-soft);
+      text-align: right;
+    }
+
+    .clinical-actions {
+      margin-top: 17px;
+    }
+
+    .action-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 7px;
+    }
+
+    .action-button {
+      display: block;
+      width: 100%;
+      padding: 10px 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 11px;
+      color: var(--ink);
+      background: var(--white);
+      text-align: left;
+      transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+    }
+
+    .action-button:hover:not(:disabled) {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      transform: translateY(-1px);
+    }
+
+    .action-button:disabled {
+      color: var(--muted);
+      background: #f1f5f4;
+      cursor: not-allowed;
+    }
+
+    .action-button.done {
+      border-color: #b7ddd3;
+      background: var(--teal-soft);
+    }
+
+    .action-button .action-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .action-button .action-top strong {
+      font-size: 0.82rem;
+    }
+
+    .action-button .action-top span {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .action-button small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      line-height: 1.35;
+    }
+
+    .action-button .action-done {
+      color: var(--teal-dark);
+      font-weight: 750;
+    }
+
+    #hintButton {
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px 12px;
+    }
+
+    .hint-ask {
+      display: flex;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .hint-ask input {
+      min-width: 0;
+      flex: 1;
+      padding: 9px 10px;
+      font-size: 0.8rem;
+    }
+
+    .hint-ask button {
+      padding: 9px 12px;
+      white-space: nowrap;
+    }
+
+    .guideline-header {
+      margin: 4px 0 0;
+      color: var(--teal-dark);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .guideline-card {
+      grid-column: 1 / -1;
+      border-color: #b7ddd3;
+      background: linear-gradient(180deg, #f4fbf9, var(--paper));
+    }
+
+    .guideline-card .guideline-title {
+      margin: 0 0 4px;
+      color: var(--ink);
+      font-size: 0.92rem;
+    }
+
+    .guideline-card .guideline-section {
+      margin: 0 0 10px;
+      color: var(--ink-soft);
+      font-size: 0.86rem;
+      white-space: pre-wrap;
+    }
+
+    .guideline-card a {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .guideline-card .protocol-list {
+      margin-top: 12px;
+    }
+
+    .guideline-card .protocol-list li {
+      list-style: none;
+      margin-left: -19px;
+    }
+
+    .protocol-status {
+      display: inline-block;
+      min-width: 62px;
+      font-weight: 750;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+    }
+
+    .protocol-status.met {
+      color: #0f766e;
+    }
+
+    .protocol-status.partial {
+      color: var(--amber);
+    }
+
+    .protocol-status.missed {
+      color: var(--danger);
+    }
+
+    .hint-card {
+      margin: 0 16px 10px;
+      padding: 11px 13px;
+      border: 1px solid #b7ddd3;
+      border-left: 4px solid var(--teal);
+      border-radius: 11px;
+      color: var(--ink-soft);
+      background: var(--teal-soft);
+      font-size: 0.84rem;
+    }
+
+    .hint-card strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--teal-dark);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .history-section {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--ink-soft);
+      background: var(--white);
+      text-align: left;
+      font-size: 0.78rem;
+    }
+
+    .history-item:hover {
+      border-color: var(--teal);
+    }
+
+    .history-item strong {
+      color: var(--teal-dark);
+      white-space: nowrap;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    #clearHistory {
+      margin-top: 8px;
+      padding: 7px 10px;
       font-size: 0.78rem;
     }
 
@@ -447,6 +836,36 @@
       background: linear-gradient(145deg, var(--teal), var(--teal-dark));
     }
 
+    .message.clinical .avatar {
+      background: #8a5a00;
+    }
+
+    .message.clinical .bubble {
+      border-color: #f0d6a5;
+      background: var(--amber-bg);
+      color: #5c3d00;
+      font-size: 0.86rem;
+    }
+
+    .message.clinical .sender {
+      color: var(--amber);
+    }
+
+    .message.supervisor .avatar {
+      background: #4c5f80;
+    }
+
+    .message.supervisor .bubble {
+      border-color: #c8d5e8;
+      background: #eef3fa;
+      color: #253a56;
+      font-size: 0.86rem;
+    }
+
+    .message.supervisor .sender {
+      color: #405a7d;
+    }
+
     .typing {
       margin: 0 24px 10px;
       color: var(--muted);
@@ -595,10 +1014,104 @@
       transition: width 500ms ease;
     }
 
+    .eval-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .eval-meta span {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink-soft);
+      background: var(--paper);
+      font-size: 0.76rem;
+      font-weight: 650;
+    }
+
+    .eval-meta span.warn {
+      border-color: #f0d6a5;
+      color: var(--amber);
+      background: var(--amber-bg);
+    }
+
     .eval-sections {
       display: flex;
       flex-direction: column;
       gap: 16px;
+    }
+
+    .debrief-extras {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 6px;
+    }
+
+    .debrief-extras .eval-section {
+      min-width: 0;
+    }
+
+    .debrief-extras .wide {
+      grid-column: 1 / -1;
+    }
+
+    .eval-section p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+      white-space: pre-wrap;
+    }
+
+    .eval-section ol {
+      margin: 0;
+      padding-left: 19px;
+      color: var(--ink-soft);
+      font-size: 0.86rem;
+    }
+
+    .eval-section ol li + li {
+      margin-top: 5px;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 4px;
+    }
+
+    .timeline-event {
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr);
+      gap: 9px;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--white);
+      font-size: 0.8rem;
+    }
+
+    .timeline-event time {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .timeline-event strong {
+      display: block;
+      color: var(--ink-soft);
+      font-size: 0.8rem;
+    }
+
+    .timeline-event span {
+      color: var(--muted);
+      font-size: 0.76rem;
+      white-space: pre-wrap;
     }
 
     .eval-section {
@@ -673,6 +1186,31 @@
       border: 0;
     }
 
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 300px minmax(0, 1fr);
+      }
+
+      .clinical-panel {
+        position: static;
+        grid-column: 1 / -1;
+        max-height: none;
+      }
+
+      .clinical-panel .vitals-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .clinical-panel .action-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .clinical-panel .action-list .action-button:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+      }
+    }
+
     @media (max-width: 920px) {
       .layout {
         grid-template-columns: 1fr;
@@ -691,6 +1229,10 @@
         min-height: 520px;
       }
 
+      .clinical-panel .vitals-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .evaluation-panel {
         grid-template-columns: 1fr;
       }
@@ -698,13 +1240,20 @@
       .eval-head,
       .overall,
       .domains,
+      .eval-meta,
       .eval-sections,
+      .debrief-extras,
+      .guideline-card,
       .eval-disclaimer {
         grid-column: 1;
       }
 
       .eval-sections {
         grid-row: auto;
+      }
+
+      .debrief-extras {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -754,6 +1303,14 @@
         min-height: 46px;
       }
 
+      .clinical-panel .vitals-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .clinical-panel .action-list {
+        grid-template-columns: 1fr;
+      }
+
       .evaluation-panel {
         padding: 20px 16px;
       }
@@ -786,16 +1343,29 @@
           <label class="sr-only" for="scenarioSelect">Scenario</label>
           <select id="scenarioSelect" required></select>
           <div id="scenarioMeta" class="scenario-meta">Loading scenarios...</div>
+          <label class="field-label" for="difficultySelect">Learning mode</label>
+          <select id="difficultySelect">
+            <option value="Beginner">Beginner - guided with automatic hints</option>
+            <option value="Intermediate" selected>Intermediate - hints on request</option>
+            <option value="Advanced">Advanced - no hints, faster deterioration</option>
+          </select>
           <label class="field-label" for="studentName">Your name <span>optional</span></label>
           <input id="studentName" type="text" maxlength="80" autocomplete="off" placeholder="Student name">
           <button id="startButton" class="primary" type="submit">Start session</button>
         </form>
         <div id="sessionInfo" class="session-info" hidden></div>
         <button id="endButton" class="secondary" type="button" hidden>End and evaluate</button>
+        <button id="healthButton" class="secondary" type="button">Test model connection</button>
+        <div id="healthResult" class="health-result" role="status" hidden></div>
         <div class="notice">
           This is a fictional educational simulation. Do not enter real patient information.
           Feedback is for learning only and is not clinical advice.
         </div>
+        <section class="history-section">
+          <div class="eyebrow">Past sessions</div>
+          <div id="historyList" class="history-list"></div>
+          <button id="clearHistory" class="ghost" type="button" hidden>Clear saved sessions</button>
+        </section>
       </aside>
 
       <section class="panel chat-panel">
@@ -803,6 +1373,7 @@
           <div>
             <div class="eyebrow">Consultation</div>
             <h2 id="chatTitle">Select a scenario</h2>
+            <p id="guidelineHeader" class="guideline-header" hidden></p>
           </div>
           <div class="status-group">
             <span id="statusDot" class="dot idle"></span>
@@ -822,6 +1393,11 @@
 
         <div id="typing" class="typing" hidden>Patient is responding...</div>
 
+        <div id="hintCard" class="hint-card" hidden>
+          <strong>Hint</strong>
+          <span id="hintText"></span>
+        </div>
+
         <div id="errorBanner" class="error-banner" hidden>
           <span id="errorText"></span>
           <button id="errorClose" type="button">Dismiss</button>
@@ -833,6 +1409,38 @@
           <button id="sendButton" class="primary send" type="submit">Send</button>
         </form>
       </section>
+
+      <aside class="panel clinical-panel">
+        <div class="clinical-head">
+          <div>
+            <div class="eyebrow">Patient monitor</div>
+            <h2 id="monitorStatus" class="monitor-stable">Not started</h2>
+          </div>
+          <span id="clinicalTime" class="clinical-time">0 min</span>
+        </div>
+        <div id="alerts" class="alerts" hidden></div>
+        <div id="vitalsGrid" class="vitals-grid"></div>
+        <div class="clinical-meta">
+          <div><span>Escalation target</span><strong id="targetTime">--</strong></div>
+          <div><span>Escalated at</span><strong id="escalatedAt">Not yet</strong></div>
+          <div><span>Hints used</span><strong id="hintCount">0</strong></div>
+        </div>
+        <div class="clinical-actions">
+          <div class="eyebrow">Clinical actions</div>
+          <div id="actionList" class="action-list">
+            <p class="history-empty">Start a session to assess and treat the patient.</p>
+          </div>
+        </div>
+        <button id="hintButton" class="secondary" type="button" hidden>Ask for a supervisor hint</button>
+        <form id="hintAsk" class="hint-ask" hidden>
+          <label class="sr-only" for="hintQuestion">Ask the supervisor about the guideline</label>
+          <input id="hintQuestion" type="text" maxlength="2000" autocomplete="off" placeholder="Ask about the guideline...">
+          <button id="hintSubmit" class="secondary" type="submit">Ask</button>
+        </form>
+        <div class="notice">
+          Actions and questions advance the simulated clock. The patient can deteriorate even while you talk.
+        </div>
+      </aside>
 
       <section id="evaluationPanel" class="panel evaluation-panel" hidden>
         <div class="eval-head">
@@ -846,8 +1454,11 @@
           <span id="overallScore" class="score">0.0</span><span class="out-of">/ 5</span>
           <p>Overall score</p>
         </div>
+        <div id="evalMeta" class="eval-meta"></div>
         <div id="domainScores" class="domains"></div>
         <div id="evalSections" class="eval-sections"></div>
+        <div id="debriefExtras" class="debrief-extras"></div>
+        <section id="guidelineCard" class="eval-section guideline-card" hidden></section>
         <div class="eval-disclaimer">
           Simulation feedback generated for nursing education. It may be incomplete or incorrect and must not be used for real clinical decisions.
         </div>
@@ -861,53 +1472,91 @@
 
   <script>
     const domainLabels = {
-      history_taking: "History taking",
-      clinical_reasoning: "Clinical reasoning",
+      red_flag_recognition: "Red flag recognition",
+      history_completeness: "History completeness",
+      prioritisation: "Prioritisation",
+      safety: "Safety",
       communication_empathy: "Communication and empathy",
-      language_accessibility: "Language accessibility",
-      safety_referral: "Safety and referral"
+      time_to_escalation: "Time to escalation"
     };
+
+    const API_KEY_STORAGE = "sisterVuoApiKey";
+    const HISTORY_STORAGE = "sisterVuoHistory";
+    const MAX_HISTORY = 8;
 
     const state = {
       scenarios: [],
       sessionId: null,
+      studentName: "",
+      difficulty: "Intermediate",
       turns: 0,
       maxTurns: 12,
       turnsRemaining: 12,
       status: "idle",
-      busy: false
+      archived: false,
+      busy: false,
+      hintsEnabled: false,
+      hintsUsed: 0,
+      hintPenalty: 0,
+      guideline: null,
+      guidelineHintsRemaining: 0,
+      hintAskOpen: false,
+      monitor: null,
+      actions: [],
+      actionsTaken: []
     };
 
     const els = {
       scenarioSelect: document.getElementById("scenarioSelect"),
       scenarioMeta: document.getElementById("scenarioMeta"),
+      difficultySelect: document.getElementById("difficultySelect"),
       studentName: document.getElementById("studentName"),
       startForm: document.getElementById("startForm"),
       startButton: document.getElementById("startButton"),
       endButton: document.getElementById("endButton"),
+      healthButton: document.getElementById("healthButton"),
+      healthResult: document.getElementById("healthResult"),
       sessionInfo: document.getElementById("sessionInfo"),
+      historyList: document.getElementById("historyList"),
+      clearHistory: document.getElementById("clearHistory"),
       chatTitle: document.getElementById("chatTitle"),
+      guidelineHeader: document.getElementById("guidelineHeader"),
       statusDot: document.getElementById("statusDot"),
       statusText: document.getElementById("statusText"),
       turnCounter: document.getElementById("turnCounter"),
       messages: document.getElementById("messages"),
       typing: document.getElementById("typing"),
+      hintCard: document.getElementById("hintCard"),
+      hintText: document.getElementById("hintText"),
       errorBanner: document.getElementById("errorBanner"),
       errorText: document.getElementById("errorText"),
       errorClose: document.getElementById("errorClose"),
       composer: document.getElementById("composer"),
       messageInput: document.getElementById("messageInput"),
       sendButton: document.getElementById("sendButton"),
+      monitorStatus: document.getElementById("monitorStatus"),
+      clinicalTime: document.getElementById("clinicalTime"),
+      alerts: document.getElementById("alerts"),
+      vitalsGrid: document.getElementById("vitalsGrid"),
+      targetTime: document.getElementById("targetTime"),
+      escalatedAt: document.getElementById("escalatedAt"),
+      hintCount: document.getElementById("hintCount"),
+      actionList: document.getElementById("actionList"),
+      hintButton: document.getElementById("hintButton"),
+      hintAsk: document.getElementById("hintAsk"),
+      hintQuestion: document.getElementById("hintQuestion"),
+      hintSubmit: document.getElementById("hintSubmit"),
+      guidelineCard: document.getElementById("guidelineCard"),
       evaluationPanel: document.getElementById("evaluationPanel"),
       overallScore: document.getElementById("overallScore"),
       domainScores: document.getElementById("domainScores"),
+      evalMeta: document.getElementById("evalMeta"),
       evalSections: document.getElementById("evalSections"),
+      debriefExtras: document.getElementById("debriefExtras"),
       newSessionButton: document.getElementById("newSessionButton"),
       keyForm: document.getElementById("keyForm"),
       apiKeyInput: document.getElementById("apiKeyInput")
     };
-
-    const API_KEY_STORAGE = "sisterVuoApiKey";
 
     function storedApiKey() {
       try {
@@ -965,32 +1614,85 @@
       }
     }
 
+    function showHint(text) {
+      if (!text) {
+        return;
+      }
+      els.hintText.textContent = text;
+      els.hintCard.hidden = false;
+      addMessage("supervisor", text);
+    }
+
+    function hideHint() {
+      els.hintCard.hidden = true;
+      els.hintText.textContent = "";
+    }
+
+    function renderGuidelineHeader() {
+      if (!state.guideline) {
+        els.guidelineHeader.hidden = true;
+        els.guidelineHeader.textContent = "";
+        return;
+      }
+      els.guidelineHeader.hidden = false;
+      els.guidelineHeader.textContent =
+        `Guideline: ${state.guideline.name}, ${state.guideline.edition_year}`;
+    }
+
     function updateControls() {
       const hasSession = Boolean(state.sessionId);
       const active = state.status === "active";
       const canChat = hasSession && active && state.turnsRemaining > 0 && !state.busy;
+      const guidelineFull = Boolean(state.guideline && state.guideline.mode === "full");
+      const guidelineOnly = Boolean(state.guideline && !guidelineFull);
 
       els.startButton.hidden = hasSession;
       els.startButton.disabled = state.busy || !els.scenarioSelect.value;
       els.scenarioSelect.disabled = hasSession || state.busy;
+      els.difficultySelect.disabled = hasSession || state.busy;
       els.studentName.disabled = hasSession || state.busy;
       els.composer.hidden = !hasSession || !active;
       els.messageInput.disabled = !canChat;
       els.sendButton.disabled = !canChat;
       els.endButton.hidden = !hasSession || !active;
       els.endButton.disabled = state.busy;
+      els.hintButton.hidden =
+        !hasSession || !active || !state.hintsEnabled || guidelineOnly;
+      els.hintButton.disabled =
+        state.busy || (guidelineFull && state.guidelineHintsRemaining <= 0);
+      const hintNoun = state.guidelineHintsRemaining === 1 ? "hint" : "hints";
+      els.hintButton.textContent = guidelineFull
+        ? `Ask supervisor (${state.guidelineHintsRemaining} ${hintNoun} left)`
+        : "Ask for a supervisor hint";
+      els.hintAsk.hidden =
+        !guidelineFull ||
+        !state.hintAskOpen ||
+        !hasSession ||
+        !active ||
+        !state.hintsEnabled ||
+        state.busy ||
+        state.guidelineHintsRemaining <= 0;
+      els.hintQuestion.disabled = state.busy;
+      els.hintSubmit.disabled = state.busy;
       els.turnCounter.textContent = `${state.turns} / ${state.maxTurns} student turns`;
+      els.hintCount.textContent =
+        state.hintsUsed > 0
+          ? `${state.hintsUsed} (-${Number(state.hintPenalty).toFixed(1)})`
+          : "0";
 
       if (active) {
         els.statusDot.className = "dot active";
         els.statusText.textContent = "Session active";
       } else if (state.status === "completed") {
         els.statusDot.className = "dot complete";
-        els.statusText.textContent = "Completed";
+        els.statusText.textContent = state.archived ? "Archived debrief" : "Completed";
       } else {
         els.statusDot.className = "dot idle";
         els.statusText.textContent = "Not started";
       }
+
+      renderGuidelineHeader();
+      renderActions();
     }
 
     function clearMessages() {
@@ -1006,7 +1708,7 @@
       const title = document.createElement("strong");
       title.textContent = "Begin a simulated consultation";
       const text = document.createTextNode(
-        "Choose a scenario, start the session, and take a focused history. The patient will answer in character. End the session at any time or continue for up to 12 student messages."
+        "Choose a scenario and a learning mode, then take a focused history. Use the monitor and clinical actions as the patient's condition changes. End at any time or continue for up to 12 student messages."
       );
       inner.append(title, text);
       wrapper.append(inner);
@@ -1019,19 +1721,26 @@
         empty.remove();
       }
 
+      const config = {
+        student: { className: "user", avatar: "You", sender: "Student nurse" },
+        nurse: { className: "clinical", avatar: "Rx", sender: "Clinical action" },
+        supervisor: { className: "supervisor", avatar: "SV", sender: "Supervisor" },
+        patient: { className: "patient", avatar: "Pt", sender: "Patient" }
+      }[role] || { className: "patient", avatar: "Pt", sender: "Patient" };
+
       const wrapper = document.createElement("div");
-      wrapper.className = `message ${role === "student" ? "user" : "patient"}`;
+      wrapper.className = `message ${config.className}`;
 
       const avatar = document.createElement("div");
       avatar.className = "avatar";
-      avatar.textContent = role === "student" ? "You" : "Pt";
+      avatar.textContent = config.avatar;
 
       const bubbleWrap = document.createElement("div");
       bubbleWrap.className = "bubble-wrap";
 
       const sender = document.createElement("div");
       sender.className = "sender";
-      sender.textContent = role === "student" ? "Student nurse" : "Patient";
+      sender.textContent = config.sender;
 
       const bubble = document.createElement("div");
       bubble.className = "bubble";
@@ -1041,6 +1750,151 @@
       wrapper.append(avatar, bubbleWrap);
       els.messages.append(wrapper);
       els.messages.scrollTop = els.messages.scrollHeight;
+    }
+
+    function formatMinutes(value) {
+      return `${Math.round(Number(value) || 0)} min`;
+    }
+
+    function vitalsMarkup(label, value, unit, alert) {
+      const card = document.createElement("div");
+      card.className = `vital${alert ? " alert" : ""}`;
+      const caption = document.createElement("span");
+      caption.textContent = label;
+      const reading = document.createElement("strong");
+      reading.textContent = value;
+      if (unit) {
+        const suffix = document.createElement("em");
+        suffix.textContent = ` ${unit}`;
+        reading.append(suffix);
+      }
+      card.append(caption, reading);
+      return card;
+    }
+
+    function renderMonitor(monitor) {
+      els.vitalsGrid.innerHTML = "";
+      els.alerts.innerHTML = "";
+      els.alerts.hidden = true;
+
+      if (!monitor) {
+        els.monitorStatus.className = "monitor-stable";
+        els.monitorStatus.textContent = "Not started";
+        els.clinicalTime.textContent = "0 min";
+        els.targetTime.textContent = "--";
+        els.escalatedAt.textContent = "Not yet";
+        ["HR", "BP", "SpO2", "RR", "Pain", "Temp"].forEach((label) => {
+          els.vitalsGrid.append(vitalsMarkup(label, "--", "", false));
+        });
+        return;
+      }
+
+      const vitals = monitor.vitals;
+      els.monitorStatus.className = `monitor-${monitor.status}`;
+      els.monitorStatus.textContent =
+        { stable: "Stable", deteriorating: "Deteriorating", critical: "Critical" }[
+          monitor.status
+        ] || monitor.status;
+      els.clinicalTime.textContent = formatMinutes(monitor.clinical_minutes);
+      els.clinicalTime.title = `Monitor time ${formatMinutes(monitor.monitor_minutes)}`;
+      els.targetTime.textContent = formatMinutes(monitor.escalation_target_minutes);
+      els.escalatedAt.textContent = monitor.escalated
+        ? formatMinutes(monitor.escalation_minutes)
+        : "Not yet";
+
+      els.vitalsGrid.append(
+        vitalsMarkup("HR", vitals.heart_rate, "bpm", vitals.heart_rate < 60 || vitals.heart_rate > 120),
+        vitalsMarkup(
+          "BP",
+          `${vitals.systolic_bp}/${vitals.diastolic_bp}`,
+          "mmHg",
+          vitals.systolic_bp < 90 || vitals.systolic_bp > 160
+        ),
+        vitalsMarkup("SpO2", vitals.spo2, "%", vitals.spo2 < 94),
+        vitalsMarkup(
+          "RR",
+          vitals.respiratory_rate,
+          "/min",
+          vitals.respiratory_rate < 10 || vitals.respiratory_rate > 25
+        ),
+        vitalsMarkup("Pain", vitals.pain_score, "/10", vitals.pain_score >= 7),
+        vitalsMarkup(
+          "Temp",
+          Number(vitals.temperature).toFixed(1),
+          "C",
+          vitals.temperature >= 38 || vitals.temperature < 35.5
+        )
+      );
+
+      if (Array.isArray(monitor.alerts) && monitor.alerts.length) {
+        monitor.alerts.forEach((alert) => {
+          const item = document.createElement("div");
+          item.className = "alert-item";
+          item.textContent = alert;
+          els.alerts.append(item);
+        });
+        els.alerts.hidden = false;
+      }
+    }
+
+    function renderActions() {
+      els.actionList.innerHTML = "";
+      if (!state.sessionId || state.archived) {
+        const note = document.createElement("p");
+        note.className = "history-empty";
+        note.textContent = "Start a session to assess and treat the patient.";
+        els.actionList.append(note);
+        return;
+      }
+
+      if (!state.actions.length) {
+        const note = document.createElement("p");
+        note.className = "history-empty";
+        note.textContent = "No clinical actions are available.";
+        els.actionList.append(note);
+        return;
+      }
+
+      state.actions.forEach((action) => {
+        const done = state.actionsTaken.includes(action.id);
+        const unavailable = action.available === false;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `action-button${done ? " done" : ""}`;
+        button.disabled =
+          state.busy ||
+          state.status !== "active" ||
+          unavailable ||
+          (done && !action.repeatable);
+        button.addEventListener("click", () => performAction(action.id));
+
+        const top = document.createElement("span");
+        top.className = "action-top";
+        const label = document.createElement("strong");
+        label.textContent = action.label;
+        const timing = document.createElement("span");
+        timing.textContent = done ? "done" : formatMinutes(action.minutes);
+        top.append(label, timing);
+
+        const description = document.createElement("small");
+        if (done) {
+          description.className = "action-done";
+          description.textContent = action.repeatable ? "Completed - can repeat" : "Completed";
+        } else if (unavailable) {
+          description.textContent = action.unavailable_reason || "Not available for this patient.";
+        } else {
+          description.textContent = action.description;
+        }
+        button.append(top, description);
+        els.actionList.append(button);
+      });
+    }
+
+    function applyMonitor(monitor) {
+      if (monitor) {
+        state.monitor = monitor;
+        renderMonitor(monitor);
+      }
     }
 
     function renderScenarioMeta() {
@@ -1073,12 +1927,167 @@
       return section;
     }
 
-    function renderEvaluation(evaluation) {
-      els.overallScore.textContent = Number(evaluation.overall_score).toFixed(1);
+    function renderOrderedSection(title, items) {
+      const section = document.createElement("section");
+      section.className = "eval-section";
+      const heading = document.createElement("h3");
+      heading.textContent = title;
+      const list = document.createElement("ol");
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        list.append(li);
+      });
+      section.append(heading, list);
+      return section;
+    }
+
+    function renderTextSection(title, text, wide = false) {
+      const section = document.createElement("section");
+      section.className = `eval-section${wide ? " wide" : ""}`;
+      const heading = document.createElement("h3");
+      heading.textContent = title;
+      const body = document.createElement("p");
+      body.textContent = text;
+      section.append(heading, body);
+      return section;
+    }
+
+    function renderTimeline(events) {
+      const section = document.createElement("section");
+      section.className = "eval-section wide";
+      const heading = document.createElement("h3");
+      heading.textContent = "Clinical timeline";
+      const list = document.createElement("div");
+      list.className = "timeline";
+      events.forEach((event) => {
+        const row = document.createElement("div");
+        row.className = "timeline-event";
+        const time = document.createElement("time");
+        time.textContent = formatMinutes(event.clinical_minutes);
+        const body = document.createElement("div");
+        const title = document.createElement("strong");
+        title.textContent = event.title;
+        body.append(title);
+        if (event.detail) {
+          const detail = document.createElement("span");
+          detail.textContent = event.detail;
+          body.append(detail);
+        }
+        row.append(time, body);
+        list.append(row);
+      });
+      section.append(heading, list);
+      return section;
+    }
+
+    function safeGuidelineUrl(value) {
+      if (typeof value !== "string" || !value.trim()) {
+        return null;
+      }
+      try {
+        const parsed = new URL(value);
+        if (
+          parsed.protocol !== "https:" ||
+          parsed.hostname !== "knowledgehub.health.gov.za" ||
+          parsed.username ||
+          parsed.password
+        ) {
+          return null;
+        }
+        return parsed.href;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function guidelineLink(label, value) {
+      const url = safeGuidelineUrl(value);
+      if (!url) {
+        return null;
+      }
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = label;
+      return link;
+    }
+
+    function renderGuidelineCard(guideline, protocolSteps) {
+      els.guidelineCard.replaceChildren();
+      if (!guideline) {
+        els.guidelineCard.hidden = true;
+        return;
+      }
+
+      const heading = document.createElement("h3");
+      heading.textContent = "Guideline";
+      const title = document.createElement("p");
+      title.className = "guideline-title";
+      title.textContent = `${guideline.name}, ${guideline.edition_year}`;
+      const section = document.createElement("p");
+      section.className = "guideline-section";
+      section.textContent = guideline.section_text;
+      els.guidelineCard.append(heading, title, section);
+
+      const primaryLink = guidelineLink("Open the guideline", guideline.url);
+      if (primaryLink) {
+        const paragraph = document.createElement("p");
+        paragraph.append(primaryLink);
+        els.guidelineCard.append(paragraph);
+      }
+
+      if (Array.isArray(guideline.further_reading) && guideline.further_reading.length) {
+        const furtherHeading = document.createElement("h3");
+        furtherHeading.textContent = "Further reading";
+        const list = document.createElement("ul");
+        guideline.further_reading.forEach((item) => {
+          if (!item) {
+            return;
+          }
+          const entry = document.createElement("li");
+          const label = `${item.title || "Guideline"}, ${item.edition_year || ""}`.trim();
+          const link = guidelineLink(label, item.url);
+          entry.textContent = link ? "" : label;
+          if (link) {
+            entry.append(link);
+          }
+          list.append(entry);
+        });
+        els.guidelineCard.append(furtherHeading, list);
+      }
+
+      if (Array.isArray(protocolSteps) && protocolSteps.length) {
+        const protocolHeading = document.createElement("h3");
+        protocolHeading.textContent = "Protocol steps";
+        const list = document.createElement("ul");
+        list.className = "protocol-list";
+        protocolSteps.forEach((step) => {
+          const item = document.createElement("li");
+          const status = document.createElement("span");
+          status.className = `protocol-status ${step.status || "missed"}`;
+          status.textContent = step.status || "missed";
+          const id = document.createElement("span");
+          id.textContent = ` ${step.id}`;
+          item.append(status, id);
+          list.append(item);
+        });
+        els.guidelineCard.append(protocolHeading, list);
+      }
+
+      els.guidelineCard.hidden = false;
+    }
+
+    function renderEvaluation(evaluation, guideline = state.guideline) {
+      const debrief = evaluation.debrief || {};
+      const scores = evaluation.domain_scores || {};
+      els.overallScore.textContent = Number(evaluation.overall_score || 0).toFixed(1);
       els.domainScores.innerHTML = "";
+      els.evalMeta.innerHTML = "";
 
       Object.entries(domainLabels).forEach(([key, label]) => {
-        const score = Number(evaluation.domain_scores[key] || 0);
+        const score = Number(scores[key] || 0);
         const row = document.createElement("div");
         row.className = "domain-row";
 
@@ -1097,12 +2106,54 @@
         els.domainScores.append(row);
       });
 
+      const penalty = Number(evaluation.hint_penalty || 0);
+      const meta = [
+        penalty > 0 ? `Hint penalty -${penalty.toFixed(1)}` : "No hint penalty",
+        debrief.time_to_escalation_minutes == null
+          ? "Never escalated"
+          : `Escalated at ${formatMinutes(debrief.time_to_escalation_minutes)}`,
+        `Target ${formatMinutes(debrief.escalation_target_minutes || 10)}`,
+        `${Array.isArray(debrief.actions_taken) ? debrief.actions_taken.length : 0} clinical actions`
+      ];
+      meta.forEach((text, index) => {
+        const item = document.createElement("span");
+        item.textContent = text;
+        if (index === 0 && penalty > 0) {
+          item.className = "warn";
+        }
+        els.evalMeta.append(item);
+      });
+
       els.evalSections.innerHTML = "";
       els.evalSections.append(
-        renderListSection("Strengths", evaluation.strengths, "None recorded."),
-        renderListSection("Missed red flags", evaluation.missed_red_flags, "None identified."),
-        renderListSection("Unsafe actions", evaluation.unsafe_actions, "None identified.", true),
-        renderListSection("Recommended learning", evaluation.recommended_learning, "None recorded.")
+        renderListSection("What went well", evaluation.strengths, "None recorded."),
+        renderListSection(
+          "What was missed",
+          debrief.what_was_missed,
+          "Nothing important was missed."
+        ),
+        renderListSection(
+          "Red flags missed",
+          evaluation.missed_red_flags,
+          "None identified."
+        ),
+        renderListSection(
+          "Unsafe actions",
+          evaluation.unsafe_actions,
+          "None identified.",
+          true
+        ),
+        renderListSection(
+          "Critical errors",
+          evaluation.critical_errors,
+          "None identified.",
+          true
+        ),
+        renderListSection(
+          "Recommended learning",
+          evaluation.recommended_learning,
+          "None recorded."
+        )
       );
 
       const feedback = document.createElement("section");
@@ -1114,8 +2165,98 @@
       feedback.append(feedbackHeading, feedbackText);
       els.evalSections.append(feedback);
 
+      els.debriefExtras.innerHTML = "";
+      if (Array.isArray(debrief.ideal_approach) && debrief.ideal_approach.length) {
+        els.debriefExtras.append(renderOrderedSection("Ideal approach", debrief.ideal_approach));
+      }
+      if (debrief.model_answer) {
+        els.debriefExtras.append(renderTextSection("Model answer", debrief.model_answer, true));
+      }
+      if (Array.isArray(debrief.reflection_questions) && debrief.reflection_questions.length) {
+        els.debriefExtras.append(
+          renderListSection("Reflection questions", debrief.reflection_questions, "")
+        );
+      }
+      if (Array.isArray(debrief.guideline_references) && debrief.guideline_references.length) {
+        els.debriefExtras.append(
+          renderListSection("Guidelines", debrief.guideline_references, "")
+        );
+      }
+      if (Array.isArray(debrief.timeline) && debrief.timeline.length) {
+        els.debriefExtras.append(renderTimeline(debrief.timeline));
+      }
+
+      renderGuidelineCard(guideline, evaluation.protocol_steps);
       els.evaluationPanel.hidden = false;
       els.evaluationPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function readHistory() {
+      try {
+        const raw = localStorage.getItem(HISTORY_STORAGE);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.filter((item) => item && item.evaluation) : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeHistory(entries) {
+      try {
+        localStorage.setItem(HISTORY_STORAGE, JSON.stringify(entries.slice(0, MAX_HISTORY)));
+      } catch (error) {
+        return;
+      }
+    }
+
+    function renderHistory() {
+      const entries = readHistory();
+      els.historyList.innerHTML = "";
+      els.clearHistory.hidden = entries.length === 0;
+
+      if (!entries.length) {
+        const empty = document.createElement("p");
+        empty.className = "history-empty";
+        empty.textContent = "Completed debriefs are saved in this browser.";
+        els.historyList.append(empty);
+        return;
+      }
+
+      entries.forEach((entry) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "history-item";
+        const label = document.createElement("span");
+        const title = document.createElement("span");
+        title.textContent = entry.title || entry.scenario_id || "Session";
+        const date = document.createElement("span");
+        date.className = "history-empty";
+        date.textContent = new Date(entry.completed_at).toLocaleString();
+        label.append(title, document.createElement("br"), date);
+        const score = document.createElement("strong");
+        score.textContent = `${Number(entry.evaluation.overall_score || 0).toFixed(1)}/5`;
+        button.append(label, score);
+        button.addEventListener("click", () => viewArchived(entry));
+        els.historyList.append(button);
+      });
+    }
+
+    function saveHistory(evaluation) {
+      if (!state.sessionId || state.archived) {
+        return;
+      }
+      const entries = readHistory().filter((entry) => entry.id !== state.sessionId);
+      entries.unshift({
+        id: state.sessionId,
+        scenario_id: els.scenarioSelect.value,
+        title: els.chatTitle.textContent,
+        difficulty: state.difficulty,
+        completed_at: new Date().toISOString(),
+        guideline: state.guideline,
+        evaluation
+      });
+      writeHistory(entries);
+      renderHistory();
     }
 
     function completeSession(evaluation) {
@@ -1123,6 +2264,7 @@
       state.turnsRemaining = 0;
       if (evaluation) {
         renderEvaluation(evaluation);
+        saveHistory(evaluation);
       }
       updateControls();
     }
@@ -1143,24 +2285,42 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             scenario_id: scenarioId,
-            student_name: els.studentName.value.trim() || null
+            student_name: els.studentName.value.trim() || null,
+            difficulty: els.difficultySelect.value
           })
         });
 
         state.sessionId = response.session_id;
+        state.studentName = els.studentName.value.trim();
+        state.difficulty = response.difficulty;
         state.turns = response.student_turns;
         state.maxTurns = response.max_student_turns;
         state.turnsRemaining = response.turns_remaining;
         state.status = response.status;
+        state.archived = false;
+        state.hintsEnabled = response.hints_enabled;
+        state.hintsUsed = 0;
+        state.hintPenalty = 0;
+        state.guideline = response.guideline || null;
+        state.guidelineHintsRemaining =
+          state.guideline && state.guideline.mode === "full" ? 3 : 0;
+        state.hintAskOpen = false;
+        els.hintQuestion.value = "";
+        state.monitor = response.monitor;
+        state.actions = response.actions || [];
+        state.actionsTaken = [];
 
         els.chatTitle.textContent = response.scenario.title;
         els.sessionInfo.textContent =
-          `${response.scenario.title}\n${response.scenario.setting}\n${response.scenario.patient_label}`;
+          `${response.scenario.title}\n${response.scenario.setting}\n${response.scenario.patient_label}\nLearning mode: ${response.difficulty}`;
         els.sessionInfo.hidden = false;
         els.evaluationPanel.hidden = true;
         clearMessages();
         addMessage("patient", response.opening_message);
         showTyping(false);
+        hideHint();
+        renderMonitor(response.monitor);
+        renderActions();
         updateControls();
         els.messageInput.focus();
       } catch (error) {
@@ -1169,6 +2329,88 @@
         state.busy = false;
         updateControls();
       }
+    }
+
+    async function performAction(actionId) {
+      if (!state.sessionId || state.busy || state.status !== "active") {
+        return;
+      }
+      hideError();
+      state.busy = true;
+      updateControls();
+      try {
+        const response = await api(`/session/${state.sessionId}/action`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action_id: actionId })
+        });
+        state.actionsTaken = response.actions_taken || [];
+        state.turns = response.student_turns;
+        state.turnsRemaining = response.turns_remaining;
+        state.status = response.status;
+        addMessage("nurse", `${response.action_label}\n${response.result}`);
+        if (response.warning) {
+          addMessage("supervisor", `Safety note: ${response.warning}`);
+        }
+        applyMonitor(response.monitor);
+        updateControls();
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        state.busy = false;
+        updateControls();
+      }
+    }
+
+    async function requestHint(question = "") {
+      if (!state.sessionId || state.busy || state.status !== "active") {
+        return;
+      }
+      hideError();
+      state.busy = true;
+      updateControls();
+      try {
+        const response = await api(`/session/${state.sessionId}/hint`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
+        });
+        state.hintsUsed = response.hints_used;
+        state.hintPenalty = response.hint_penalty;
+        if (typeof response.hints_remaining === "number") {
+          state.guidelineHintsRemaining = response.hints_remaining;
+        }
+        state.hintAskOpen = false;
+        els.hintQuestion.value = "";
+        showHint(response.hint);
+        applyMonitor(response.monitor);
+        updateControls();
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        state.busy = false;
+        updateControls();
+      }
+    }
+
+    function handleHintClick() {
+      if (state.guideline && state.guideline.mode === "full") {
+        state.hintAskOpen = true;
+        updateControls();
+        els.hintQuestion.focus();
+        return;
+      }
+      requestHint("");
+    }
+
+    function submitGuidelineQuestion(event) {
+      event.preventDefault();
+      const question = els.hintQuestion.value.trim();
+      if (!question) {
+        els.hintQuestion.focus();
+        return;
+      }
+      requestHint(question);
     }
 
     async function sendMessage(event) {
@@ -1199,6 +2441,10 @@
         state.turns = response.student_turns;
         state.turnsRemaining = response.turns_remaining;
         state.status = response.status;
+        applyMonitor(response.monitor);
+        if (response.hint) {
+          showHint(response.hint);
+        }
 
         if (response.evaluation) {
           completeSession(response.evaluation);
@@ -1244,20 +2490,114 @@
       }
     }
 
+    async function pollMonitor() {
+      if (!state.sessionId || state.status !== "active" || document.hidden) {
+        return;
+      }
+      try {
+        const monitor = await api(`/session/${state.sessionId}/monitor`);
+        applyMonitor(monitor);
+      } catch (error) {
+        return;
+      }
+    }
+
+    async function checkModelHealth() {
+      if (state.busy) {
+        return;
+      }
+      hideError();
+      els.healthButton.disabled = true;
+      els.healthResult.hidden = false;
+      els.healthResult.className = "health-result";
+      els.healthResult.textContent = "Testing the model connection...";
+      try {
+        const data = await api("/health?probe=true");
+        const llm = data.llm || {};
+        if (llm.ok) {
+          els.healthResult.className = "health-result ok";
+          els.healthResult.textContent =
+            `Model reachable: ${llm.model || "configured model"} replied in ${llm.latency_ms} ms.`;
+        } else {
+          els.healthResult.className = "health-result fail";
+          const issues = Array.isArray(data.llm_config_issues) && data.llm_config_issues.length
+            ? ` ${data.llm_config_issues.join(" ")}`
+            : "";
+          els.healthResult.textContent =
+            `Model unavailable: ${llm.error || "unknown error"}${issues}`;
+        }
+      } catch (error) {
+        els.healthResult.className = "health-result fail";
+        els.healthResult.textContent = `Health check failed: ${error.message}`;
+      } finally {
+        els.healthButton.disabled = false;
+      }
+    }
+
+    function viewArchived(entry) {
+      state.sessionId = null;
+      state.turns = 0;
+      state.maxTurns = 12;
+      state.turnsRemaining = 0;
+      state.status = "completed";
+      state.archived = true;
+      state.busy = false;
+      state.monitor = null;
+      state.actions = [];
+      state.actionsTaken = [];
+      state.hintsEnabled = false;
+      state.hintsUsed = 0;
+      state.hintPenalty = 0;
+      state.guideline = entry.guideline || null;
+      state.guidelineHintsRemaining = 0;
+      state.hintAskOpen = false;
+
+      hideError();
+      hideHint();
+      clearMessages();
+      addMessage(
+        "supervisor",
+        `Archived debrief from ${new Date(entry.completed_at).toLocaleString()}. Start a new session when you are ready.`
+      );
+      els.chatTitle.textContent = `${entry.title || "Session"} (archived)`;
+      els.sessionInfo.hidden = true;
+      els.sessionInfo.textContent = "";
+      renderMonitor(null);
+      renderActions();
+      renderEvaluation(entry.evaluation, state.guideline);
+      updateControls();
+    }
+
     function newSession() {
       state.sessionId = null;
       state.turns = 0;
       state.maxTurns = 12;
       state.turnsRemaining = 12;
       state.status = "idle";
+      state.archived = false;
       state.busy = false;
+      state.hintsEnabled = false;
+      state.hintsUsed = 0;
+      state.hintPenalty = 0;
+      state.guideline = null;
+      state.guidelineHintsRemaining = 0;
+      state.hintAskOpen = false;
+      state.monitor = null;
+      state.actions = [];
+      state.actionsTaken = [];
 
       hideError();
+      hideHint();
       clearMessages();
       showEmptyState();
       els.evaluationPanel.hidden = true;
+      els.guidelineCard.hidden = true;
+      els.guidelineCard.replaceChildren();
+      els.hintQuestion.value = "";
       els.domainScores.innerHTML = "";
+      els.evalMeta.innerHTML = "";
       els.evalSections.innerHTML = "";
+      els.debriefExtras.innerHTML = "";
       els.overallScore.textContent = "0.0";
       els.sessionInfo.hidden = true;
       els.sessionInfo.textContent = "";
@@ -1265,6 +2605,8 @@
       els.studentName.value = "";
       els.messageInput.value = "";
       showTyping(false);
+      renderMonitor(null);
+      renderActions();
       updateControls();
       renderScenarioMeta();
       els.scenarioSelect.focus();
@@ -1309,8 +2651,19 @@
     els.startForm.addEventListener("submit", startSession);
     els.composer.addEventListener("submit", sendMessage);
     els.endButton.addEventListener("click", endSession);
+    els.healthButton.addEventListener("click", checkModelHealth);
+    els.hintButton.addEventListener("click", handleHintClick);
+    els.hintAsk.addEventListener("submit", submitGuidelineQuestion);
     els.newSessionButton.addEventListener("click", newSession);
     els.errorClose.addEventListener("click", hideError);
+    els.clearHistory.addEventListener("click", () => {
+      try {
+        localStorage.removeItem(HISTORY_STORAGE);
+      } catch (error) {
+        return;
+      }
+      renderHistory();
+    });
     els.messageInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
@@ -1318,8 +2671,12 @@
       }
     });
 
+    renderMonitor(null);
+    renderActions();
+    renderHistory();
     updateControls();
     loadScenarios();
+    setInterval(pollMonitor, 15000);
   </script>
 </body>
 </html>

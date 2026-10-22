@@ -1,0 +1,29 @@
+# Render blueprint: https://render.com/docs/blueprint-spec
+# Secrets (sync: false) are asked for in the Render dashboard and never stored in git.
+services:
+  - type: web
+    name: sister-vuo
+    runtime: python
+    plan: free              # sleeps when idle; use "starter" before real students use WhatsApp
+    region: frankfurt       # closest Render region to South Africa
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: WEB_CONCURRENCY   # sessions live in memory, so run exactly one worker
+        value: "1"
+      - key: LLM_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: LLM_MODEL
+        value: meta-llama/llama-3.3-70b-instruct
+      - key: LLM_JSON_MODE
+        value: "true"
+      - key: LLM_API_KEY
+        sync: false
+      - key: APP_API_KEY
+        sync: false
+      # WhatsApp is added later in the Render dashboard (Environment tab): WHATSAPP_VERIFY_TOKEN,
+      # WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_APP_SECRET. Until all four are
+      # set the webhook stays disabled and the web chat works as normal.

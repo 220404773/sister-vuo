@@ -22,37 +22,179 @@
   "presenting_complaint": "Two days of diarrhoea and vomiting, poor drinking, very few wet nappies, and unusual sleepiness.",
   "opening_line": "Sister, Tshepo has been vomiting and having diarrhoea since yesterday. He is very sleepy and has not made a wet nappy since last night.",
   "personality": "Worried and protective. She answers questions carefully and appreciates clear explanations. She may minimise how little he has been drinking if she feels judged.",
-  "history": {
-    "onset": "Watery diarrhoea started two days ago. Vomiting started yesterday and has become more frequent.",
-    "stools": "Six to eight watery stools today. No blood or mucus in the stool.",
-    "vomiting": "About five episodes since this morning. He cannot keep water or breast milk down.",
-    "feeding": "Breastfeeding much less than usual. He refuses food and has not drunk from a cup today.",
-    "urine_output": "No wet nappy for more than ten hours. The last nappy was only slightly wet.",
-    "hydration_signs": "His eyes look sunken to his mother, he has no tears when crying, and his mouth looks dry.",
-    "alertness": "He is unusually sleepy and floppy. He wakes briefly when spoken to but goes back to sleep.",
-    "fever": "He felt hot at home. The mother thinks his temperature was 38.4 degrees Celsius.",
-    "pertinent_negatives": [
-      "no blood in the stool",
-      "no green or bile-stained vomit",
-      "no convulsion",
-      "no rash",
-      "no neck stiffness",
-      "no recent travel"
+  "case_file": {
+    "history": {
+      "onset": "Watery diarrhoea started two days ago. Vomiting started yesterday and has become more frequent.",
+      "stools": "Six to eight watery stools today. No blood or mucus in the stool.",
+      "vomiting": "About five episodes since this morning. He cannot keep water or breast milk down.",
+      "feeding": "Breastfeeding much less than usual. He refuses food and has not drunk from a cup today.",
+      "urine_output": "No wet nappy for more than ten hours. The last nappy was only slightly wet.",
+      "hydration_signs": "His eyes look sunken to his mother, he has no tears when crying, and his mouth looks dry.",
+      "alertness": "He is unusually sleepy and floppy. He wakes briefly when spoken to but goes back to sleep.",
+      "fever": "He felt hot at home. The mother thinks his temperature was 38.4 degrees Celsius.",
+      "pertinent_negatives": [
+        "no blood in the stool",
+        "no green or bile-stained vomit",
+        "no convulsion",
+        "no rash",
+        "no neck stiffness",
+        "no recent travel"
+      ],
+      "past_medical_history": "Born at term. No chronic illness. No previous hospital admissions.",
+      "medications": "No chronic medication. The mother gave a little paracetamol yesterday.",
+      "allergies": "No known allergies.",
+      "immunisations": "Up to date for age.",
+      "social_history": "Lives in a rural village with both parents and an older sibling. The older sibling had a similar illness last week. The family has limited transport to the clinic.",
+      "weight": "His mother thinks he last weighed about 9 kilograms."
+    },
+    "risk_factors": [
+      "age 14 months",
+      "two days of diarrhoea and vomiting",
+      "not keeping fluids down",
+      "no wet nappy for more than ten hours",
+      "lethargy and floppiness",
+      "limited transport to hospital"
     ],
-    "past_medical_history": "Born at term. No chronic illness. No previous hospital admissions.",
-    "medications": "No chronic medication. The mother gave a little paracetamol yesterday.",
-    "allergies": "No known allergies.",
-    "immunisations": "Up to date for age.",
-    "social_history": "Lives in a rural village with both parents and an older sibling. The older sibling had a similar illness last week. The family has limited transport to the clinic.",
-    "weight": "His mother thinks he last weighed about 9 kilograms."
+    "baseline_vitals": {
+      "heart_rate": 150,
+      "systolic_bp": 85,
+      "diastolic_bp": 50,
+      "spo2": 96,
+      "respiratory_rate": 40,
+      "pain_score": 4,
+      "temperature": 38.4
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 8,
+        "systolic_bp": -7,
+        "diastolic_bp": -4,
+        "spo2": -1,
+        "respiratory_rate": 4,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 10,
+      "acceleration_multiplier": 1.5
+    },
+    "escalation_target_minutes": 10,
+    "required_actions": ["vitals", "iv_access"],
+    "critical_actions": ["call_ambulance"],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "Onset and duration",
+        "triggers": ["when", "start", "begin", "how long", "since", "how many days"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "stools",
+        "label": "Stool frequency and appearance",
+        "triggers": ["stool", "diarrhoea", "nappy", "poo", "loose"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "vomiting",
+        "label": "Vomiting",
+        "triggers": ["vomit", "throw up", "sick"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "feeding",
+        "label": "Feeding and drinking",
+        "triggers": ["feed", "breast", "drink", "eat", "bottle", "cup"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "urine_output",
+        "label": "Urine output and wet nappies",
+        "triggers": ["nappy", "urine", "wet", "pee"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "hydration_signs",
+        "label": "Hydration signs",
+        "triggers": ["eyes", "tears", "cry", "mouth", "dry", "skin", "pinch"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "alertness",
+        "label": "Alertness and activity",
+        "triggers": ["sleepy", "lethargic", "floppy", "wake", "alert", "play", "conscious"],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "fever",
+        "label": "Fever",
+        "triggers": ["fever", "temperature", "hot"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "pertinent_negatives",
+        "label": "Pertinent negatives",
+        "triggers": ["blood", "green", "bile", "convulsion", "fit", "rash", "neck", "travel"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "past_medical_history",
+        "label": "Past medical history",
+        "triggers": ["medical history", "condition", "health", "born", "admission", "hospital"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications",
+        "triggers": ["medication", "tablet", "medicine", "paracetamol", "syrup"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": ["allerg"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "immunisations",
+        "label": "Immunisations",
+        "triggers": ["immunisation", "vaccine", "vaccination", "shot"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "social_history",
+        "label": "Social history and transport",
+        "triggers": ["live", "home", "sibling", "brother", "sister", "transport", "travel", "work"],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "weight",
+        "label": "Weight",
+        "triggers": ["weight", "weigh", "heavy", "kg"],
+        "weight": 1,
+        "required": true
+      }
+    ]
   },
   "ground_truth": {
-    "diagnosis": "Moderate dehydration due to acute gastroenteritis",
+    "diagnosis": "Severe dehydration due to acute gastroenteritis, with warning signs",
     "forbidden_patient_terms": [
       "dehydration",
       "dehydrated",
       "gastroenteritis",
-      "severe dehydration"
+      "severe dehydration",
+      "shock"
     ],
     "differentials": [
       "severe dehydration or shock",
@@ -81,6 +223,116 @@
       "continue breastfeeding and add zinc according to local guidance",
       "avoid anti-diarrhoeal medicines and avoid giving plain water only",
       "give clear safety-netting advice and arrange follow-up"
+    ]
+  },
+  "clinical_actions": {
+    "vitals": {
+      "minutes": 3,
+      "result": "Weight 9.0 kg. Capillary refill 3 seconds. Blood glucose 4.2 mmol/L. Eyes sunken, no tears, dry mucous membranes."
+    },
+    "ecg": {
+      "available": false,
+      "unavailable_reason": "An ECG is not indicated in this dehydrated child; focus on ABCDE, hydration and urgent transfer.",
+      "minutes": 5,
+      "result": "An ECG is not indicated in this child."
+    },
+    "oxygen": {
+      "result": "Oxygen started at 1-2 L/min via nasal prongs."
+    },
+    "aspirin": {
+      "unsafe": true,
+      "result": "Aspirin given.",
+      "warning": "Aspirin is contraindicated in a child with a possible viral illness because of the risk of Reye syndrome."
+    },
+    "iv_access": {
+      "result": "IV cannula sited. A 20 mL/kg crystalloid bolus was started per protocol, and bloods including glucose were taken.",
+      "effects": {
+        "systolic_bp": 5,
+        "heart_rate": -4
+      }
+    },
+    "call_ambulance": {
+      "result": "Emergency ambulance requested for urgent transfer to hospital. Estimated arrival 20 minutes."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR. Urgent paediatric review and transfer arranged."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Lethargy or unusual sleepiness",
+        "triggers": ["sleepy", "lethargic", "floppy", "wake", "alert", "conscious"],
+        "actions": []
+      },
+      {
+        "flag": "Reduced urine output for more than eight hours",
+        "triggers": ["nappy", "urine", "wet", "pee"],
+        "actions": []
+      },
+      {
+        "flag": "No tears when crying",
+        "triggers": ["tears", "crying without tears", "no tears"],
+        "actions": []
+      },
+      {
+        "flag": "Sunken eyes",
+        "triggers": ["sunken"],
+        "actions": []
+      },
+      {
+        "flag": "Dry mouth",
+        "triggers": ["dry mouth", "mouth dry", "thirsty", "thirst"],
+        "actions": []
+      },
+      {
+        "flag": "Unable to keep fluids down",
+        "triggers": ["keep down", "keep fluids down", "vomit everything", "vomiting everything", "vomits everything", "cannot drink", "can't drink", "unable to drink"],
+        "actions": []
+      },
+      {
+        "flag": "High fever",
+        "triggers": ["fever", "temperature", "hot"],
+        "actions": []
+      },
+      {
+        "flag": "Possible shock or poor perfusion",
+        "triggers": ["capillary", "cold", "mottled"],
+        "actions": ["vitals"]
+      },
+      {
+        "flag": "Urgent paediatric escalation",
+        "triggers": ["ambulance", "emergency", "refer", "admit"],
+        "actions": ["call_ambulance", "escalate_doctor"]
+      }
+    ]
+  },
+  "hints": [
+    "Ask how long he has been unwell, how many stools and vomits, and whether he is drinking.",
+    "Wet nappies, tears, eyes and alertness are the key dehydration signs. Ask about each one directly.",
+    "He is lethargic and not keeping fluids down. Check observations and glucose, then plan IV fluids and urgent transfer.",
+    "Reassess after fluids and explain the plan to his mother in plain language, with clear safety-netting."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Assess ABCDE, level of consciousness, and immediate danger signs in the child.",
+      "Weigh the child and record observations, capillary refill, temperature and blood glucose if available.",
+      "Ask specifically about stools, vomiting, drinking, wet nappies, tears, eyes, mouth and alertness.",
+      "Classify dehydration using WHO or IMCI criteria and recognise severe dehydration with warning signs.",
+      "Secure IV access and start isotonic fluids per protocol; use nasogastric oral rehydration if IV access is delayed and the child is not in shock.",
+      "Arrange urgent transfer or admission. Continue breastfeeding and give zinc according to local guidance.",
+      "Avoid anti-diarrhoeal medicines and plain water only; give clear safety-netting and follow-up advice to the mother."
+    ],
+    "model_answer": "Tshepo is a 14-month-old boy weighing about 9 kg, with two days of watery diarrhoea and vomiting, no wet nappy for more than ten hours, and unusual sleepiness and floppiness. He has sunken eyes, no tears and a dry mouth, and his temperature is 38.4 C. Observations show HR 150, BP 85/50, RR 40 and capillary refill of 3 seconds. This is severe dehydration with warning signs, likely due to acute gastroenteritis. Immediate priorities are ABCDE, glucose, IV access and isotonic fluid resuscitation per protocol, urgent transfer to hospital, continued breastfeeding and zinc where appropriate. Avoid anti-diarrhoeal medicines and plain water only. Explain the plan to his mother and give clear safety-netting.",
+    "reflection_questions": [
+      "Which clinical signs told you this child was severely dehydrated rather than mildly dehydrated?",
+      "Why are anti-diarrhoeal medicines and plain water alone unsafe in this child?",
+      "How did you explain the urgency to his mother, and what did you check that she understood?"
+    ],
+    "references": [
+      "World Health Organization. Pocket Book of Hospital Care for Children. 2nd edition.",
+      "World Health Organization and UNICEF. Integrated Management of Childhood Illness (IMCI) chart booklet. Latest edition.",
+      "National Department of Health. Standard Treatment Guidelines and Essential Medicines List for South Africa: Paediatric Hospital Level. Latest edition."
     ]
   },
   "learning_objectives": [
