@@ -137,6 +137,11 @@
       margin: 0 0 6px;
     }
 
+    .start-bar #scenarioSelect {
+      min-width: 200px;
+      max-width: 260px;
+    }
+
     .start-bar #difficultySelect {
       min-width: 210px;
     }
@@ -1361,6 +1366,17 @@
       border: 0;
     }
 
+    /* Four header fields do not fit between the brand and the badge below this width,
+       so the form takes its own row under them. */
+    @media (max-width: 1799px) {
+      .start-bar {
+        order: 3;
+        flex-basis: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+    }
+
     @media (max-width: 1180px) {
       .layout {
         grid-template-columns: 300px minmax(0, 1fr);
@@ -1475,10 +1491,12 @@
         width: 100%;
       }
 
+      .start-bar #scenarioSelect,
       .start-bar #difficultySelect,
       .start-bar #studentName,
       .start-bar #startButton {
         width: 100%;
+        max-width: none;
         min-width: 0;
         min-height: 44px;
       }
@@ -1545,6 +1563,10 @@
       </div>
       <form id="startForm" class="start-bar">
         <div class="start-field">
+          <label class="field-label" for="scenarioSelect">Scenario</label>
+          <select id="scenarioSelect" required></select>
+        </div>
+        <div class="start-field">
           <label class="field-label" for="difficultySelect">Learning mode</label>
           <select id="difficultySelect">
             <option value="Beginner">Beginner - guided with automatic hints</option>
@@ -1569,10 +1591,7 @@
           <input id="apiKeyInput" type="password" autocomplete="off" placeholder="Access key">
           <button class="primary" type="submit">Unlock</button>
         </form>
-        <div class="eyebrow">Scenario</div>
-        <label class="sr-only" for="scenarioSelect">Scenario</label>
-        <!-- This select submits with #startForm only through form="startForm"; keep the attribute. -->
-        <select id="scenarioSelect" form="startForm" required></select>
+        <div class="eyebrow">About this scenario</div>
         <div id="scenarioMeta" class="scenario-meta">Loading scenarios...</div>
         <div id="sessionInfo" class="session-info" hidden></div>
         <button id="endButton" class="secondary" type="button" hidden>End and evaluate</button>

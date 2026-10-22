@@ -100,7 +100,7 @@ def test_ac02_ids_are_unique_and_only_health_and_scenario_stay_left() -> None:
     for element_id in MOVED:
         assert not setup_panel.contains(find_by_id(document, element_id)[0])
     assert setup_panel.contains(find_by_id(document, "healthButton")[0])
-    assert setup_panel.contains(find_by_id(document, "scenarioSelect")[0])
+    assert not setup_panel.contains(find_by_id(document, "scenarioSelect")[0])
 
 
 # --- AC-03: the scenario joins the header form through form= ----------------
@@ -112,11 +112,9 @@ def test_ac03_scenario_validates_through_the_header_form() -> None:
     start_form = find_by_id(document, "startForm")[0]
 
     assert scenario.tag == "select"
-    assert scenario.attrs.get("form") == "startForm"
     assert "required" in scenario.attrs
     assert "form" not in start_form.attrs
-    setup_panel = find_all(document, "aside", "setup-panel")[0]
-    assert setup_panel.contains(scenario)
+    assert start_form.contains(scenario)
     for element_id in MOVED:
         assert start_form.contains(find_by_id(document, element_id)[0])
 
@@ -346,12 +344,9 @@ def test_round2_560px_controls_stack_full_width_with_44px_targets() -> None:
         assert "min-height: 44px" in declarations
 
 
-def test_round2_scenario_form_coupling_is_documented_and_the_handler_reads_it() -> None:
+def test_round2_the_start_handler_reads_the_scenario_select() -> None:
     html = read_ui()
 
-    assert re.search(
-        r'<!--[^>]*form="startForm"[^>]*-->', html
-    ), "the form= coupling must stay documented next to #scenarioSelect"
     assert 'els.startForm.addEventListener("submit", startSession);' in html
     start = _js_function(html, "startSession")
     assert "els.scenarioSelect.value" in start
@@ -369,7 +364,6 @@ def test_fr04_connection_end_and_panels_stay_in_place() -> None:
     for element_id in (
         "keyForm",
         "apiKeyInput",
-        "scenarioSelect",
         "scenarioMeta",
         "sessionInfo",
         "endButton",

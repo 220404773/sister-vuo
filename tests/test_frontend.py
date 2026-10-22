@@ -119,32 +119,29 @@ def test_header_holds_brand_start_bar_then_badge() -> None:
     order = [
         el.attrs["id"]
         for el in start_bar.descendants()
-        if el.attrs.get("id") in {"difficultySelect", "studentName", "startButton"}
+        if el.attrs.get("id") in {"scenarioSelect", "difficultySelect", "studentName", "startButton"}
     ]
-    assert order == ["difficultySelect", "studentName", "startButton"]
+    assert order == ["scenarioSelect", "difficultySelect", "studentName", "startButton"]
 
 
 def test_moved_controls_appear_once_and_leave_the_setup_panel() -> None:
     html = read_ui()
     document = parse_ui()
     setup_panel = find_all(document, "aside", "setup-panel")[0]
-    for element_id in ("difficultySelect", "studentName", "startButton"):
+    for element_id in ("scenarioSelect", "difficultySelect", "studentName", "startButton"):
         assert html.count(f'id="{element_id}"') == 1
         node = find_by_id(document, element_id)[0]
         assert not setup_panel.contains(node)
-    for element_id in ("scenarioSelect", "healthButton"):
-        assert html.count(f'id="{element_id}"') == 1
+    assert html.count('id="healthButton"') == 1
     assert setup_panel.contains(find_by_id(document, "healthButton")[0])
-    assert setup_panel.contains(find_by_id(document, "scenarioSelect")[0])
 
 
-def test_scenario_stays_in_the_form_through_its_form_attribute() -> None:
+def test_scenario_is_a_required_field_inside_the_header_form() -> None:
     document = parse_ui()
     scenario = find_by_id(document, "scenarioSelect")[0]
     start_form = find_by_id(document, "startForm")[0]
-    assert scenario.attrs.get("form") == "startForm"
     assert scenario.attrs.get("required") is not None
-    for element_id in ("difficultySelect", "studentName", "startButton"):
+    for element_id in ("scenarioSelect", "difficultySelect", "studentName", "startButton"):
         assert start_form.contains(find_by_id(document, element_id)[0])
 
 
