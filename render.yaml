@@ -7,7 +7,7 @@ services:
     plan: free              # sleeps when idle; use "starter" before real students use WhatsApp
     region: frankfurt       # closest Render region to South Africa
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
@@ -22,6 +22,8 @@ services:
         value: "true"
       - key: LLM_API_KEY
         sync: false
+      - key: APP_ENV
+        value: production
       - key: APP_API_KEY
         sync: false
       # WhatsApp is added later in the Render dashboard (Environment tab): WHATSAPP_VERIFY_TOKEN,

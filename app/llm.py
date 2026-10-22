@@ -245,6 +245,69 @@ def sanitize_patient_reply(
     return limit_sentences(text, 3)
 
 
+_FILTERED_FEEDBACK_FALLBACK = (
+    "Review the debrief and discuss the safe next steps with your supervisor."
+)
+
+
+def _forbidden_terms(scenario: dict[str, Any]) -> list[str]:
+    terms = scenario.get("ground_truth", {}).get("forbidden_patient_terms", [])
+    return [str(term).strip() for term in terms if str(term).strip()]
+
+
+def _reveals_forbidden(text: str, terms: list[str], student_text: str) -> bool:
+    """True when text introduces a hidden diagnosis term the student did not use."""
+    lowered = text.lower()
+    return any(
+        term.lower() in lowered and term.lower() not in student_text for term in terms
+    )
+
+
+def _filter_sentences(text: str, terms: list[str], student_text: str) -> str:
+    sentences = [item.strip() for item in _SENTENCE_SPLIT.split(text.strip()) if item.strip()]
+    kept = [
+        sentence
+        for sentence in sentences
+        if not _reveals_forbidden(sentence, terms, student_text)
+    ]
+    return " ".join(kept).strip()
+
+
+def sanitize_evaluator_output(
+    evaluation: Evaluation,
+    scenario: dict[str, Any],
+    transcript: Sequence[dict[str, str]],
+) -> Evaluation:
+    """Remove sentences that would leak the hidden diagnosis to the student.
+
+    The evaluator transcript is untrusted input: a prompt injection could make the
+    model echo the ground truth. A term the student already used themselves is not
+    a leak, so it is allowed through, exactly like the patient reply filter.
+    """
+    terms = _forbidden_terms(scenario)
+    if not terms:
+        return evaluation
+    student_text = " ".join(
+        turn.get("content", "") for turn in transcript if turn.get("role") == "student"
+    ).lower()
+    if not student_text:
+        student_text = ""
+
+    filtered_feedback = _filter_sentences(
+        evaluation.feedback_to_student, terms, student_text
+    )
+    evaluation.feedback_to_student = filtered_feedback or _FILTERED_FEEDBACK_FALLBACK
+    evaluation.recommended_learning = [
+        filtered
+        for filtered in (
+            _filter_sentences(item, terms, student_text)
+            for item in evaluation.recommended_learning
+        )
+        if filtered
+    ]
+    return evaluation
+
+
 def _extract_json_object(raw: str) -> dict[str, Any]:
     text = raw.strip()
     if not text:
@@ -746,7 +809,9 @@ class LLMService:
             json_mode=True,
         )
         try:
-            return parse_evaluation(raw)
+            return sanitize_evaluator_output(
+                parse_evaluation(raw), scenario, transcript
+            )
         except LLMEvaluationError:
             logger.warning("Evaluator returned invalid JSON; retrying once")
             repair_messages = list(messages)
@@ -768,7 +833,9 @@ class LLMService:
                 json_mode=True,
             )
             try:
-                return parse_evaluation(repaired)
+                return sanitize_evaluator_output(
+                    parse_evaluation(repaired), scenario, transcript
+                )
             except LLMEvaluationError as second_error:
                 raise LLMEvaluationError(
                     "The evaluator returned an invalid response. Please try ending the session again."

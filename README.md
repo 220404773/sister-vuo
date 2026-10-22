@@ -89,6 +89,8 @@ LLM_API_KEY=replace-me
 LLM_MODEL=your-llama-model
 ```
 
+Set `APP_ENV=production` on a public host. In production the app raises a clear `RuntimeError` at startup when `APP_API_KEY` is empty, so it cannot run with an open API by accident. `APP_ENV` defaults to `development`. Other operational settings are documented in `.env.example`: `RATE_LIMIT_START_PER_MINUTE`, `RATE_LIMIT_TURN_PER_MINUTE`, `RATE_LIMIT_PROBE_PER_MINUTE`, `RATE_LIMIT_WHATSAPP_PER_MINUTE` and `TRANSCRIPT_RETENTION_DAYS`.
+
 `LLM_BASE_URL` should be the API root that ends in `/v1` or similar. The app calls `POST {LLM_BASE_URL}/chat/completions`. If the provider supports OpenAI JSON mode, set `LLM_JSON_MODE=true`; otherwise the evaluator prompt itself requests JSON and the parser recovers fenced or surrounding text.
 
 Guidelines are optional. Copy `guidelines.example.json` to `guidelines.json` (gitignored), fill in document metadata, and write the steps in your own short words. Do not reproduce guideline text without permission, and do not commit `guidelines.json`. Point `GUIDELINES_PATH` at another local file if you prefer. With no file, the app remains fully usable and falls back to scenario hints.
@@ -115,13 +117,16 @@ curl -X POST http://127.0.0.1:8000/session/start \
 
 Scenario IDs are `abdominal_pain`, `paediatric_dehydration`, and `chest_pain`. `difficulty` is `Beginner`, `Intermediate` or `Advanced`; when omitted, the scenario's own level is used.
 
-The response includes `session_id`, a safe scenario summary, the patient's opening line, the 12-turn limit, the current `monitor`, available `actions`, `difficulty`, `hints_enabled`, and a `guideline` object (`name`, `edition_year`, `section_text`, optional `url`, `mode`, and `further_reading`) or `null` when guidelines are off.
+The response includes `session_id`, a random `session_token`, a safe scenario summary, the patient's opening line, the 12-turn limit, the current `monitor`, available `actions`, `difficulty`, `hints_enabled`, and a `guideline` object (`name`, `edition_year`, `section_text`, optional `url`, `mode`, and `further_reading`) or `null` when guidelines are off.
+
+Every `/session/{id}/...` route also needs the session token in the `X-Session-Token` header. A missing or wrong token returns HTTP 404 with the same `Session not found.` body as an unknown id, so session ids cannot be used on their own. Keep the token in memory; do not put it in a URL, log or browser storage. WhatsApp sessions stay bound to the sender's phone number and do not use this token.
 
 ### Send a student message
 
 ```bash
 curl -X POST http://127.0.0.1:8000/session/SESSION_ID/message \
   -H "Content-Type: application/json" \
+  -H "X-Session-Token: SESSION_TOKEN" \
   -d "{\"message\":\"When did the pain start?\"}"
 ```
 
@@ -132,6 +137,7 @@ The response contains the patient reply, turn counts, status, the updated `monit
 ```bash
 curl -X POST http://127.0.0.1:8000/session/SESSION_ID/action \
   -H "Content-Type: application/json" \
+  -H "X-Session-Token: SESSION_TOKEN" \
   -d "{\"action_id\":\"vitals\"}"
 ```
 
@@ -142,21 +148,24 @@ Action IDs depend on the scenario, for example `vitals`, `ecg`, `oxygen`, `aspir
 ```bash
 curl -X POST http://127.0.0.1:8000/session/SESSION_ID/hint \
   -H "Content-Type: application/json" \
+  -H "X-Session-Token: SESSION_TOKEN" \
   -d "{\"question\":\"Which observations should I record?\"}"
 ```
 
-The body is optional for backward compatibility. Hints are disabled in Advanced mode (HTTP 409) and each used hint adds a `0.3` penalty, capped at `1.2`. In full guideline mode the server returns at most three stored steps per session, matched by simple keyword overlap; a fourth request returns HTTP 409. A links-only scenario returns HTTP 404 for hints. If no stored step matches, the response says `Check the guideline: <section_text>.` The question and matched step IDs are logged, but hint text is never added to the patient transcript or patient prompt. Beginner sessions also receive automatic hints at turns 3, 6 and 9.
+The body is optional for backward compatibility. Hints are disabled in Advanced mode (HTTP 409) and each used hint adds a `0.3` penalty, capped at `1.2`. In full guideline mode the server returns at most three stored steps per session, matched by simple keyword overlap; a fourth request returns HTTP 409. A links-only scenario returns HTTP 404 for hints. If no stored step matches, the response says `Check the guideline: <section_text>.` A step whose text contains one of the scenario's `forbidden_patient_terms` is never returned as a hint (it is still used for scoring); if that leaves no match, the fallback line is returned. The question and matched step IDs are logged, but hint text is never added to the patient transcript or patient prompt. Beginner sessions also receive automatic hints at turns 3, 6 and 9.
 
 ### Read the monitor
 
 ```bash
-curl http://127.0.0.1:8000/session/SESSION_ID/monitor
+curl http://127.0.0.1:8000/session/SESSION_ID/monitor \
+  -H "X-Session-Token: SESSION_TOKEN"
 ```
 
 ### End and evaluate
 
 ```bash
-curl -X POST http://127.0.0.1:8000/session/SESSION_ID/end
+curl -X POST http://127.0.0.1:8000/session/SESSION_ID/end \
+  -H "X-Session-Token: SESSION_TOKEN"
 ```
 
 Calling `/end` again returns the stored evaluation without another model call.
@@ -169,7 +178,13 @@ Other routes:
 - `GET /health?probe=true` - also makes one tiny model call (`status` becomes `degraded` on failure)
 - `GET /health/llm` - dedicated model-only deep check (requires `APP_API_KEY` when set)
 
-All scenario and session routes require the `X-API-Key` header when `APP_API_KEY` is set. The health probes also require it when probing the model.
+All scenario and session routes require the `X-API-Key` header when `APP_API_KEY` is set. The health probes also require it when probing the model. Every `/session/{id}/...` route additionally requires that session's `X-Session-Token`; a missing or wrong token returns HTTP 404.
+
+### Rate limits
+
+A small in-memory sliding-window limiter tracks each client IP (`request.client.host`) and returns HTTP 429 with a `Retry-After` header when a limit is exceeded. The limits are `RATE_LIMIT_START_PER_MINUTE` (default 10), `RATE_LIMIT_TURN_PER_MINUTE` (default 60, shared by message, action and hint), `RATE_LIMIT_PROBE_PER_MINUTE` (default 6 for `/health?probe=true` and `/health/llm`) and `RATE_LIMIT_WHATSAPP_PER_MINUTE` (default 30 per sender phone; over the limit the sender gets one short "please slow down" reply and the message is not processed). Old entries and keys are dropped, so memory stays bounded.
+
+When the app runs behind Render's proxy, start Uvicorn with `--proxy-headers` so `request.client.host` is the real client and not the proxy. `render.yaml` already includes it.
 
 ## If the model cannot be reached
 
@@ -278,6 +293,7 @@ WhatsApp free-form replies are appropriate inside the 24-hour customer service w
 
 - Each session writes `logs/transcripts/{session_id}.jsonl` with start, student messages, patient messages, history disclosure, clinical actions, hints, escalation, evaluation, and evaluation failures. Guideline hints log the student's question and matched step IDs, not the stored hint text.
 - Transcripts contain fictional patient dialogue and student messages. Do not enter real patient information.
+- Transcript files older than `TRANSCRIPT_RETENTION_DAYS` (default 30) are deleted at startup, whenever a session starts, on an hourly background sweep, and on shutdown. Set it to `0` to keep them until the operator removes them. The operator can also delete a session's transcript on request.
 - Completed debriefs are stored in the browser's `localStorage` so the student can review them later. They are not sent anywhere else; use **Clear saved sessions** to remove them.
 - WhatsApp phone numbers are kept only in memory for routing. Logs contain a masked value such as `***1234`, never the full number.
 - `.env`, `logs/` and `guidelines.json` are gitignored. Only `guidelines.example.json` belongs in version control.
@@ -286,6 +302,7 @@ WhatsApp free-form replies are appropriate inside the 24-hour customer service w
 Access control:
 
 - With `APP_API_KEY` set, `/scenarios` and every `/session/...` endpoint require an `X-API-Key` header. The chat UI asks for the key once and keeps it in the browser. Without it the API is open, which is fine on localhost only.
+- Each web session gets a random `session_token`; `/session/{id}/...` routes require it in `X-Session-Token`. The chat UI keeps it in memory only (never `localStorage`) and sends it with every session request.
 - Sessions idle for `SESSION_TTL_MINUTES` (default 120) are removed from memory, and at most `MAX_ACTIVE_SESSIONS` (default 200) can be active at once; beyond that, starting returns HTTP 503.
 - The evaluator receives the transcript as a JSON array, so a student cannot forge patient turns by typing line breaks.
 
@@ -303,7 +320,7 @@ Tests substitute fake LLM and WhatsApp clients, so they do not need model creden
 ## Limitations
 
 - Sessions and phone mappings are in memory; a restart clears them. Run a single Uvicorn worker, because multiple workers would have separate session stores.
-- There is no database, per-user accounts, per-client rate limiting, or streaming. The single `APP_API_KEY` is shared by everyone who uses the UI.
+- There is no database, per-user accounts, or streaming. Rate limits are in memory and per process; the single `APP_API_KEY` is shared by everyone who uses the UI.
 - The browser history is per-browser and per-origin; clearing site data removes it. It is not a formal portfolio or assessment record.
 - The monitor and deterioration curves are simplified educational models, not physiological simulations. Vitals and timings are approximations for learning.
 - The patient and evaluator are simulated and can be wrong. Evaluations are not formal assessments and must not be used for clinical decisions.

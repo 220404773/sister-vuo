@@ -123,6 +123,7 @@ class ProtocolStepResult(BaseModel):
 
 class StartResponse(BaseModel):
     session_id: str
+    session_token: str
     scenario: ScenarioSummary
     opening_message: str
     student_turns: int

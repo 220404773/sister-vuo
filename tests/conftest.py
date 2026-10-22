@@ -95,9 +95,15 @@ def settings(tmp_path: Path) -> Settings:
         whatsapp_phone_number_id="phone-id",
         whatsapp_app_secret="app-secret",
         # Pinned so a developer's real .env (APP_API_KEY, limits) cannot change test results.
+        app_env="development",
         app_api_key="",
         session_ttl_minutes=120,
         max_active_sessions=200,
+        rate_limit_start_per_minute=10,
+        rate_limit_turn_per_minute=60,
+        rate_limit_probe_per_minute=6,
+        rate_limit_whatsapp_per_minute=30,
+        transcript_retention_days=30,
         llm_json_mode=False,
     )
 

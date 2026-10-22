@@ -21,6 +21,10 @@ def start(
     return response.json()
 
 
+def session_headers(started: dict) -> dict[str, str]:
+    return {"X-Session-Token": started["session_token"]}
+
+
 def test_ui_is_served(client: TestClient) -> None:
     response = client.get("/")
     assert response.status_code == 200
@@ -76,6 +80,8 @@ def test_start_message_end_flow(
 ) -> None:
     started = start(client)
     session_id = started["session_id"]
+    headers = session_headers(started)
+    assert started["session_token"]
     assert started["scenario"]["id"] == "abdominal_pain"
     assert started["student_turns"] == 0
     assert started["turns_remaining"] == 12
@@ -88,6 +94,7 @@ def test_start_message_end_flow(
     message = client.post(
         f"/session/{session_id}/message",
         json={"message": "When did the pain start?"},
+        headers=headers,
     )
     assert message.status_code == 200, message.text
     payload = message.json()
@@ -99,7 +106,7 @@ def test_start_message_end_flow(
     assert payload["monitor"]["clinical_minutes"] > 0
     assert "onset" in fake_llm.revealed_calls[-1]
 
-    ended = client.post(f"/session/{session_id}/end")
+    ended = client.post(f"/session/{session_id}/end", headers=headers)
     assert ended.status_code == 200, ended.text
     evaluation = ended.json()["evaluation"]
     assert 0 <= evaluation["overall_score"] <= 5
@@ -115,12 +122,12 @@ def test_start_message_end_flow(
     assert evaluation["critical_errors"]
     assert fake_llm.evaluation_calls == 1
 
-    repeated = client.post(f"/session/{session_id}/end")
+    repeated = client.post(f"/session/{session_id}/end", headers=headers)
     assert repeated.status_code == 200
     assert repeated.json()["evaluation"] == evaluation
     assert fake_llm.evaluation_calls == 1
 
-    snapshot = client.get(f"/session/{session_id}")
+    snapshot = client.get(f"/session/{session_id}", headers=headers)
     assert snapshot.status_code == 200
     assert snapshot.json()["status"] == "completed"
     assert "diagnosis" not in snapshot.text
@@ -131,6 +138,7 @@ def test_start_message_end_flow(
     assert "session_started" in log_text
     assert "student_message" in log_text
     assert "evaluation" in log_text
+    assert started["session_token"] not in log_text
 
 
 def test_auto_evaluation_after_twelve_turns(
@@ -139,11 +147,13 @@ def test_auto_evaluation_after_twelve_turns(
 ) -> None:
     started = start(client)
     session_id = started["session_id"]
+    headers = session_headers(started)
     last = None
     for turn in range(1, 13):
         response = client.post(
             f"/session/{session_id}/message",
             json={"message": f"Question number {turn}"},
+            headers=headers,
         )
         assert response.status_code == 200, response.text
         last = response.json()
@@ -160,6 +170,7 @@ def test_auto_evaluation_after_twelve_turns(
     overflow = client.post(
         f"/session/{session_id}/message",
         json={"message": "One more question"},
+        headers=headers,
     )
     assert overflow.status_code == 409
 
@@ -171,11 +182,13 @@ def test_evaluation_failure_at_turn_limit_can_be_retried(
     fake_llm.evaluation_failures = 1
     started = start(client)
     session_id = started["session_id"]
+    headers = session_headers(started)
     last = None
     for turn in range(1, 13):
         response = client.post(
             f"/session/{session_id}/message",
             json={"message": f"Question number {turn}"},
+            headers=headers,
         )
         assert response.status_code == 200, response.text
         last = response.json()
@@ -190,10 +203,11 @@ def test_evaluation_failure_at_turn_limit_can_be_retried(
     overflow = client.post(
         f"/session/{session_id}/message",
         json={"message": "One more question"},
+        headers=headers,
     )
     assert overflow.status_code == 409
 
-    retried = client.post(f"/session/{session_id}/end")
+    retried = client.post(f"/session/{session_id}/end", headers=headers)
     assert retried.status_code == 200, retried.text
     assert 0 <= retried.json()["evaluation"]["overall_score"] <= 5
     assert fake_llm.evaluation_calls == 2
@@ -203,8 +217,9 @@ def test_session_can_be_ended_without_messages(
     client: TestClient,
     fake_llm: FakeLLM,
 ) -> None:
-    session_id = start(client)["session_id"]
-    response = client.post(f"/session/{session_id}/end")
+    started = start(client)
+    session_id = started["session_id"]
+    response = client.post(f"/session/{session_id}/end", headers=session_headers(started))
     assert response.status_code == 200
     evaluation = response.json()["evaluation"]
     assert 0 <= evaluation["overall_score"] <= 5
@@ -225,45 +240,62 @@ def test_unknown_session(client: TestClient) -> None:
 
 
 def test_requires_non_empty_message(client: TestClient) -> None:
-    session_id = start(client)["session_id"]
-    response = client.post(f"/session/{session_id}/message", json={"message": "   "})
+    started = start(client)
+    session_id = started["session_id"]
+    response = client.post(
+        f"/session/{session_id}/message",
+        json={"message": "   "},
+        headers=session_headers(started),
+    )
     assert response.status_code == 422
 
 
 def test_clinical_actions_update_the_monitor(client: TestClient) -> None:
     started = start(client, "chest_pain")
     session_id = started["session_id"]
+    headers = session_headers(started)
 
-    vitals = client.post(f"/session/{session_id}/action", json={"action_id": "vitals"})
+    vitals = client.post(
+        f"/session/{session_id}/action",
+        json={"action_id": "vitals"},
+        headers=headers,
+    )
     assert vitals.status_code == 200, vitals.text
     result = vitals.json()
     assert "HR" in result["result"]
     assert result["monitor"]["clinical_minutes"] >= 3
     assert "vitals" in result["actions_taken"]
 
-    ecg = client.post(f"/session/{session_id}/action", json={"action_id": "ecg"})
+    ecg = client.post(
+        f"/session/{session_id}/action", json={"action_id": "ecg"}, headers=headers
+    )
     assert ecg.status_code == 200, ecg.text
     assert "ST-segment" in ecg.json()["result"]
 
-    repeated = client.post(f"/session/{session_id}/action", json={"action_id": "ecg"})
+    repeated = client.post(
+        f"/session/{session_id}/action", json={"action_id": "ecg"}, headers=headers
+    )
     assert repeated.status_code == 409
 
-    unknown = client.post(f"/session/{session_id}/action", json={"action_id": "xray"})
+    unknown = client.post(
+        f"/session/{session_id}/action", json={"action_id": "xray"}, headers=headers
+    )
     assert unknown.status_code == 404
 
     ambulance = client.post(
         f"/session/{session_id}/action",
         json={"action_id": "call_ambulance"},
+        headers=headers,
     )
     assert ambulance.status_code == 200, ambulance.text
     assert ambulance.json()["monitor"]["escalated"] is True
     assert ambulance.json()["monitor"]["escalation_minutes"] is not None
 
-    monitor = client.get(f"/session/{session_id}/monitor")
+    monitor = client.get(f"/session/{session_id}/monitor", headers=headers)
     assert monitor.status_code == 200
     assert monitor.json()["escalated"] is True
 
-    ended = client.post(f"/session/{session_id}/end")
+    ended = client.post(f"/session/{session_id}/end", headers=headers)
     assert ended.status_code == 200, ended.text
     evaluation = ended.json()["evaluation"]
     assert evaluation["debrief"]["actions_taken"] == ["vitals", "ecg", "call_ambulance"]
@@ -272,35 +304,47 @@ def test_clinical_actions_update_the_monitor(client: TestClient) -> None:
 
 
 def test_beginner_receives_automatic_hint_at_turn_three(client: TestClient) -> None:
-    session_id = start(client, "abdominal_pain", "Beginner")["session_id"]
+    started = start(client, "abdominal_pain", "Beginner")
+    session_id = started["session_id"]
+    headers = session_headers(started)
     hints = []
     for turn in range(1, 4):
         response = client.post(
             f"/session/{session_id}/message",
             json={"message": f"History question {turn}"},
+            headers=headers,
         )
         assert response.status_code == 200, response.text
         hints.append(response.json()["hint"])
     assert hints[0] is None and hints[1] is None
     assert hints[2]
-    snapshot = client.get(f"/session/{session_id}")
+    snapshot = client.get(f"/session/{session_id}", headers=headers)
     assert snapshot.json()["hints_used"] == 0
 
 
 def test_difficulty_controls_hints(client: TestClient) -> None:
     beginner = start(client, "abdominal_pain", "Beginner")
     assert beginner["hints_enabled"] is True
-    hint = client.post(f"/session/{beginner['session_id']}/hint")
+    hint = client.post(
+        f"/session/{beginner['session_id']}/hint",
+        headers=session_headers(beginner),
+    )
     assert hint.status_code == 200, hint.text
     assert hint.json()["hints_used"] == 1
     assert hint.json()["hint_penalty"] > 0
 
     advanced = start(client, "abdominal_pain", "Advanced")
     assert advanced["hints_enabled"] is False
-    blocked = client.post(f"/session/{advanced['session_id']}/hint")
+    blocked = client.post(
+        f"/session/{advanced['session_id']}/hint",
+        headers=session_headers(advanced),
+    )
     assert blocked.status_code == 409
 
-    snapshot = client.get(f"/session/{advanced['session_id']}")
+    snapshot = client.get(
+        f"/session/{advanced['session_id']}",
+        headers=session_headers(advanced),
+    )
     assert snapshot.status_code == 200
     assert snapshot.json()["difficulty"] == "Advanced"
     assert snapshot.json()["hints_used"] == 0

@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import asyncio
 import inspect
 import logging
 import secrets
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, Request
@@ -33,6 +34,7 @@ from .models import (
     StartRequest,
     StartResponse,
 )
+from .ratelimit import RateLimiter, SlidingWindowLimiter
 from .sessions import (
     ActiveSessionExists,
     HintsDisabled,
@@ -52,6 +54,32 @@ from .whatsapp import router as whatsapp_router
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
+RETENTION_SWEEP_SECONDS = 60 * 60
+
+SECURITY_HEADERS = {
+    "Content-Security-Policy": (
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+        "connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; "
+        "form-action 'self'"
+    ),
+    "Strict-Transport-Security": "max-age=31536000",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+}
+
+
+async def _retention_sweeper(
+    transcripts: TranscriptLogger,
+    retention_days: int,
+    interval_seconds: float = RETENTION_SWEEP_SECONDS,
+) -> None:
+    """Delete expired transcripts even when the app runs for a long time."""
+    while True:
+        await asyncio.sleep(interval_seconds)
+        transcripts.delete_expired(retention_days)
+
 
 def create_app(
     settings_obj: Settings | None = None,
@@ -59,15 +87,23 @@ def create_app(
     whatsapp_client: Any | None = None,
 ) -> FastAPI:
     app_settings = settings_obj or get_settings()
+    if app_settings.app_env == "production" and not app_settings.app_api_key:
+        raise RuntimeError(
+            "APP_ENV is production but APP_API_KEY is not set. Refusing to start with an "
+            "open API. Set APP_API_KEY or use APP_ENV=development."
+        )
     scenarios = ScenarioRepository(app_settings.scenario_dir)
     transcripts = TranscriptLogger(app_settings.log_dir)
+    transcripts.delete_expired(app_settings.transcript_retention_days)
     llm = llm_service or LLMService(app_settings)
     guidelines = load_guidelines(app_settings.guidelines_path)
     manager = SessionManager(app_settings, scenarios, llm, transcripts, guidelines)
     whatsapp = whatsapp_client or WhatsAppClient(app_settings)
+    rate_limiter = RateLimiter(app_settings)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
+        transcripts.delete_expired(app_settings.transcript_retention_days)
         config_issues = app_settings.llm_config_issues()
         if config_issues:
             logger.error("LLM configuration is incomplete: %s", " ".join(config_issues))
@@ -85,14 +121,23 @@ def create_app(
             )
         if not app_settings.app_api_key:
             logger.warning("APP_API_KEY is not set; the REST API and chat UI are unauthenticated.")
-        yield
-        for resource in (llm, whatsapp):
-            close = getattr(resource, "close", None)
-            if close is None:
-                continue
-            result = close()
-            if inspect.isawaitable(result):
-                await result
+        sweeper = asyncio.create_task(
+            _retention_sweeper(transcripts, app_settings.transcript_retention_days)
+        )
+        try:
+            yield
+        finally:
+            sweeper.cancel()
+            with suppress(asyncio.CancelledError):
+                await sweeper
+            transcripts.delete_expired(app_settings.transcript_retention_days)
+            for resource in (llm, whatsapp):
+                close = getattr(resource, "close", None)
+                if close is None:
+                    continue
+                result = close()
+                if inspect.isawaitable(result):
+                    await result
 
     app = FastAPI(
         title="Sister Vuo",
@@ -106,6 +151,14 @@ def create_app(
     app.state.manager = manager
     app.state.whatsapp = whatsapp
     app.state.whatsapp_dedupe = MessageDeduper()
+    app.state.rate_limiter = rate_limiter
+
+    @app.middleware("http")
+    async def add_security_headers(request: Request, call_next: Any) -> Any:
+        response = await call_next(request)
+        for name, value in SECURITY_HEADERS.items():
+            response.headers[name] = value
+        return response
 
     @app.exception_handler(ScenarioNotFound)
     async def handle_scenario_not_found(_: Request, exc: ScenarioNotFound) -> JSONResponse:
@@ -174,13 +227,42 @@ def create_app(
         if not secrets.compare_digest(supplied.encode("utf-8"), expected.encode("utf-8")):
             raise HTTPException(status_code=401, detail="A valid API key is required.")
 
-    protected = [Depends(require_api_key)]
+    async def require_session_token(session_id: str, request: Request) -> None:
+        manager: SessionManager = request.app.state.manager
+        manager.authorize(session_id, request.headers.get("x-session-token"))
+
+    def client_host(request: Request) -> str:
+        return request.client.host if request.client is not None else "unknown"
+
+    def enforce_limit(limiter: SlidingWindowLimiter, key: str) -> None:
+        retry_after = limiter.check(key)
+        if retry_after is not None:
+            raise HTTPException(
+                status_code=429,
+                detail="Too many requests. Please slow down and try again shortly.",
+                headers={"Retry-After": str(int(retry_after))},
+            )
+
+    async def limit_start(request: Request) -> None:
+        enforce_limit(rate_limiter.start, client_host(request))
+
+    async def limit_turn(request: Request) -> None:
+        enforce_limit(rate_limiter.turn, client_host(request))
+
+    async def limit_probe(request: Request) -> None:
+        enforce_limit(rate_limiter.probe, client_host(request))
+
+    protected_session = [Depends(require_api_key), Depends(require_session_token), Depends(limit_turn)]
 
     @app.get("/", include_in_schema=False)
     async def index() -> FileResponse:
         return FileResponse(app_settings.static_dir / "index.html")
 
-    @app.get("/scenarios", response_model=list[ScenarioSummary], dependencies=protected)
+    @app.get(
+        "/scenarios",
+        response_model=list[ScenarioSummary],
+        dependencies=[Depends(require_api_key), Depends(limit_start)],
+    )
     async def list_scenarios(request: Request) -> list[ScenarioSummary]:
         return request.app.state.scenarios.list_summaries()
 
@@ -200,6 +282,7 @@ def create_app(
         }
         if probe:
             await require_api_key(request)
+            enforce_limit(rate_limiter.probe, client_host(request))
             result = await llm.probe()
             payload["llm_base_url"] = settings.llm_base_url
             payload["llm_model"] = settings.llm_model
@@ -208,7 +291,7 @@ def create_app(
                 payload["status"] = "degraded"
         return payload
 
-    @app.get("/health/llm", dependencies=protected)
+    @app.get("/health/llm", dependencies=[Depends(require_api_key), Depends(limit_probe)])
     async def health_llm(request: Request) -> dict[str, Any]:
         """Dedicated deep check: always makes one tiny model call."""
         settings: Settings = request.app.state.settings
@@ -221,7 +304,11 @@ def create_app(
             "llm": result,
         }
 
-    @app.post("/session/start", response_model=StartResponse, dependencies=protected)
+    @app.post(
+        "/session/start",
+        response_model=StartResponse,
+        dependencies=[Depends(require_api_key), Depends(limit_start)],
+    )
     async def start_session(payload: StartRequest, request: Request) -> StartResponse:
         settings: Settings = request.app.state.settings
         manager: SessionManager = request.app.state.manager
@@ -234,6 +321,7 @@ def create_app(
         summary = manager.scenarios.summary(str(session.scenario["id"]))
         return StartResponse(
             session_id=session.id,
+            session_token=session.session_token or "",
             scenario=summary,
             opening_message=session.transcript[0].content,
             student_turns=session.student_turns,
@@ -248,7 +336,7 @@ def create_app(
         )
 
     @app.post(
-        "/session/{session_id}/message", response_model=MessageResponse, dependencies=protected
+        "/session/{session_id}/message", response_model=MessageResponse, dependencies=protected_session
     )
     async def send_message(
         session_id: str,
@@ -273,7 +361,7 @@ def create_app(
     @app.post(
         "/session/{session_id}/action",
         response_model=ActionResponse,
-        dependencies=protected,
+        dependencies=protected_session,
     )
     async def clinical_action(
         session_id: str,
@@ -298,7 +386,7 @@ def create_app(
     @app.post(
         "/session/{session_id}/hint",
         response_model=HintResponse,
-        dependencies=protected,
+        dependencies=protected_session,
     )
     async def supervisor_hint(
         session_id: str, request: Request, payload: HintRequest | None = None
@@ -319,19 +407,19 @@ def create_app(
     @app.get(
         "/session/{session_id}/monitor",
         response_model=MonitorView,
-        dependencies=protected,
+        dependencies=protected_session,
     )
     async def get_monitor(session_id: str, request: Request) -> MonitorView:
         manager: SessionManager = request.app.state.manager
         return await manager.monitor(session_id)
 
-    @app.post("/session/{session_id}/end", response_model=EndResponse, dependencies=protected)
+    @app.post("/session/{session_id}/end", response_model=EndResponse, dependencies=protected_session)
     async def end_session(session_id: str, request: Request) -> EndResponse:
         manager: SessionManager = request.app.state.manager
         evaluation = await manager.end(session_id)
         return EndResponse(session_id=session_id, evaluation=evaluation)
 
-    @app.get("/session/{session_id}", response_model=SessionSnapshot, dependencies=protected)
+    @app.get("/session/{session_id}", response_model=SessionSnapshot, dependencies=protected_session)
     async def get_session(session_id: str, request: Request) -> SessionSnapshot:
         manager: SessionManager = request.app.state.manager
         return await manager.snapshot(session_id)

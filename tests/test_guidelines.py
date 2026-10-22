@@ -99,6 +99,10 @@ def start_chest(client: TestClient, difficulty: str = "Intermediate") -> dict:
     return response.json()
 
 
+def token_headers(started: dict) -> dict[str, str]:
+    return {"X-Session-Token": started["session_token"]}
+
+
 def test_full_mode_start_hint_and_history_isolation(
     settings: Settings,
     tmp_path: Path,
@@ -124,6 +128,7 @@ def test_full_mode_start_hint_and_history_isolation(
         hint = client.post(
             f"/session/{started['session_id']}/hint",
             json={"question": "Which observations should I record?"},
+            headers=token_headers(started),
         )
         assert hint.status_code == 200, hint.text
         payload = hint.json()
@@ -132,13 +137,16 @@ def test_full_mode_start_hint_and_history_isolation(
         assert payload["hints_remaining"] == 2
         assert payload["question"] == "Which observations should I record?"
 
-        snapshot = client.get(f"/session/{started['session_id']}").json()
+        snapshot = client.get(
+            f"/session/{started['session_id']}", headers=token_headers(started)
+        ).json()
         assert "Record a 12 lead ECG." not in json.dumps(snapshot["transcript"])
         assert snapshot["guideline_hints_used"] == 1
 
         message = client.post(
             f"/session/{started['session_id']}/message",
             json={"message": "The pain started this morning."},
+            headers=token_headers(started),
         )
         assert message.status_code == 200, message.text
         assert "Record a 12 lead ECG." not in json.dumps(fake_llm.patient_calls[-1])
@@ -159,18 +167,25 @@ def test_hint_limit_is_three_per_session(
     with guideline_client(settings, tmp_path, fake_llm, fake_whatsapp, full_guidelines()) as client:
         started = start_chest(client)
         url = f"/session/{started['session_id']}/hint"
+        headers = token_headers(started)
 
         remaining = []
         for _ in range(3):
-            response = client.post(url, json={"question": "vital signs"})
+            response = client.post(
+                url, json={"question": "vital signs"}, headers=headers
+            )
             assert response.status_code == 200, response.text
             remaining.append(response.json()["hints_remaining"])
         assert remaining == [2, 1, 0]
 
-        exhausted = client.post(url, json={"question": "vital signs"})
+        exhausted = client.post(
+            url, json={"question": "vital signs"}, headers=headers
+        )
         assert exhausted.status_code == 409
 
-        snapshot = client.get(f"/session/{started['session_id']}").json()
+        snapshot = client.get(
+            f"/session/{started['session_id']}", headers=token_headers(started)
+        ).json()
         assert snapshot["guideline_hints_used"] == 3
         assert snapshot["hints_used"] == 3
 
@@ -194,6 +209,7 @@ def test_links_only_mode_has_no_hints(
         response = client.post(
             f"/session/{started['session_id']}/hint",
             json={"question": "vital signs"},
+            headers=token_headers(started),
         )
         assert response.status_code == 404
 
@@ -216,6 +232,7 @@ def test_missing_file_disables_guidelines_but_keeps_app_working(
         fallback = client.post(
             f"/session/{started['session_id']}/hint",
             json={"question": "vital signs"},
+            headers=token_headers(started),
         )
         assert fallback.status_code == 200
         assert fallback.json()["hint"]
@@ -306,7 +323,9 @@ def test_full_mode_end_normalises_protocol_and_notes_counts(
     ]
     with guideline_client(settings, tmp_path, fake_llm, fake_whatsapp, full_guidelines()) as client:
         started = start_chest(client)
-        ended = client.post(f"/session/{started['session_id']}/end")
+        ended = client.post(
+            f"/session/{started['session_id']}/end", headers=token_headers(started)
+        )
         assert ended.status_code == 200, ended.text
         evaluation = ended.json()["evaluation"]
 
@@ -353,7 +372,9 @@ def test_dose_guard_removes_unsupported_doses_only(
 
         fake_llm.evaluate = unsafe_evaluate
         started = start_chest(client)
-        ended = client.post(f"/session/{started['session_id']}/end")
+        ended = client.post(
+            f"/session/{started['session_id']}/end", headers=token_headers(started)
+        )
         assert ended.status_code == 200, ended.text
         evaluation = ended.json()["evaluation"]
 

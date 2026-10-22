@@ -66,8 +66,10 @@ def test_api_key_protects_rest_endpoints(settings: Settings) -> None:
         )
         assert started.status_code == 200
         session_id = started.json()["session_id"]
+        session_token = started.json()["session_token"]
         assert client.get(f"/session/{session_id}").status_code == 401
-        assert client.get(f"/session/{session_id}", headers=headers).status_code == 200
+        session_headers = {**headers, "X-Session-Token": session_token}
+        assert client.get(f"/session/{session_id}", headers=session_headers).status_code == 200
 
 
 def test_active_session_cap(settings: Settings) -> None:
@@ -81,12 +83,19 @@ def test_active_session_cap(settings: Settings) -> None:
 
 def test_idle_sessions_expire(settings: Settings) -> None:
     with make_client(settings, session_ttl_minutes=1) as client:
-        session_id = client.post(
+        started = client.post(
             "/session/start", json={"scenario_id": "chest_pain"}
-        ).json()["session_id"]
+        ).json()
+        session_id = started["session_id"]
         manager = client.app.state.manager
         manager._sessions[session_id].last_activity = time.monotonic() - 120
-        assert client.get(f"/session/{session_id}").status_code == 404
+        assert (
+            client.get(
+                f"/session/{session_id}",
+                headers={"X-Session-Token": started["session_token"]},
+            ).status_code
+            == 404
+        )
         assert manager.active_count() == 0
 
 

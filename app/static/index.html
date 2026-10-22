@@ -1393,12 +1393,12 @@
 
         <div id="typing" class="typing" hidden>Patient is responding...</div>
 
-        <div id="hintCard" class="hint-card" hidden>
+        <div id="hintCard" class="hint-card" role="status" hidden>
           <strong>Hint</strong>
           <span id="hintText"></span>
         </div>
 
-        <div id="errorBanner" class="error-banner" hidden>
+        <div id="errorBanner" class="error-banner" role="alert" hidden>
           <span id="errorText"></span>
           <button id="errorClose" type="button">Dismiss</button>
         </div>
@@ -1487,6 +1487,7 @@
     const state = {
       scenarios: [],
       sessionId: null,
+      sessionToken: null,
       studentName: "",
       difficulty: "Intermediate",
       turns: 0,
@@ -1571,6 +1572,9 @@
       const key = storedApiKey();
       if (key) {
         headers["X-API-Key"] = key;
+      }
+      if (state.sessionToken && path.startsWith("/session/") && path !== "/session/start") {
+        headers["X-Session-Token"] = state.sessionToken;
       }
       const response = await fetch(path, { ...options, headers });
       if (response.status === 401) {
@@ -2291,6 +2295,7 @@
         });
 
         state.sessionId = response.session_id;
+        state.sessionToken = response.session_token || null;
         state.studentName = els.studentName.value.trim();
         state.difficulty = response.difficulty;
         state.turns = response.student_turns;
@@ -2536,6 +2541,7 @@
 
     function viewArchived(entry) {
       state.sessionId = null;
+      state.sessionToken = null;
       state.turns = 0;
       state.maxTurns = 12;
       state.turnsRemaining = 0;
@@ -2570,6 +2576,7 @@
 
     function newSession() {
       state.sessionId = null;
+      state.sessionToken = null;
       state.turns = 0;
       state.maxTurns = 12;
       state.turnsRemaining = 12;

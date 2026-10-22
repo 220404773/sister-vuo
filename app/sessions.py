@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import secrets
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -290,12 +291,37 @@ class TranscriptLogger:
         except OSError:
             logger.exception("Could not write transcript log for session %s", session_id)
 
+    def delete_expired(self, retention_days: int) -> int:
+        """Delete transcript files older than the retention period.
+
+        A retention of 0 (or less) means keep transcripts forever.
+        """
+        if retention_days <= 0:
+            return 0
+        cutoff = time.time() - retention_days * 24 * 60 * 60
+        deleted = 0
+        for path in self.directory.glob("*.jsonl"):
+            try:
+                if path.is_file() and path.stat().st_mtime < cutoff:
+                    path.unlink()
+                    deleted += 1
+            except OSError:
+                logger.exception("Could not delete expired transcript %s", path)
+        if deleted:
+            logger.info(
+                "Deleted %d transcript file(s) older than %d day(s)",
+                deleted,
+                retention_days,
+            )
+        return deleted
+
 
 @dataclass(slots=True)
 class Session:
     id: str
     scenario: dict[str, Any]
     channel: str
+    session_token: str | None = None
     phone: str | None = None
     student_name: str | None = None
     difficulty: str = "Intermediate"
@@ -391,6 +417,21 @@ class SessionManager:
         self._purge_expired()
         session = self._sessions.get(session_id)
         if session is None:
+            raise SessionNotFound("Session not found.")
+        session.last_activity = time.monotonic()
+        return session
+
+    def authorize(self, session_id: str, token: str | None) -> Session:
+        """Look up a session and verify its per-session token in constant time."""
+        self._purge_expired()
+        session = self._sessions.get(session_id)
+        expected = session.session_token if session is not None else None
+        supplied = token or ""
+        if (
+            session is None
+            or not expected
+            or not secrets.compare_digest(supplied.encode("utf-8"), expected.encode("utf-8"))
+        ):
             raise SessionNotFound("Session not found.")
         session.last_activity = time.monotonic()
         return session
@@ -513,6 +554,7 @@ class SessionManager:
         selected = normalize_difficulty(difficulty, str(scenario["difficulty"]))
         async with self._start_lock:
             self._purge_expired()
+            self.transcripts.delete_expired(self.settings.transcript_retention_days)
             if phone is not None:
                 active = self.get_active_by_phone(phone)
                 if active is not None:
@@ -525,6 +567,7 @@ class SessionManager:
                 )
             session = Session(
                 id=uuid.uuid4().hex,
+                session_token=secrets.token_urlsafe(32),
                 scenario=scenario,
                 channel=channel,
                 phone=phone,
@@ -734,7 +777,15 @@ class SessionManager:
                     raise NoHintsRemaining(
                         f"No supervisor hints remain (maximum {MAX_GUIDELINE_HINTS} per session)."
                     )
-                hint = self.guidelines.hint(str(session.scenario["id"]), question)
+                forbidden = tuple(
+                    str(term)
+                    for term in session.scenario.get("ground_truth", {}).get(
+                        "forbidden_patient_terms", []
+                    )
+                )
+                hint = self.guidelines.hint(
+                    str(session.scenario["id"]), question, forbidden
+                )
                 session.guideline_hints_used += 1
                 session.hints_used += 1
                 self._event(

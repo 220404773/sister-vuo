@@ -506,6 +506,7 @@ async def receive_whatsapp_webhook(
     manager: SessionManager = request.app.state.manager
     client: Any = request.app.state.whatsapp
     deduper: MessageDeduper = request.app.state.whatsapp_dedupe
+    limiter = request.app.state.rate_limiter.whatsapp
 
     for entry in payload.get("entry", []):
         if not isinstance(entry, dict):
@@ -528,6 +529,14 @@ async def receive_whatsapp_webhook(
                         f"{sender}:{message.get('timestamp', '')}:{message.get('type', '')}"
                     )
                 if deduper.seen(message_id):
+                    continue
+                if limiter.check(sender) is not None:
+                    background_tasks.add_task(
+                        _safe_send,
+                        client,
+                        sender,
+                        "Please slow down and try again in a minute.",
+                    )
                     continue
                 if message.get("type") != "text":
                     background_tasks.add_task(_send_unsupported, client, sender)

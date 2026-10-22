@@ -196,7 +196,18 @@ def _tokens(text: str) -> set[str]:
     }
 
 
-def select_steps(question: str, steps: tuple[GuidelineStep, ...]) -> list[GuidelineStep]:
+def _mentions_forbidden(text: str, forbidden_terms: tuple[str, ...]) -> bool:
+    lowered = text.lower()
+    return any(
+        term.strip() and term.strip().lower() in lowered for term in forbidden_terms
+    )
+
+
+def select_steps(
+    question: str,
+    steps: tuple[GuidelineStep, ...],
+    forbidden_terms: tuple[str, ...] = (),
+) -> list[GuidelineStep]:
     """Select the stored step(s) with the strongest simple keyword overlap."""
     question_tokens = _tokens(question)
     if not question_tokens:
@@ -205,7 +216,7 @@ def select_steps(question: str, steps: tuple[GuidelineStep, ...]) -> list[Guidel
     scored: list[tuple[int, int, GuidelineStep]] = []
     for index, step in enumerate(steps):
         overlap = len(question_tokens & _tokens(step.text))
-        if overlap:
+        if overlap and not _mentions_forbidden(step.text, forbidden_terms):
             scored.append((overlap, index, step))
     if not scored:
         return []
@@ -268,13 +279,18 @@ class GuidelineRepository:
         guideline = self.for_scenario(scenario_id)
         return guideline.view() if guideline else None
 
-    def hint(self, scenario_id: str, question: str) -> GuidelineHint:
+    def hint(
+        self,
+        scenario_id: str,
+        question: str,
+        forbidden_terms: tuple[str, ...] = (),
+    ) -> GuidelineHint:
         guideline = self.for_scenario(scenario_id)
         if guideline is None or guideline.mode != "full":
             raise GuidelineHintsUnavailable(
                 "This scenario has no guideline steps for supervisor hints."
             )
-        selected = select_steps(question, guideline.steps)
+        selected = select_steps(question, guideline.steps, forbidden_terms)
         if not selected:
             section = guideline.section_text.strip().rstrip(".")
             return GuidelineHint(text=f"Check the guideline: {section}.", step_ids=[])

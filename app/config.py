@@ -63,12 +63,30 @@ class Settings:
         default_factory=lambda: _env_int("LLM_EVALUATOR_MAX_TOKENS", 2000)
     )
     max_student_turns: int = 12
+    app_env: str = field(
+        default_factory=lambda: (os.getenv("APP_ENV", "").strip().lower() or "development")
+    )
     app_api_key: str = field(default_factory=lambda: os.getenv("APP_API_KEY", "").strip())
     session_ttl_minutes: int = field(
         default_factory=lambda: _env_int("SESSION_TTL_MINUTES", 120)
     )
     max_active_sessions: int = field(
         default_factory=lambda: _env_int("MAX_ACTIVE_SESSIONS", 200)
+    )
+    rate_limit_start_per_minute: int = field(
+        default_factory=lambda: _env_int("RATE_LIMIT_START_PER_MINUTE", 10)
+    )
+    rate_limit_turn_per_minute: int = field(
+        default_factory=lambda: _env_int("RATE_LIMIT_TURN_PER_MINUTE", 60)
+    )
+    rate_limit_probe_per_minute: int = field(
+        default_factory=lambda: _env_int("RATE_LIMIT_PROBE_PER_MINUTE", 6)
+    )
+    rate_limit_whatsapp_per_minute: int = field(
+        default_factory=lambda: _env_int("RATE_LIMIT_WHATSAPP_PER_MINUTE", 30)
+    )
+    transcript_retention_days: int = field(
+        default_factory=lambda: _env_int("TRANSCRIPT_RETENTION_DAYS", 30)
     )
     scenario_dir: Path = PROJECT_ROOT / "scenarios"
     prompt_dir: Path = PROJECT_ROOT / "prompts"
