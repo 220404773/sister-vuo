@@ -64,6 +64,7 @@
 
     .topbar {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
@@ -115,6 +116,41 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       white-space: nowrap;
+    }
+
+    .start-bar {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .start-field {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .start-field .field-label {
+      margin: 0 0 6px;
+    }
+
+    .start-bar #difficultySelect {
+      min-width: 210px;
+    }
+
+    .start-bar #studentName {
+      width: 190px;
+    }
+
+    .start-bar #startButton {
+      width: auto;
+      margin-top: 0;
+      padding: 0 20px;
+      white-space: nowrap;
+      min-height: 44px;
     }
 
     .layout {
@@ -1212,6 +1248,17 @@
     }
 
     @media (max-width: 920px) {
+      .topbar {
+        flex-wrap: wrap;
+      }
+
+      .start-bar {
+        order: 3;
+        flex-basis: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
       .layout {
         grid-template-columns: 1fr;
       }
@@ -1264,7 +1311,27 @@
       }
 
       .topbar {
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .start-bar {
+        flex: 0 1 auto;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .start-bar .start-field {
+        width: 100%;
+      }
+
+      .start-bar #difficultySelect,
+      .start-bar #studentName,
+      .start-bar #startButton {
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
       }
 
       .badge {
@@ -1327,6 +1394,21 @@
           <p>AI nursing patient simulator</p>
         </div>
       </div>
+      <form id="startForm" class="start-bar">
+        <div class="start-field">
+          <label class="field-label" for="difficultySelect">Learning mode</label>
+          <select id="difficultySelect">
+            <option value="Beginner">Beginner - guided with automatic hints</option>
+            <option value="Intermediate" selected>Intermediate - hints on request</option>
+            <option value="Advanced">Advanced - no hints, faster deterioration</option>
+          </select>
+        </div>
+        <div class="start-field">
+          <label class="field-label" for="studentName">Your name <span>optional</span></label>
+          <input id="studentName" type="text" maxlength="80" autocomplete="off" placeholder="Student name">
+        </div>
+        <button id="startButton" class="primary" type="submit">Start session</button>
+      </form>
       <div class="badge">Education simulation</div>
     </header>
 
@@ -1339,20 +1421,10 @@
           <button class="primary" type="submit">Unlock</button>
         </form>
         <div class="eyebrow">Scenario</div>
-        <form id="startForm">
-          <label class="sr-only" for="scenarioSelect">Scenario</label>
-          <select id="scenarioSelect" required></select>
-          <div id="scenarioMeta" class="scenario-meta">Loading scenarios...</div>
-          <label class="field-label" for="difficultySelect">Learning mode</label>
-          <select id="difficultySelect">
-            <option value="Beginner">Beginner - guided with automatic hints</option>
-            <option value="Intermediate" selected>Intermediate - hints on request</option>
-            <option value="Advanced">Advanced - no hints, faster deterioration</option>
-          </select>
-          <label class="field-label" for="studentName">Your name <span>optional</span></label>
-          <input id="studentName" type="text" maxlength="80" autocomplete="off" placeholder="Student name">
-          <button id="startButton" class="primary" type="submit">Start session</button>
-        </form>
+        <label class="sr-only" for="scenarioSelect">Scenario</label>
+        <!-- This select submits with #startForm only through form="startForm"; keep the attribute. -->
+        <select id="scenarioSelect" form="startForm" required></select>
+        <div id="scenarioMeta" class="scenario-meta">Loading scenarios...</div>
         <div id="sessionInfo" class="session-info" hidden></div>
         <button id="endButton" class="secondary" type="button" hidden>End and evaluate</button>
         <button id="healthButton" class="secondary" type="button">Test model connection</button>
