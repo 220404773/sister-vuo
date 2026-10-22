@@ -604,15 +604,6 @@
       font-weight: 700;
     }
 
-    .guideline-card .protocol-list {
-      margin-top: 12px;
-    }
-
-    .guideline-card .protocol-list li {
-      list-style: none;
-      margin-left: -19px;
-    }
-
     .protocol-status {
       display: inline-block;
       min-width: 62px;
@@ -955,16 +946,15 @@
     }
 
     .evaluation-panel {
-      display: grid;
+      display: flex;
+      flex-direction: column;
       grid-column: 1 / -1;
-      grid-template-columns: minmax(250px, 340px) minmax(0, 1fr);
-      gap: 18px 30px;
+      gap: 16px;
       padding: 26px;
     }
 
     .eval-head {
       display: flex;
-      grid-column: 1 / -1;
       align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
@@ -977,9 +967,140 @@
       letter-spacing: -0.025em;
     }
 
+    .eval-head h2:focus-visible,
+    .eval-head h2:focus {
+      outline: 2px solid var(--teal);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    .debrief-scenario {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .debrief-card {
+      min-width: 0;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--paper);
+    }
+
+    .debrief-card h3 {
+      margin: 0 0 10px;
+      color: var(--ink);
+      font-size: 0.98rem;
+      letter-spacing: -0.01em;
+    }
+
+    .debrief-card h4 {
+      margin: 0 0 6px;
+      color: var(--ink-soft);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .debrief-card ul,
+    .debrief-card ol {
+      margin: 0;
+      padding-left: 19px;
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+    }
+
+    .debrief-card li + li {
+      margin-top: 5px;
+    }
+
+    .debrief-card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+      white-space: pre-wrap;
+    }
+
+    .debrief-summary {
+      display: grid;
+      grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+      gap: 20px 26px;
+      align-items: start;
+    }
+
+    .debrief-lead h3 {
+      margin-bottom: 6px;
+    }
+
+    .debrief-lead > p {
+      color: var(--ink);
+      font-size: 0.98rem;
+      line-height: 1.55;
+    }
+
+    .debrief-lead .eval-meta {
+      margin-top: 14px;
+    }
+
+    .debrief-safety {
+      border-color: #f1c6bf;
+      background: var(--danger-bg);
+    }
+
+    .debrief-safety h3 {
+      color: var(--danger);
+    }
+
+    .debrief-safety h4 {
+      color: var(--danger);
+    }
+
+    .debrief-safety.clear {
+      border-color: var(--line-strong);
+      background: var(--teal-soft);
+    }
+
+    .debrief-safety.clear h3 {
+      color: var(--teal-dark);
+    }
+
+    /* The heading takes focus after the debrief appears (for screen readers); it is not a control. */
+    #debriefHeading:focus {
+      outline: none;
+    }
+
+    .guideline-group > p + h4 {
+      margin-top: 14px;
+    }
+
+    .safety-group + .safety-group,
+    .improve-group + .improve-group,
+    .guideline-group + .guideline-group {
+      margin-top: 14px;
+    }
+
+    .safety-calm {
+      color: var(--ink-soft);
+    }
+
+    .debrief-progress {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .debrief-progress.single {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .debrief-skills .domains {
+      margin-top: 2px;
+    }
+
     .overall {
-      align-self: start;
-      padding: 22px;
+      padding: 20px;
       border-radius: 18px;
       color: var(--white);
       background:
@@ -1003,11 +1124,12 @@
     }
 
     .overall p {
-      margin: 10px 0 0;
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 0.82rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      margin: 6px 0 0;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
     }
 
     .domains {
@@ -1073,44 +1195,35 @@
       background: var(--amber-bg);
     }
 
-    .eval-sections {
+    .debrief-extras {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 10px;
     }
 
-    .debrief-extras {
-      display: grid;
-      grid-column: 1 / -1;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-      margin-top: 6px;
+    .debrief-details {
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--white);
     }
 
-    .debrief-extras .eval-section {
-      min-width: 0;
-    }
-
-    .debrief-extras .wide {
-      grid-column: 1 / -1;
-    }
-
-    .eval-section p {
-      margin: 0;
-      color: var(--ink-soft);
+    .debrief-details summary {
+      padding: 11px 0;
+      color: var(--ink);
       font-size: 0.88rem;
-      white-space: pre-wrap;
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    .eval-section ol {
-      margin: 0;
-      padding-left: 19px;
-      color: var(--ink-soft);
-      font-size: 0.86rem;
+    .debrief-details summary:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
 
-    .eval-section ol li + li {
-      margin-top: 5px;
+    .debrief-details > *:not(summary) {
+      margin-bottom: 12px;
     }
 
     .timeline {
@@ -1150,54 +1263,80 @@
       white-space: pre-wrap;
     }
 
-    .eval-section {
-      padding: 16px 18px;
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      background: var(--paper);
+    .guideline-card {
+      border-color: #b7ddd3;
+      background: linear-gradient(180deg, #f4fbf9, var(--paper));
     }
 
-    .eval-section h3 {
-      margin: 0 0 8px;
+    .guideline-card .guideline-title {
+      margin: 0 0 4px;
       color: var(--ink);
-      font-size: 0.9rem;
-      letter-spacing: -0.01em;
+      font-size: 0.92rem;
+      font-weight: 700;
     }
 
-    .eval-section ul {
-      margin: 0;
-      padding-left: 19px;
+    .guideline-card .guideline-section {
+      margin: 0 0 10px;
       color: var(--ink-soft);
+      font-size: 0.86rem;
+      white-space: pre-wrap;
+    }
+
+    .guideline-card a {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .guideline-card .protocol-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .protocol-item {
+      display: grid;
+      grid-template-columns: minmax(80px, 96px) minmax(0, 1fr);
+      gap: 4px 10px;
+      align-items: baseline;
+      margin-left: 0;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--white);
       font-size: 0.86rem;
     }
 
-    .eval-section li + li {
-      margin-top: 5px;
+    .protocol-status {
+      font-weight: 750;
+      font-size: 0.76rem;
     }
 
-    .eval-section li.muted {
-      color: var(--muted);
-      list-style: none;
-      margin-left: -19px;
+    .protocol-status.met {
+      color: #0f766e;
     }
 
-    .eval-section.unsafe {
-      border-color: #f1c6bf;
-      background: var(--danger-bg);
+    .protocol-status.partial {
+      color: var(--amber);
     }
 
-    .eval-section.unsafe h3 {
+    .protocol-status.missed {
       color: var(--danger);
     }
 
-    .eval-section.feedback p {
-      margin: 0;
+    .protocol-text {
       color: var(--ink-soft);
-      font-size: 0.9rem;
+    }
+
+    .protocol-evidence {
+      grid-column: 2;
+      color: var(--muted);
+      font-size: 0.76rem;
     }
 
     .eval-disclaimer {
-      grid-column: 1 / -1;
       padding-top: 2px;
       color: var(--muted);
       font-size: 0.78rem;
@@ -1281,26 +1420,16 @@
       }
 
       .evaluation-panel {
-        grid-template-columns: 1fr;
+        padding: 22px;
       }
 
-      .eval-head,
-      .overall,
-      .domains,
-      .eval-meta,
-      .eval-sections,
-      .debrief-extras,
-      .guideline-card,
-      .eval-disclaimer {
-        grid-column: 1;
+      .debrief-summary {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
       }
 
-      .eval-sections {
-        grid-row: auto;
-      }
-
-      .debrief-extras {
-        grid-template-columns: 1fr;
+      .debrief-progress {
+        grid-template-columns: minmax(0, 1fr);
       }
     }
 
@@ -1308,6 +1437,26 @@
       .shell {
         width: min(100% - 18px, 1440px);
         padding-top: 12px;
+      }
+
+      .evaluation-panel {
+        padding: 16px;
+      }
+
+      .debrief-card {
+        padding: 15px 16px;
+      }
+
+      .debrief-summary {
+        gap: 14px;
+      }
+
+      .protocol-item {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .protocol-evidence {
+        grid-column: 1;
       }
 
       .topbar {
@@ -1518,19 +1667,72 @@
         <div class="eval-head">
           <div>
             <div class="eyebrow">Debrief</div>
-            <h2>Evaluation</h2>
+            <h2 id="debriefHeading" tabindex="-1">Your debrief</h2>
+            <p id="debriefScenario" class="debrief-scenario"></p>
           </div>
           <button id="newSessionButton" class="ghost" type="button">New session</button>
         </div>
-        <div class="overall">
-          <span id="overallScore" class="score">0.0</span><span class="out-of">/ 5</span>
-          <p>Overall score</p>
+
+        <div class="debrief-card debrief-summary">
+          <div class="overall">
+            <span id="overallScore" class="score">0.0</span><span class="out-of">/ 5</span>
+            <p id="overallLabel" class="overall-label">Absent or unsafe</p>
+          </div>
+          <div class="debrief-lead">
+            <h3>Feedback</h3>
+            <p id="debriefFeedback"></p>
+            <div id="debriefFacts" class="eval-meta"></div>
+          </div>
         </div>
-        <div id="evalMeta" class="eval-meta"></div>
-        <div id="domainScores" class="domains"></div>
-        <div id="evalSections" class="eval-sections"></div>
-        <div id="debriefExtras" class="debrief-extras"></div>
-        <section id="guidelineCard" class="eval-section guideline-card" hidden></section>
+
+        <section id="debriefSafety" class="debrief-card debrief-safety">
+          <h3 id="debriefSafetyHeading">Safety: needs attention</h3>
+          <div id="debriefSafetyBody"></div>
+        </section>
+
+        <div id="debriefProgress" class="debrief-progress">
+          <section id="debriefWentWell" class="debrief-card debrief-column">
+            <h3>What went well</h3>
+            <div id="debriefStrengths"></div>
+          </section>
+          <section id="debriefImprove" class="debrief-card debrief-column">
+            <h3>What to improve</h3>
+            <div id="debriefImprovements"></div>
+          </section>
+        </div>
+
+        <section class="debrief-card debrief-skills">
+          <h3>Skills</h3>
+          <div id="domainScores" class="domains"></div>
+        </section>
+
+        <section id="guidelineCard" class="debrief-card guideline-card" hidden>
+          <h3>Guideline check</h3>
+          <div id="guidelineBody"></div>
+        </section>
+
+        <section id="debriefDeeper" class="debrief-card" hidden>
+          <h3>Go deeper</h3>
+          <div id="debriefExtras" class="debrief-extras">
+            <details id="idealApproachDetails" class="debrief-details" hidden>
+              <summary>Ideal approach</summary>
+              <ol id="idealApproachList"></ol>
+            </details>
+            <details id="modelAnswerDetails" class="debrief-details" hidden>
+              <summary>Model answer</summary>
+              <p id="modelAnswerText"></p>
+            </details>
+            <details id="reflectionDetails" class="debrief-details" hidden>
+              <summary>Reflection questions</summary>
+              <ul id="reflectionList"></ul>
+            </details>
+            <details id="timelineDetails" class="debrief-details" hidden>
+              <summary>Clinical timeline</summary>
+              <div id="timelineBody"></div>
+            </details>
+          </div>
+        </section>
+
         <div class="eval-disclaimer">
           Simulation feedback generated for nursing education. It may be incomplete or incorrect and must not be used for real clinical decisions.
         </div>
@@ -1620,12 +1822,33 @@
       hintQuestion: document.getElementById("hintQuestion"),
       hintSubmit: document.getElementById("hintSubmit"),
       guidelineCard: document.getElementById("guidelineCard"),
+      guidelineBody: document.getElementById("guidelineBody"),
       evaluationPanel: document.getElementById("evaluationPanel"),
+      debriefHeading: document.getElementById("debriefHeading"),
+      debriefScenario: document.getElementById("debriefScenario"),
       overallScore: document.getElementById("overallScore"),
+      overallLabel: document.getElementById("overallLabel"),
+      debriefFeedback: document.getElementById("debriefFeedback"),
+      debriefFacts: document.getElementById("debriefFacts"),
+      debriefSafety: document.getElementById("debriefSafety"),
+      debriefSafetyHeading: document.getElementById("debriefSafetyHeading"),
+      debriefSafetyBody: document.getElementById("debriefSafetyBody"),
+      debriefProgress: document.getElementById("debriefProgress"),
+      debriefWentWell: document.getElementById("debriefWentWell"),
+      debriefStrengths: document.getElementById("debriefStrengths"),
+      debriefImprove: document.getElementById("debriefImprove"),
+      debriefImprovements: document.getElementById("debriefImprovements"),
       domainScores: document.getElementById("domainScores"),
-      evalMeta: document.getElementById("evalMeta"),
-      evalSections: document.getElementById("evalSections"),
+      debriefDeeper: document.getElementById("debriefDeeper"),
       debriefExtras: document.getElementById("debriefExtras"),
+      idealApproachDetails: document.getElementById("idealApproachDetails"),
+      idealApproachList: document.getElementById("idealApproachList"),
+      modelAnswerDetails: document.getElementById("modelAnswerDetails"),
+      modelAnswerText: document.getElementById("modelAnswerText"),
+      reflectionDetails: document.getElementById("reflectionDetails"),
+      reflectionList: document.getElementById("reflectionList"),
+      timelineDetails: document.getElementById("timelineDetails"),
+      timelineBody: document.getElementById("timelineBody"),
       newSessionButton: document.getElementById("newSessionButton"),
       keyForm: document.getElementById("keyForm"),
       apiKeyInput: document.getElementById("apiKeyInput")
@@ -1984,56 +2207,39 @@
         `${scenario.description}\n${scenario.setting} | ${scenario.difficulty}\n${scenario.patient_label}\n\nLearning focus:\n${objectives}`;
     }
 
-    function renderListSection(title, items, emptyText, unsafe = false) {
-      const section = document.createElement("section");
-      section.className = `eval-section${unsafe ? " unsafe" : ""}`;
-      const heading = document.createElement("h3");
-      heading.textContent = title;
-      const list = document.createElement("ul");
-      const values = Array.isArray(items) && items.length ? items : [emptyText];
-      values.forEach((item) => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        if (!Array.isArray(items) || !items.length) {
-          li.className = "muted";
-        }
-        list.append(li);
-      });
-      section.append(heading, list);
-      return section;
+    function cleanItems(items) {
+      if (!Array.isArray(items)) {
+        return [];
+      }
+      return items
+        .filter((item) => typeof item === "string" && item.trim())
+        .map((item) => item.trim());
     }
 
-    function renderOrderedSection(title, items) {
-      const section = document.createElement("section");
-      section.className = "eval-section";
-      const heading = document.createElement("h3");
-      heading.textContent = title;
-      const list = document.createElement("ol");
+    function dedupeInto(items, seen) {
+      const result = [];
+      cleanItems(items).forEach((item) => {
+        const key = item.toLowerCase();
+        if (seen.has(key)) {
+          return;
+        }
+        seen.add(key);
+        result.push(item);
+      });
+      return result;
+    }
+
+    function bulletList(items) {
+      const list = document.createElement("ul");
       items.forEach((item) => {
         const li = document.createElement("li");
         li.textContent = item;
         list.append(li);
       });
-      section.append(heading, list);
-      return section;
+      return list;
     }
 
-    function renderTextSection(title, text, wide = false) {
-      const section = document.createElement("section");
-      section.className = `eval-section${wide ? " wide" : ""}`;
-      const heading = document.createElement("h3");
-      heading.textContent = title;
-      const body = document.createElement("p");
-      body.textContent = text;
-      section.append(heading, body);
-      return section;
-    }
-
-    function renderTimeline(events) {
-      const section = document.createElement("section");
-      section.className = "eval-section wide";
-      const heading = document.createElement("h3");
-      heading.textContent = "Clinical timeline";
+    function renderTimelineContent(events) {
       const list = document.createElement("div");
       list.className = "timeline";
       events.forEach((event) => {
@@ -2053,8 +2259,7 @@
         row.append(time, body);
         list.append(row);
       });
-      section.append(heading, list);
-      return section;
+      return list;
     }
 
     function safeGuidelineUrl(value) {
@@ -2090,181 +2295,321 @@
       return link;
     }
 
-    function renderGuidelineCard(guideline, protocolSteps) {
-      els.guidelineCard.replaceChildren();
-      if (!guideline) {
-        els.guidelineCard.hidden = true;
-        return;
+    function renderSafety(evaluation) {
+      const seen = new Set();
+      const groups = [
+        ["Critical errors", dedupeInto(evaluation.critical_errors, seen)],
+        ["Unsafe actions", dedupeInto(evaluation.unsafe_actions, seen)],
+        ["Red flags missed", dedupeInto(evaluation.missed_red_flags, seen)]
+      ];
+      els.debriefSafetyBody.replaceChildren();
+      // All clear: a calm, neutral card. The alarm heading and red styling are only for real concerns.
+      const allClear = !groups.some(([, items]) => items.length);
+      els.debriefSafety.classList.toggle("clear", allClear);
+      els.debriefSafetyHeading.textContent = allClear ? "Safety" : "Safety: needs attention";
+      if (allClear) {
+        const calm = document.createElement("p");
+        calm.className = "safety-calm";
+        calm.textContent =
+          "No unsafe actions, critical errors or missed red flags were identified.";
+        els.debriefSafetyBody.append(calm);
+        return seen;
       }
-
-      const heading = document.createElement("h3");
-      heading.textContent = "Guideline";
-      const title = document.createElement("p");
-      title.className = "guideline-title";
-      title.textContent = `${guideline.name}, ${guideline.edition_year}`;
-      const section = document.createElement("p");
-      section.className = "guideline-section";
-      section.textContent = guideline.section_text;
-      els.guidelineCard.append(heading, title, section);
-
-      const primaryLink = guidelineLink("Open the guideline", guideline.url);
-      if (primaryLink) {
-        const paragraph = document.createElement("p");
-        paragraph.append(primaryLink);
-        els.guidelineCard.append(paragraph);
-      }
-
-      if (Array.isArray(guideline.further_reading) && guideline.further_reading.length) {
-        const furtherHeading = document.createElement("h3");
-        furtherHeading.textContent = "Further reading";
-        const list = document.createElement("ul");
-        guideline.further_reading.forEach((item) => {
-          if (!item) {
-            return;
-          }
-          const entry = document.createElement("li");
-          const label = `${item.title || "Guideline"}, ${item.edition_year || ""}`.trim();
-          const link = guidelineLink(label, item.url);
-          entry.textContent = link ? "" : label;
-          if (link) {
-            entry.append(link);
-          }
-          list.append(entry);
-        });
-        els.guidelineCard.append(furtherHeading, list);
-      }
-
-      if (Array.isArray(protocolSteps) && protocolSteps.length) {
-        const protocolHeading = document.createElement("h3");
-        protocolHeading.textContent = "Protocol steps";
-        const list = document.createElement("ul");
-        list.className = "protocol-list";
-        protocolSteps.forEach((step) => {
-          const item = document.createElement("li");
-          const status = document.createElement("span");
-          status.className = `protocol-status ${step.status || "missed"}`;
-          status.textContent = step.status || "missed";
-          const id = document.createElement("span");
-          id.textContent = ` ${step.id}`;
-          item.append(status, id);
-          list.append(item);
-        });
-        els.guidelineCard.append(protocolHeading, list);
-      }
-
-      els.guidelineCard.hidden = false;
+      groups.forEach(([title, items]) => {
+        if (!items.length) {
+          return;
+        }
+        const group = document.createElement("div");
+        group.className = "safety-group";
+        const heading = document.createElement("h4");
+        heading.textContent = title;
+        group.append(heading, bulletList(items));
+        els.debriefSafetyBody.append(group);
+      });
+      return seen;
     }
 
-    function renderEvaluation(evaluation, guideline = state.guideline) {
-      const debrief = evaluation.debrief || {};
-      const scores = evaluation.domain_scores || {};
-      els.overallScore.textContent = Number(evaluation.overall_score || 0).toFixed(1);
-      els.domainScores.innerHTML = "";
-      els.evalMeta.innerHTML = "";
+    function renderProgress(evaluation, debrief, safetySeen) {
+      const strengths = cleanItems(evaluation.strengths);
+      const missed = dedupeInto(debrief.what_was_missed, safetySeen);
+      const learning = cleanItems(evaluation.recommended_learning);
 
+      els.debriefStrengths.replaceChildren();
+      if (strengths.length) {
+        els.debriefStrengths.append(bulletList(strengths));
+      }
+
+      els.debriefImprovements.replaceChildren();
+      [
+        ["What was missed", missed],
+        ["Recommended learning", learning]
+      ].forEach(([title, items]) => {
+        if (!items.length) {
+          return;
+        }
+        const group = document.createElement("div");
+        group.className = "improve-group";
+        const heading = document.createElement("h4");
+        heading.textContent = title;
+        group.append(heading, bulletList(items));
+        els.debriefImprovements.append(group);
+      });
+
+      const hasWell = strengths.length > 0;
+      const hasImprove = missed.length > 0 || learning.length > 0;
+      els.debriefWentWell.hidden = !hasWell;
+      els.debriefImprove.hidden = !hasImprove;
+      els.debriefProgress.hidden = !hasWell && !hasImprove;
+      els.debriefProgress.classList.toggle("single", hasWell !== hasImprove);
+    }
+
+    function renderSkills(scores) {
+      els.domainScores.replaceChildren();
       Object.entries(domainLabels).forEach(([key, label]) => {
-        const score = Number(scores[key] || 0);
+        const raw = scores[key];
+        const hasScore =
+          raw !== null &&
+          raw !== undefined &&
+          raw !== "" &&
+          Number.isFinite(Number(raw));
+        const score = hasScore ? Number(raw) : 0;
+
         const row = document.createElement("div");
         row.className = "domain-row";
 
         const name = document.createElement("span");
         name.textContent = label;
         const value = document.createElement("strong");
-        value.textContent = `${score}/5`;
+        value.textContent = hasScore ? `${score}/5` : "Not scored";
 
         const bar = document.createElement("div");
         bar.className = "bar";
+        bar.setAttribute("aria-hidden", "true");
         const fill = document.createElement("i");
-        fill.style.width = `${Math.max(0, Math.min(100, (score / 5) * 100))}%`;
+        fill.style.width = hasScore
+          ? `${Math.max(0, Math.min(100, (score / 5) * 100))}%`
+          : "0%";
         bar.append(fill);
 
         row.append(name, value, bar);
         els.domainScores.append(row);
       });
+    }
+
+    function renderGuidelineCard(guideline, protocolSteps, references) {
+      const body = els.guidelineBody;
+      body.replaceChildren();
+      const steps = Array.isArray(protocolSteps)
+        ? protocolSteps.filter((step) => step && step.status)
+        : [];
+      const refs = cleanItems(references);
+      const hasGuideline = Boolean(guideline) && typeof guideline === "object";
+
+      if (!hasGuideline && !steps.length && !refs.length) {
+        els.guidelineCard.hidden = true;
+        return;
+      }
+
+      const statusWords = { met: "Met", partial: "Partly met", missed: "Missed" };
+      if (steps.length) {
+        const group = document.createElement("div");
+        group.className = "guideline-group";
+        const list = document.createElement("ul");
+        list.className = "protocol-list";
+        steps.forEach((step) => {
+          const item = document.createElement("li");
+          item.className = "protocol-item";
+          const status = document.createElement("span");
+          status.className = `protocol-status ${step.status}`;
+          status.textContent = statusWords[step.status] || "Missed";
+          const text = document.createElement("span");
+          text.className = "protocol-text";
+          text.textContent =
+            typeof step.text === "string" && step.text.trim()
+              ? step.text.trim()
+              : `Step ${step.id}`;
+          item.append(status, text);
+          if (step.evidence_turn !== null && step.evidence_turn !== undefined) {
+            const evidence = document.createElement("span");
+            evidence.className = "protocol-evidence";
+            evidence.textContent = `message ${step.evidence_turn}`;
+            item.append(evidence);
+          }
+          list.append(item);
+        });
+        group.append(list);
+        body.append(group);
+      }
+
+      if (hasGuideline) {
+        const group = document.createElement("div");
+        group.className = "guideline-group";
+        if (guideline.name) {
+          const title = document.createElement("p");
+          title.className = "guideline-title";
+          title.textContent = guideline.edition_year
+            ? `${guideline.name}, ${guideline.edition_year}`
+            : guideline.name;
+          group.append(title);
+        }
+        if (guideline.section_text) {
+          const section = document.createElement("p");
+          section.className = "guideline-section";
+          section.textContent = guideline.section_text;
+          group.append(section);
+        }
+        const primaryLink = guidelineLink("Open the guideline", guideline.url);
+        if (primaryLink) {
+          const paragraph = document.createElement("p");
+          paragraph.append(primaryLink);
+          group.append(paragraph);
+        }
+        if (Array.isArray(guideline.further_reading) && guideline.further_reading.length) {
+          const furtherHeading = document.createElement("h4");
+          furtherHeading.textContent = "Further reading";
+          const list = bulletList([]);
+          guideline.further_reading.forEach((item) => {
+            if (!item) {
+              return;
+            }
+            const entry = document.createElement("li");
+            const label = `${item.title || "Guideline"}, ${item.edition_year || ""}`.trim();
+            const link = guidelineLink(label, item.url);
+            entry.textContent = link ? "" : label;
+            if (link) {
+              entry.append(link);
+            }
+            list.append(entry);
+          });
+          if (list.children.length) {
+            group.append(furtherHeading, list);
+          }
+        }
+        if (group.children.length) {
+          body.append(group);
+        }
+      }
+
+      const guidelineName = hasGuideline && guideline.name
+        ? String(guideline.name).trim().toLowerCase()
+        : "";
+      const alsoReferenced = refs.filter((ref) => ref.trim().toLowerCase() !== guidelineName);
+      if (alsoReferenced.length) {
+        const group = document.createElement("div");
+        group.className = "guideline-group";
+        const heading = document.createElement("h4");
+        heading.textContent = "Also referenced";
+        group.append(heading, bulletList(alsoReferenced));
+        body.append(group);
+      }
+
+      els.guidelineCard.hidden = false;
+    }
+
+    function renderDeeper(debrief) {
+      els.idealApproachDetails.open = false;
+      els.modelAnswerDetails.open = false;
+      els.reflectionDetails.open = false;
+      els.timelineDetails.open = false;
+      const ideal = cleanItems(debrief.ideal_approach);
+      els.idealApproachList.replaceChildren();
+      ideal.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        els.idealApproachList.append(li);
+      });
+      els.idealApproachDetails.hidden = ideal.length === 0;
+
+      const modelAnswer =
+        typeof debrief.model_answer === "string" ? debrief.model_answer.trim() : "";
+      els.modelAnswerText.textContent = modelAnswer;
+      els.modelAnswerDetails.hidden = modelAnswer === "";
+
+      const questions = cleanItems(debrief.reflection_questions);
+      els.reflectionList.replaceChildren();
+      questions.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        els.reflectionList.append(li);
+      });
+      els.reflectionDetails.hidden = questions.length === 0;
+
+      const timeline = Array.isArray(debrief.timeline) ? debrief.timeline : [];
+      els.timelineBody.replaceChildren();
+      if (timeline.length) {
+        els.timelineBody.append(renderTimelineContent(timeline));
+      }
+      els.timelineDetails.hidden = timeline.length === 0;
+
+      els.debriefDeeper.hidden =
+        ideal.length === 0 && !modelAnswer && questions.length === 0 && timeline.length === 0;
+    }
+
+    function renderEvaluation(evaluation, guideline = state.guideline) {
+      const debrief = evaluation.debrief || {};
+      const scores = evaluation.domain_scores || {};
+      const overall = Number(evaluation.overall_score || 0);
+      const scaleLabels = [
+        "Absent or unsafe",
+        "Very poor",
+        "Below the expected level",
+        "Competent",
+        "Strong",
+        "Excellent"
+      ];
+      const labelIndex = Math.max(0, Math.min(5, Math.round(overall)));
+
+      els.overallScore.textContent = overall.toFixed(1);
+      els.overallLabel.textContent = scaleLabels[labelIndex];
+      els.debriefScenario.textContent = els.chatTitle.textContent || "";
+      els.debriefFeedback.textContent = evaluation.feedback_to_student || "";
 
       const penalty = Number(evaluation.hint_penalty || 0);
-      const meta = [
-        penalty > 0 ? `Hint penalty -${penalty.toFixed(1)}` : "No hint penalty",
-        debrief.time_to_escalation_minutes == null
-          ? "Never escalated"
-          : `Escalated at ${formatMinutes(debrief.time_to_escalation_minutes)}`,
-        `Target ${formatMinutes(debrief.escalation_target_minutes || 10)}`,
-        `${Array.isArray(debrief.actions_taken) ? debrief.actions_taken.length : 0} clinical actions`
+      const target = formatMinutes(debrief.escalation_target_minutes || 10);
+      const facts = [
+        {
+          text: penalty > 0 ? `Hint penalty -${penalty.toFixed(1)}` : "No hint penalty",
+          warn: penalty > 0
+        },
+        {
+          text:
+            debrief.time_to_escalation_minutes == null
+              ? `Never escalated (target ${target})`
+              : `Escalated at ${formatMinutes(debrief.time_to_escalation_minutes)} (target ${target})`,
+          warn: false
+        },
+        {
+          text: (() => {
+            const count = Array.isArray(debrief.actions_taken) ? debrief.actions_taken.length : 0;
+            return `${count} clinical action${count === 1 ? "" : "s"}`;
+          })(),
+          warn: false
+        }
       ];
-      meta.forEach((text, index) => {
+      els.debriefFacts.replaceChildren();
+      facts.forEach((fact) => {
         const item = document.createElement("span");
-        item.textContent = text;
-        if (index === 0 && penalty > 0) {
+        item.textContent = fact.text;
+        if (fact.warn) {
           item.className = "warn";
         }
-        els.evalMeta.append(item);
+        els.debriefFacts.append(item);
       });
 
-      els.evalSections.innerHTML = "";
-      els.evalSections.append(
-        renderListSection("What went well", evaluation.strengths, "None recorded."),
-        renderListSection(
-          "What was missed",
-          debrief.what_was_missed,
-          "Nothing important was missed."
-        ),
-        renderListSection(
-          "Red flags missed",
-          evaluation.missed_red_flags,
-          "None identified."
-        ),
-        renderListSection(
-          "Unsafe actions",
-          evaluation.unsafe_actions,
-          "None identified.",
-          true
-        ),
-        renderListSection(
-          "Critical errors",
-          evaluation.critical_errors,
-          "None identified.",
-          true
-        ),
-        renderListSection(
-          "Recommended learning",
-          evaluation.recommended_learning,
-          "None recorded."
-        )
-      );
+      const safetySeen = renderSafety(evaluation);
+      renderProgress(evaluation, debrief, safetySeen);
+      renderSkills(scores);
+      renderGuidelineCard(guideline, evaluation.protocol_steps, debrief.guideline_references);
+      renderDeeper(debrief);
 
-      const feedback = document.createElement("section");
-      feedback.className = "eval-section feedback";
-      const feedbackHeading = document.createElement("h3");
-      feedbackHeading.textContent = "Feedback";
-      const feedbackText = document.createElement("p");
-      feedbackText.textContent = evaluation.feedback_to_student;
-      feedback.append(feedbackHeading, feedbackText);
-      els.evalSections.append(feedback);
-
-      els.debriefExtras.innerHTML = "";
-      if (Array.isArray(debrief.ideal_approach) && debrief.ideal_approach.length) {
-        els.debriefExtras.append(renderOrderedSection("Ideal approach", debrief.ideal_approach));
-      }
-      if (debrief.model_answer) {
-        els.debriefExtras.append(renderTextSection("Model answer", debrief.model_answer, true));
-      }
-      if (Array.isArray(debrief.reflection_questions) && debrief.reflection_questions.length) {
-        els.debriefExtras.append(
-          renderListSection("Reflection questions", debrief.reflection_questions, "")
-        );
-      }
-      if (Array.isArray(debrief.guideline_references) && debrief.guideline_references.length) {
-        els.debriefExtras.append(
-          renderListSection("Guidelines", debrief.guideline_references, "")
-        );
-      }
-      if (Array.isArray(debrief.timeline) && debrief.timeline.length) {
-        els.debriefExtras.append(renderTimeline(debrief.timeline));
-      }
-
-      renderGuidelineCard(guideline, evaluation.protocol_steps);
       els.evaluationPanel.hidden = false;
-      els.evaluationPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      const reduceMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      els.debriefHeading.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start"
+      });
+      els.debriefHeading.focus({ preventScroll: true });
     }
 
     function readHistory() {
@@ -2671,13 +3016,30 @@
       showEmptyState();
       els.evaluationPanel.hidden = true;
       els.guidelineCard.hidden = true;
-      els.guidelineCard.replaceChildren();
-      els.hintQuestion.value = "";
-      els.domainScores.innerHTML = "";
-      els.evalMeta.innerHTML = "";
-      els.evalSections.innerHTML = "";
-      els.debriefExtras.innerHTML = "";
+      els.guidelineBody.replaceChildren();
+      els.debriefScenario.textContent = "";
+      els.debriefFeedback.textContent = "";
+      els.debriefFacts.replaceChildren();
+      els.debriefSafetyBody.replaceChildren();
+      els.debriefProgress.hidden = false;
+      els.debriefProgress.classList.remove("single");
+      els.debriefWentWell.hidden = false;
+      els.debriefImprove.hidden = false;
+      els.debriefStrengths.replaceChildren();
+      els.debriefImprovements.replaceChildren();
+      els.debriefDeeper.hidden = true;
+      els.idealApproachDetails.hidden = true;
+      els.idealApproachList.replaceChildren();
+      els.modelAnswerDetails.hidden = true;
+      els.modelAnswerText.textContent = "";
+      els.reflectionDetails.hidden = true;
+      els.reflectionList.replaceChildren();
+      els.timelineDetails.hidden = true;
+      els.timelineBody.replaceChildren();
+      els.domainScores.replaceChildren();
       els.overallScore.textContent = "0.0";
+      els.overallLabel.textContent = "Absent or unsafe";
+      els.hintQuestion.value = "";
       els.sessionInfo.hidden = true;
       els.sessionInfo.textContent = "";
       els.chatTitle.textContent = "Select a scenario";

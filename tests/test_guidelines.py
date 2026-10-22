@@ -331,7 +331,12 @@ def test_full_mode_end_normalises_protocol_and_notes_counts(
 
         steps = evaluation["protocol_steps"]
         assert len(steps) == 5
-        assert steps[0] == {"id": "step-1", "status": "met", "evidence_turn": 1}
+        assert steps[0] == {
+            "id": "step-1",
+            "status": "met",
+            "evidence_turn": 1,
+            "text": "Call for emergency help and stay with the patient.",
+        }
         assert [step["status"] for step in steps[1:]] == ["missed", "missed", "missed", "missed"]
         assert "Protocol review: 1 met, 0 partial, 4 missed." in evaluation["feedback_to_student"]
 

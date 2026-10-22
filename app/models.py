@@ -119,6 +119,7 @@ class ProtocolStepResult(BaseModel):
     id: str
     status: Literal["met", "partial", "missed"]
     evidence_turn: int | None = Field(default=None, ge=1)
+    text: str | None = None
 
 
 class StartResponse(BaseModel):

@@ -21,7 +21,7 @@ This is an educational simulation. It is not a clinical decision-support tool, a
 - Automatic evaluation after `END` or 12 student messages
 - Six rubric domains: red flag recognition, history completeness, prioritisation, safety, communication and empathy, and time to escalation
 - A debrief with timeline, missed findings, critical errors, model answer, ideal approach, reflection questions, guideline card and protocol-step status
-- Browser chat UI with local saved debriefs and a responsive monitor layout
+- Browser chat UI with local saved debriefs and a responsive monitor layout. The debrief reads in one order: summary and feedback, safety, what went well and what to improve, skills, guideline check, then closed Go deeper disclosures.
 - WhatsApp Cloud API webhook with per-phone sessions and text clinical commands
 - Local JSONL transcript logs
 - API and webhook tests with no external model calls
@@ -229,7 +229,7 @@ The API exposes a merged evaluation and debrief:
   "feedback_to_student": "...",
   "hint_penalty": 0.3,
   "protocol_steps": [
-    {"id": "step-1", "status": "met", "evidence_turn": 2}
+    {"id": "step-1", "status": "met", "evidence_turn": 2, "text": "Call for emergency help and stay with the patient."}
   ],
   "debrief": {
     "what_was_missed": ["..."],
@@ -247,7 +247,7 @@ The API exposes a merged evaluation and debrief:
 
 `overall_score` is recomputed by the server as the mean of the six whole-number domains minus the hint penalty, rounded to one decimal place. Red flag recognition, history completeness, safety and time to escalation come from the deterministic assessor; prioritisation and communication/empathy come from the evaluator. This prevents inconsistent arithmetic and keeps objective scores reproducible.
 
-In full guideline mode, `protocol_steps` is `null` only when the feature is off. The server keeps configured order, drops unknown or duplicate IDs, treats missing IDs as `missed`, and appends a deterministic count sentence to `feedback_to_student`. The dose guard removes any sentence in `strengths`, `recommended_learning` or `feedback_to_student` that names a dose not present in the supplied steps.
+In full guideline mode, `protocol_steps` is `null` only when the feature is off. The server keeps configured order, drops unknown or duplicate IDs, treats missing IDs as `missed`, and appends a deterministic count sentence to `feedback_to_student`. Each protocol step also carries the stored step `text`, so the page never shows raw step IDs. The dose guard removes any sentence in `strengths`, `recommended_learning` or `feedback_to_student` that names a dose not present in the supplied steps.
 
 ## WhatsApp Cloud API
 

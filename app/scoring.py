@@ -295,7 +295,10 @@ def normalize_protocol_steps(
     raw_steps: list[Any] | None, configured_steps: Any
 ) -> list[ProtocolStepResult]:
     configured = list(configured_steps or ())
-    configured_ids = {_step_value(step, "id") for step in configured}
+    configured_text = {
+        _step_value(step, "id"): _step_value(step, "text") or None
+        for step in configured
+    }
     supplied: dict[str, ProtocolStepResult] = {}
     for item in raw_steps or ():
         if isinstance(item, ProtocolStepResult):
@@ -310,7 +313,7 @@ def normalize_protocol_steps(
             continue
         if step_id in supplied:
             continue
-        if step_id not in configured_ids:
+        if step_id not in configured_text:
             continue
         if status not in {"met", "partial", "missed"}:
             continue
@@ -324,6 +327,7 @@ def normalize_protocol_steps(
             id=step_id,
             status=status,  # type: ignore[arg-type]
             evidence_turn=evidence_turn,
+            text=configured_text[step_id],
         )
 
     return [
@@ -333,6 +337,7 @@ def normalize_protocol_steps(
                 id=_step_value(step, "id"),
                 status="missed",
                 evidence_turn=None,
+                text=configured_text.get(_step_value(step, "id")),
             ),
         )
         for step in configured
