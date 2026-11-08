@@ -2129,6 +2129,293 @@
     .age-groups .field-label {
       margin: 0 6px 0 0;
     }
+
+    /* --- App shell --- */
+    .side-label {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .side-note {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin: 0;
+    }
+
+    .side-nav .side-note { display: none; }
+
+    .condition-list { display: none; }
+
+    /* "What do you do?" */
+    .clinical-actions {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 18px;
+      background: var(--teal-soft);
+    }
+
+    .action-title {
+      margin: 0 0 4px;
+      font-size: 1.1rem;
+      color: var(--ink);
+    }
+
+    .action-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin: 10px 0 12px;
+    }
+
+    .action-form textarea {
+      width: 100%;
+      min-height: 88px;
+      padding: 12px 14px;
+      border: 2px solid var(--teal);
+      border-radius: 14px;
+      background: var(--white);
+      font-size: 1rem;
+      line-height: 1.45;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .action-form textarea:focus-visible {
+      outline: 3px solid var(--teal-dark);
+      outline-offset: 2px;
+    }
+
+    .action-form button {
+      width: 100%;
+      min-height: 46px;
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .action-help {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.85rem;
+    }
+
+    .action-log {
+      max-height: none;
+    }
+
+    /* Big screens: one page, no page scroll. Side navigation, the work fills the screen and
+       each column scrolls on its own. Phones and tablets keep the stacked layout. */
+    @media (min-width: 1200px) and (min-height: 640px) {
+      body { overflow: hidden; }
+
+      .shell {
+        box-sizing: border-box;
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 14px 20px;
+        width: 100%;
+        max-width: none;
+        height: 100vh;
+        margin: 0;
+        padding: 14px 20px;
+      }
+
+      .topbar {
+        grid-column: 1 / -1;
+        flex-wrap: nowrap;
+        margin: 0;
+        gap: 20px;
+      }
+
+      .topbar .brand { flex: 0 0 auto; }
+
+      .topbar .start-bar {
+        order: 0;
+        flex: 1 1 auto;
+        flex-basis: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+      }
+
+      .topbar .start-bar #scenarioSelect { min-width: 0; width: 260px; }
+      .topbar .start-bar #difficultySelect { min-width: 0; width: 250px; }
+      .topbar .start-bar #studentName { width: 170px; }
+      .topbar .badge { display: none; }
+
+      .side-nav {
+        grid-column: 1;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 16px 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .side-nav .tabs {
+        flex-direction: column;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+      }
+
+      .side-nav .tab { width: 100%; text-align: left; }
+      .side-nav .age-groups,
+      .side-nav .modes { flex-direction: column; align-items: stretch; gap: 6px; margin: 0; }
+      .side-nav .age-groups { flex-direction: row; flex-wrap: wrap; }
+      .side-nav .age-groups .side-label { flex-basis: 100%; }
+      .side-nav .age-groups .mode-button { flex: 1 1 0; }
+      .side-nav .modes .mode-button { text-align: left; border-radius: 12px; }
+      .side-nav .side-section { display: grid; gap: 18px; }
+      .side-nav .side-note { display: block; margin-top: auto; }
+
+      .workspace {
+        grid-column: 2;
+        grid-row: 2;
+        min-height: 0;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+      }
+
+      .page-footer { display: none; }
+
+      /* Chat cases: three columns that fill the height. */
+      .layout {
+        grid-template-columns: 280px minmax(0, 1fr) 340px;
+        align-items: stretch;
+      }
+
+      .layout > .setup-panel,
+      .layout > .chat-panel,
+      .layout > .clinical-panel {
+        position: static;
+        height: calc(100vh - 128px);
+        min-height: 0;
+        max-height: none;
+      }
+
+      .layout > .setup-panel,
+      .layout > .clinical-panel { overflow-y: auto; }
+
+      .clinical-panel .vitals-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+      /* Right column: monitor, then straight to "What do you do?", then the details. */
+      .layout > .clinical-panel { display: flex; flex-direction: column; }
+      .clinical-panel > .clinical-actions { order: 1; margin-top: 12px; }
+      .clinical-panel > .clinical-meta { order: 2; margin-top: 12px; }
+      .clinical-panel > #hintButton,
+      .clinical-panel > #hintAsk,
+      .clinical-panel > .notice { order: 3; }
+
+      /* Left column: the session buttons first, the case description below. */
+      .layout > .setup-panel { display: flex; flex-direction: column; }
+      .layout > .setup-panel > *,
+      .layout > .clinical-panel > * { flex-shrink: 0; }
+      .setup-panel > #leaveButton { min-height: 44px; }
+      .setup-panel > #sessionInfo { order: -3; margin-top: 0; }
+      .setup-panel > #endButton { order: -2; margin-top: 10px; }
+      .setup-panel > #leaveButton { order: -1; margin: 8px 0 18px; }
+
+      /* The case title gets the full width; the status wraps under it. */
+      .chat-head { flex-wrap: wrap; }
+      .chat-head > :first-child { flex: 1 1 260px; min-width: 0; }
+
+      @media (max-width: 1499px) {
+        .layout { grid-template-columns: 250px minmax(0, 1fr) 320px; }
+      }
+
+      /* Learning and integrated questions: a condition list beside the content. */
+      .study-panel { margin-bottom: 0; }
+
+      #learningPanel,
+      #integratedPanel {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 128px);
+        box-sizing: border-box;
+      }
+
+      #learningPanel[hidden],
+      #integratedPanel[hidden] { display: none; }
+
+      #learningPanel .study-picker,
+      #integratedPanel .study-picker { display: none; }
+
+      .study-split {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 22px;
+        flex: 1 1 auto;
+        min-height: 0;
+        margin-top: 12px;
+      }
+
+      .condition-list {
+        display: grid;
+        align-content: start;
+        gap: 4px;
+        overflow-y: auto;
+        padding-right: 6px;
+      }
+
+      .condition-item {
+        padding: 9px 12px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: var(--ink-soft);
+        text-align: left;
+        font-size: 0.92rem;
+      }
+
+      .condition-item:hover { background: var(--paper); }
+
+      .condition-item[aria-current="true"] {
+        background: var(--teal);
+        color: var(--white);
+        font-weight: 700;
+      }
+
+      .study-scroll {
+        min-height: 0;
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+
+      .study-scroll > h2:first-child { margin-top: 0; }
+
+      /* Written cases: the case on the left, the answers on the right. */
+      .written-split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+        gap: 24px;
+        margin-top: 8px;
+      }
+
+      .written-split[hidden] { display: none; }
+
+      .written-left,
+      .written-right {
+        max-height: calc(100vh - 300px);
+        overflow-y: auto;
+        padding-right: 8px;
+      }
+
+      .written-left .scenario-box { margin-top: 0; }
+      .written-right > h3:first-child { margin-top: 0; }
+    }
   </style>
 </head>
 <body>
@@ -2163,10 +2450,28 @@
       <div class="badge">Education simulation</div>
     </header>
 
-    <nav class="tabs" role="tablist" aria-label="Sister Vuo sections">
-      <button id="tabLearning" class="tab" type="button" role="tab" aria-selected="false" aria-controls="learningPanel" tabindex="-1">Learning</button>
-      <button id="tabScenarios" class="tab" type="button" role="tab" aria-selected="true" aria-controls="scenariosPanel" tabindex="0">Clinical Scenarios</button>
-    </nav>
+    <aside class="side-nav" aria-label="Navigation">
+      <nav class="tabs" role="tablist" aria-label="Sister Vuo sections">
+        <button id="tabLearning" class="tab" type="button" role="tab" aria-selected="false" aria-controls="learningPanel" tabindex="-1">Learning</button>
+        <button id="tabScenarios" class="tab" type="button" role="tab" aria-selected="true" aria-controls="scenariosPanel" tabindex="0">Clinical Scenarios</button>
+      </nav>
+      <div id="scenarioNav" class="side-section">
+      <div class="age-groups" role="group" aria-label="Patient age group">
+        <span class="side-label">Patients</span>
+        <button class="mode-button age-button" type="button" data-age="adult" aria-pressed="true">Adults</button>
+        <button class="mode-button age-button" type="button" data-age="paediatric" aria-pressed="false">Children</button>
+      </div>
+      <div class="modes" role="group" aria-label="Kind of case">
+        <span class="side-label">Case type</span>
+        <button class="mode-button" type="button" data-mode="chat" aria-pressed="true">Chat cases</button>
+        <button class="mode-button" type="button" data-mode="written" aria-pressed="false">Written cases</button>
+        <button class="mode-button" type="button" data-mode="integrated" aria-pressed="false" hidden>Integrated questions</button>
+      </div>
+      </div>
+      <p class="side-note">Education simulation with fictional patients. Not clinical advice.</p>
+    </aside>
+
+    <div class="workspace">
 
     <section id="learningPanel" class="panel study-panel" role="tabpanel" aria-labelledby="tabLearning" hidden>
       <h2>Learning</h2>
@@ -2177,21 +2482,14 @@
           <select id="conditionSelect"></select>
         </div>
       </div>
-      <div id="learningContent" aria-live="polite"></div>
+      <div class="study-split">
+        <nav id="conditionList" class="condition-list" aria-label="Conditions"></nav>
+        <div id="learningContent" class="study-scroll" aria-live="polite"></div>
+      </div>
     </section>
 
     <div id="scenariosPanel" role="tabpanel" aria-labelledby="tabScenarios">
       <p id="studyError" class="review-box" role="alert" hidden></p>
-      <div class="age-groups" role="group" aria-label="Patient age group">
-        <span class="field-label">Patients</span>
-        <button class="mode-button age-button" type="button" data-age="adult" aria-pressed="true">Adults</button>
-        <button class="mode-button age-button" type="button" data-age="paediatric" aria-pressed="false">Children</button>
-      </div>
-      <div class="modes" role="group" aria-label="Kind of case">
-        <button class="mode-button" type="button" data-mode="chat" aria-pressed="true">Chat cases</button>
-        <button class="mode-button" type="button" data-mode="written" aria-pressed="false">Written cases</button>
-        <button class="mode-button" type="button" data-mode="integrated" aria-pressed="false" hidden>Integrated questions</button>
-      </div>
 
     <main class="layout">
       <aside class="panel setup-panel">
@@ -2277,13 +2575,12 @@
           <div><span>Hints used</span><strong id="hintCount">0</strong></div>
         </div>
         <div class="clinical-actions">
-          <div class="eyebrow">What do you do?</div>
+          <h3 class="action-title"><label for="actionInput">What do you do?</label></h3>
+          <p class="action-help">One action at a time: what you assess, give (with the dose) or who you call. Each action takes clinical time.</p>
           <form id="actionForm" class="action-form">
-            <label class="sr-only" for="actionInput">Type one nursing action</label>
-            <input id="actionInput" type="text" maxlength="300" autocomplete="off" placeholder="One action at a time, for example: take a full set of observations">
-            <button id="actionSubmit" class="secondary" type="submit">Do it</button>
+            <textarea id="actionInput" rows="3" maxlength="300" placeholder="For example: give oxygen by face mask to keep the saturation at 94 to 98 percent"></textarea>
+            <button id="actionSubmit" class="primary" type="submit">Do it</button>
           </form>
-          <p class="action-help">Type what you assess, give or who you call, with doses where they apply. Each action takes clinical time.</p>
           <div id="actionList" class="action-log">
             <p class="history-empty">Start a session to assess and treat the patient.</p>
           </div>
@@ -2386,7 +2683,8 @@
           </div>
           <button id="writtenStart" class="primary inline-button" type="button">Start case</button>
         </div>
-        <div id="writtenWork" hidden>
+        <div id="writtenWork" class="written-split" hidden>
+          <div class="written-left">
           <div id="scenarioBox" class="scenario-box" aria-label="Scenario"></div>
 
           <h3>Ask for more information</h3>
@@ -2409,6 +2707,8 @@
             <button id="askButton" class="secondary inline-button" type="submit">Ask</button>
           </form>
           <ul id="askLog" class="ask-log" aria-live="polite"></ul>
+          </div>
+          <div class="written-right">
 
           <h3 id="q1Text"></h3>
           <div id="q1Table" class="answer-table"></div>
@@ -2423,6 +2723,7 @@
             <button id="writtenLeave" class="secondary" type="button">Leave this case</button>
             <span class="muted-note">After you submit, the answers cannot be changed.</span>
           </div>
+          </div>
         </div>
         <div id="writtenResult" hidden></div>
       </section>
@@ -2436,8 +2737,12 @@
             <select id="integratedCondition"></select>
           </div>
         </div>
-        <div id="integratedList"></div>
+        <div class="study-split">
+          <nav id="integratedConditionList" class="condition-list" aria-label="Conditions"></nav>
+          <div id="integratedList" class="study-scroll"></div>
+        </div>
       </section>
+    </div>
     </div>
 
     <footer class="page-footer">
@@ -2858,7 +3163,7 @@
       const canAct = Boolean(state.sessionId) && !state.archived && state.status === "active";
       if (form) {
         form.hidden = !canAct;
-        form.querySelector("input").disabled = state.busy;
+        form.querySelector("textarea").disabled = state.busy;
         form.querySelector("button").disabled = state.busy;
       }
       els.actionList.replaceChildren();
@@ -3804,6 +4109,12 @@
     document.getElementById("leaveButton").addEventListener("click", () => {
       if (window.confirm("Leave this case without an evaluation? You can then pick another case.")) newSession();
     });
+    document.getElementById("actionInput").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        document.getElementById("actionForm").requestSubmit();
+      }
+    });
     document.getElementById("actionForm").addEventListener("submit", async (event) => {
       event.preventDefault();
       const input = document.getElementById("actionInput");
@@ -3957,6 +4268,7 @@
         if (selected && focus) tab.focus();
       }
       studyEls.learningPanel.hidden = name !== "learning";
+      document.getElementById("scenarioNav").hidden = name !== "scenarios";
       studyEls.scenariosPanel.hidden = name !== "scenarios";
       const hash = name === "learning" ? "#learning" : "#scenarios";
       if (location.hash !== hash) history.replaceState(null, "", hash);
@@ -4042,6 +4354,10 @@
         studyEls.conditionSelect.replaceChildren(
           ...data.items.map((item) => h("option", { value: item.id, text: item.title }))
         );
+        fillConditionList(document.getElementById("conditionList"), data.items, (id) => {
+          studyEls.conditionSelect.value = id;
+          showCondition(id);
+        });
         study.conditionsLoaded = true;
         if (data.items.length) showCondition(data.items[0].id);
         else studyEls.learningContent.replaceChildren(h("p", { className: "muted-note", text: "No conditions are available yet." }));
@@ -4059,7 +4375,23 @@
       actions: "Clinical actions and rationale"
     };
 
+    function fillConditionList(list, items, onPick) {
+      list.replaceChildren(...items.map((item) => {
+        const button = h("button", { type: "button", className: "condition-item", "data-id": item.id, text: item.title });
+        button.addEventListener("click", () => onPick(item.id));
+        return button;
+      }));
+    }
+
+    function markCondition(list, id) {
+      for (const button of list.querySelectorAll(".condition-item")) {
+        if (button.dataset.id === id) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      }
+    }
+
     async function showCondition(id) {
+      markCondition(document.getElementById("conditionList"), id);
       try {
         const data = await api(`/v1/learning/conditions/${encodeURIComponent(id)}`);
         const parts = [h("h2", { text: data.title })];
@@ -4375,6 +4707,10 @@
         try {
           const data = await api("/v1/learning/conditions");
           select.replaceChildren(...data.items.map((item) => h("option", { value: item.id, text: item.title })));
+          fillConditionList(document.getElementById("integratedConditionList"), data.items, (id) => {
+            select.value = id;
+            showIntegrated(id);
+          });
           select.addEventListener("change", () => showIntegrated(select.value));
           study.integratedLoaded = true;
         } catch (error) {
@@ -4386,6 +4722,7 @@
     }
 
     async function showIntegrated(conditionId) {
+      markCondition(document.getElementById("integratedConditionList"), conditionId);
       try {
         const data = await api(`/v1/integrated-questions?condition=${encodeURIComponent(conditionId)}`);
         studyEls.integratedList.replaceChildren(...(data.items.length
