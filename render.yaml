@@ -26,6 +26,10 @@ services:
         value: production
       - key: APP_API_KEY
         sync: false
+      # The ACC 200 written cases are private: upload the files from scenarios/private/ as
+      # Secret Files (Environment tab). Render mounts them in /etc/secrets.
+      - key: WRITTEN_CASES_PATH
+        value: /etc/secrets
       # WhatsApp is added later in the Render dashboard (Environment tab): WHATSAPP_VERIFY_TOKEN,
       # WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_APP_SECRET. Until all four are
       # set the webhook stays disabled and the web chat works as normal.
