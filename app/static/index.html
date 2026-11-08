@@ -2226,22 +2226,29 @@
         padding: 14px 20px;
       }
 
+      /* The start controls sit beside the title when they fit, and move to their own row
+         under it when they do not; they never cover the title. */
       .topbar {
         grid-column: 1 / -1;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
+        align-items: flex-end;
         margin: 0;
-        gap: 20px;
+        gap: 12px 20px;
       }
 
-      .topbar .brand { flex: 0 0 auto; }
+      .topbar .brand { flex: 0 0 auto; align-self: center; }
 
       .topbar .start-bar {
         order: 0;
-        flex: 1 1 auto;
+        flex: 0 1 auto;
         flex-basis: auto;
         flex-wrap: nowrap;
         justify-content: flex-end;
+        margin-left: auto;
+        max-width: 100%;
       }
+
+      .topbar .start-bar .field-label { white-space: nowrap; }
 
       .topbar .start-bar #scenarioSelect,
       .topbar .start-bar #difficultySelect {
@@ -2329,7 +2336,7 @@
       .layout > .chat-panel,
       .layout > .clinical-panel {
         position: static;
-        height: calc(100vh - 186px);
+        height: calc(100vh - var(--chrome-h, 123px) - 64px);
         min-height: 0;
         max-height: none;
       }
@@ -2371,7 +2378,7 @@
       #integratedPanel {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 186px);
+        height: calc(100vh - var(--chrome-h, 123px) - 64px);
         box-sizing: border-box;
       }
 
@@ -2436,7 +2443,7 @@
 
       .written-left,
       .written-right {
-        max-height: calc(100vh - 358px);
+        max-height: calc(100vh - var(--chrome-h, 123px) - 236px);
         overflow-y: auto;
         padding-right: 8px;
       }
@@ -4861,6 +4868,20 @@
     selectTab(location.hash === "#learning" ? "learning" : "scenarios");
     setMode("chat");
     syncCaseLocks();
+
+    (function trackChromeHeight() {
+      const parts = [document.querySelector(".topbar"), document.querySelector(".side-nav")];
+      const update = () => {
+        const height = parts.reduce((total, part) => total + (part ? part.offsetHeight : 0), 0);
+        document.documentElement.style.setProperty("--chrome-h", `${height}px`);
+      };
+      update();
+      if (window.ResizeObserver) {
+        const observer = new ResizeObserver(update);
+        parts.forEach((part) => part && observer.observe(part));
+      }
+      window.addEventListener("resize", update);
+    })();
   </script>
 </body>
 </html>
