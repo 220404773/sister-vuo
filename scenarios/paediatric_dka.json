@@ -1,0 +1,414 @@
+{
+  "id": "paediatric_dka",
+  "order": 12,
+  "age_group": "paediatric",
+  "title": "Child with weight loss, vomiting and fast breathing",
+  "setting": "District hospital casualty, night",
+  "difficulty": "Advanced",
+  "description": "A grandmother brings her 11-year-old granddaughter, who has been losing weight and is now vomiting and drowsy.",
+  "speaker": {
+    "name": "Gogo Thandi Khumalo",
+    "role": "the grandmother and caregiver of the patient",
+    "language": "isiZulu and some English",
+    "style": "Calm but worried. She gives long answers and mentions traditional remedies she has tried."
+  },
+  "patient": {
+    "name": "Ayanda Khumalo",
+    "age": 11,
+    "age_unit": "years",
+    "sex": "female",
+    "occupation": "Grade 5 learner",
+    "living_situation": "Lives with her grandmother"
+  },
+  "presenting_complaint": "Three weeks of drinking a lot and passing much urine, weight loss, then two days of vomiting, tummy pain and fast breathing.",
+  "opening_line": "Nurse, my child is not well. She is vomiting, her stomach is sore and now she is breathing so hard and sleepy.",
+  "personality": "Patient and respectful; she is not sure of medical words.",
+  "case_file": {
+    "history": {
+      "onset": "For about three weeks she has been very thirsty and passing urine often, even at night. Two days ago she started vomiting.",
+      "weight_loss": "Her school dress is loose; she has lost a lot of weight.",
+      "abdominal_pain": "She has pain all over her tummy since yesterday.",
+      "breathing": "She is breathing deeply and fast, and her breath smells sweet, like fruit.",
+      "alertness": "She is sleepy today and answers slowly. No headache yet.",
+      "past_medical_history": "Healthy before this. No known diabetes.",
+      "family_history": "Her late mother had sugar diabetes on injections.",
+      "medications": "Only a herbal mixture the grandmother made.",
+      "allergies": "No known allergies.",
+      "weight": "About 35 kilograms; she was heavier at the start of the year."
+    },
+    "risk_factors": [
+      "new-onset diabetes",
+      "vomiting",
+      "drowsiness",
+      "young age (cerebral oedema risk)"
+    ],
+    "baseline_vitals": {
+      "heart_rate": 132,
+      "systolic_bp": 100,
+      "diastolic_bp": 60,
+      "spo2": 98,
+      "respiratory_rate": 34,
+      "pain_score": 5,
+      "temperature": 37.0
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 3,
+        "systolic_bp": -2,
+        "diastolic_bp": -1,
+        "spo2": 0,
+        "respiratory_rate": 1,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 30,
+      "acceleration_multiplier": 1.3
+    },
+    "escalation_target_minutes": 15,
+    "required_actions": [
+      "glucose_check",
+      "blood_gas",
+      "vitals"
+    ],
+    "critical_actions": [
+      "escalate_doctor"
+    ],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "Thirst, urine and timeline",
+        "triggers": [
+          "thirst",
+          "drink",
+          "urine",
+          "wee",
+          "toilet",
+          "when",
+          "how long",
+          "start"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "weight_loss",
+        "label": "Weight loss",
+        "triggers": [
+          "weight",
+          "thin",
+          "loose",
+          "lost"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "abdominal_pain",
+        "label": "Abdominal pain",
+        "triggers": [
+          "pain",
+          "stomach",
+          "tummy",
+          "abdomen"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "breathing",
+        "label": "Breathing and breath smell",
+        "triggers": [
+          "breath",
+          "smell",
+          "fast",
+          "deep"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "alertness",
+        "label": "Alertness and headache",
+        "triggers": [
+          "sleepy",
+          "drowsy",
+          "alert",
+          "headache",
+          "confus"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "family_history",
+        "label": "Family history",
+        "triggers": [
+          "family",
+          "mother",
+          "diabetes",
+          "sugar"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "past_medical_history",
+        "label": "Past medical history",
+        "triggers": [
+          "medical history",
+          "illness",
+          "before"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications and remedies",
+        "triggers": [
+          "medication",
+          "medicine",
+          "herb",
+          "mixture"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": [
+          "allerg"
+        ],
+        "weight": 1,
+        "required": true
+      }
+    ]
+  },
+  "ground_truth": {
+    "diagnosis": "Diabetic ketoacidosis at first presentation of type 1 diabetes in a child",
+    "forbidden_patient_terms": [
+      "diabetic ketoacidosis",
+      "ketoacidosis",
+      "dka",
+      "type 1 diabetes"
+    ],
+    "differentials": [
+      "diabetic ketoacidosis",
+      "gastroenteritis",
+      "appendicitis",
+      "sepsis"
+    ],
+    "red_flags": [
+      "deep fast breathing",
+      "drowsiness",
+      "vomiting",
+      "fruity breath",
+      "weight loss with thirst and polyuria"
+    ],
+    "expected_actions": [
+      "check capillary glucose and blood ketones, and a venous blood gas with electrolytes",
+      "weigh the child and calculate fluids by weight",
+      "give a 10 millilitres per kilogram 0.9 percent sodium chloride bolus only if she is shocked; otherwise replace the deficit slowly over 48 hours",
+      "start insulin at 0.05 to 0.1 units per kilogram per hour 1 to 2 hours after starting fluids, never as a bolus",
+      "add potassium 40 millimoles per litre to the fluids once the potassium is known and urine is passed",
+      "hourly neurological observations for cerebral oedema (headache, slowing heart rate, rising pressure, falling consciousness); mannitol 0.5 to 1 gram per kilogram or 3 percent saline 2.5 to 5 millilitres per kilogram if it occurs",
+      "no bicarbonate; escalate to the doctor and arrange high care"
+    ]
+  },
+  "clinical_actions": {
+    "vitals": {
+      "minutes": 3,
+      "result": "Weight 35 kg. Dry mouth, capillary refill 3 seconds. Deep sighing breathing. Glasgow Coma Scale 14."
+    },
+    "ecg": {
+      "result": "Sinus tachycardia, peaked T waves are not present."
+    },
+    "aspirin": {
+      "unsafe": true,
+      "result": "Aspirin given.",
+      "warning": "Aspirin is not given to children for this problem; it risks Reye syndrome and bleeding."
+    },
+    "oxygen": {
+      "result": "Oxygen by face mask."
+    },
+    "iv_access": {
+      "result": "Cannula sited; bloods sent for glucose, electrolytes, urea, creatinine and a full blood count."
+    },
+    "glucose_check": {
+      "label": "Glucose and ketones",
+      "description": "Capillary glucose and blood ketones.",
+      "minutes": 2,
+      "category": "assessment",
+      "repeatable": true,
+      "keywords": [
+        "glucose",
+        "sugar",
+        "hgt",
+        "glucometer",
+        "finger prick",
+        "ketone",
+        "dextrostix"
+      ],
+      "result": "Capillary glucose 28.4 mmol/L. Blood ketones 5.6 mmol/L."
+    },
+    "blood_gas": {
+      "label": "Venous blood gas",
+      "description": "Venous gas with electrolytes.",
+      "minutes": 4,
+      "category": "investigation",
+      "keywords": [
+        "blood gas",
+        "venous gas",
+        "vbg",
+        "abg",
+        "gas",
+        "ph",
+        "bicarbonate",
+        "electrolyte"
+      ],
+      "result": "Venous pH 7.08, bicarbonate 7 mmol/L, sodium 133 mmol/L, potassium 5.0 mmol/L, chloride 101 mmol/L."
+    },
+    "fluid_bolus": {
+      "label": "Fluids",
+      "description": "Intravenous fluids.",
+      "minutes": 5,
+      "category": "treatment",
+      "repeatable": true,
+      "keywords": [
+        "bolus",
+        "saline",
+        "fluid",
+        "sodium chloride",
+        "ringer",
+        "rehydrat",
+        "drip"
+      ],
+      "result": "Fluids running.",
+      "effects": {
+        "heart_rate": -4,
+        "systolic_bp": 2
+      }
+    },
+    "insulin": {
+      "label": "Insulin",
+      "description": "Insulin infusion.",
+      "minutes": 2,
+      "category": "treatment",
+      "keywords": [
+        "insulin",
+        "actrapid"
+      ],
+      "result": "Recorded."
+    },
+    "neuro_obs": {
+      "label": "Neurological observations",
+      "description": "Glasgow Coma Scale and pupils.",
+      "minutes": 2,
+      "category": "assessment",
+      "repeatable": true,
+      "keywords": [
+        "glasgow",
+        "gcs",
+        "neuro",
+        "pupil",
+        "conscious",
+        "headache"
+      ],
+      "result": "Glasgow Coma Scale 14 (eyes 4, verbal 4, motor 6). Pupils equal and reacting. No headache."
+    },
+    "call_ambulance": {
+      "result": "Transfer to the regional paediatric high care requested."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR and coming to review."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Deep fast breathing",
+        "triggers": [
+          "breath",
+          "fast",
+          "deep"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Drowsiness",
+        "triggers": [
+          "sleepy",
+          "drowsy",
+          "alert",
+          "confus"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Thirst, polyuria and weight loss",
+        "triggers": [
+          "thirst",
+          "urine",
+          "weight"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Raised glucose and ketones",
+        "triggers": [
+          "glucose",
+          "sugar",
+          "ketone"
+        ],
+        "actions": [
+          "glucose_check"
+        ]
+      },
+      {
+        "flag": "Escalation",
+        "triggers": [
+          "doctor",
+          "refer",
+          "high care",
+          "transfer"
+        ],
+        "actions": [
+          "escalate_doctor"
+        ]
+      }
+    ]
+  },
+  "hints": [
+    "Ask about thirst, urine, weight and how long this has been going on.",
+    "Check her glucose and ketones, and a blood gas.",
+    "Children with this condition are at risk of brain swelling: fluids are calculated carefully and insulin is never given as a bolus.",
+    "Plan hourly neurological observations and escalate."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Recognise new diabetes with ketoacidosis from thirst, polyuria, weight loss, vomiting and deep breathing.",
+      "Confirm with glucose, ketones and a blood gas; weigh the child.",
+      "Bolus 10 millilitres per kilogram only for shock; otherwise replace the deficit over 48 hours.",
+      "Insulin 0.05 to 0.1 units per kilogram per hour, started 1 to 2 hours after fluids, never as a bolus.",
+      "Potassium in the fluids once known and urine is passed; no bicarbonate.",
+      "Hourly neurological observations; treat cerebral oedema at once with mannitol or 3 percent saline; escalate to high care."
+    ],
+    "model_answer": "Ayanda is 11 years old and 35 kg, with new type 1 diabetes in ketoacidosis: three weeks of thirst, polyuria and weight loss, then vomiting, abdominal pain, Kussmaul breathing and drowsiness, glucose 28.4 mmol/L, ketones 5.6 mmol/L and pH 7.08. She is not in shock, so the deficit is replaced slowly over 48 hours with 0.9 percent sodium chloride, and insulin starts at 0.05 to 0.1 units per kilogram per hour 1 to 2 hours after fluids, without a bolus. Add potassium once it is known and she passes urine. Do hourly neurological observations, because children are at risk of cerebral oedema, and escalate to the doctor and high care.",
+    "reflection_questions": [
+      "Why is the fluid plan slower in a child than in an adult with the same condition?",
+      "Which signs would warn you of cerebral oedema?",
+      "Why is insulin never given as a bolus in children?"
+    ],
+    "references": [
+      "National Department of Health. Standard Treatment Guidelines and Essential Medicines List for South Africa: Paediatric Hospital Level. Latest edition.",
+      "Advanced Paediatric Life Support (APLS): The Practical Approach. Latest edition.",
+      "World Health Organization. Pocket Book of Hospital Care for Children. 2nd edition."
+    ],
+    "review_note": "Draft paediatric case written for the app. Doses and steps follow common paediatric emergency practice and need clinician review against the current South African guidelines before teaching use."
+  },
+  "learning_objectives": [
+    "Recognise diabetic ketoacidosis in a child",
+    "Plan weight-based fluids and insulin safely",
+    "Monitor for cerebral oedema"
+  ]
+}

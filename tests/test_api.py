@@ -39,7 +39,7 @@ def test_health_and_scenarios(client: TestClient, fake_llm: FakeLLM) -> None:
     health = client.get("/health")
     assert health.status_code == 200
     assert health.json()["status"] == "ok"
-    assert health.json()["scenarios"] == 3
+    assert health.json()["scenarios"] == 8  # 2 adult and 6 paediatric chat cases
     assert health.json()["llm_configured"] is True
     assert health.json()["whatsapp_configured"] is True
     assert fake_llm.probe_calls == 0
@@ -67,6 +67,11 @@ def test_health_and_scenarios(client: TestClient, fake_llm: FakeLLM) -> None:
         "abdominal_pain",
         "paediatric_dehydration",
         "chest_pain",
+        "paediatric_asthma",
+        "paediatric_anaphylaxis",
+        "paediatric_dka",
+        "paediatric_status_epilepticus",
+        "paediatric_septic_shock",
     ]
     body = json.dumps(payload)
     assert "ectopic" not in body.lower()
@@ -89,7 +94,7 @@ def test_start_message_end_flow(
     assert started["difficulty"] == "Intermediate"
     assert started["hints_enabled"] is True
     assert started["monitor"]["status"] in {"stable", "deteriorating"}
-    assert {item["id"] for item in started["actions"]} >= {"vitals", "call_ambulance"}
+    assert started["actions"] == [], "the web chat never lists the actions (they give the answers away)"
 
     message = client.post(
         f"/session/{session_id}/message",

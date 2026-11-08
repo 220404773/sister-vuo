@@ -2068,6 +2068,62 @@
       .answer-row .row-remove { grid-column: 2; grid-row: 1; }
       .submit-row button { width: 100%; }
     }
+
+    .action-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .action-form input {
+      min-height: 44px;
+    }
+
+    .action-form button {
+      width: auto;
+      margin: 0;
+      padding: 0 16px;
+    }
+
+    .action-help {
+      margin: 6px 0 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .action-log {
+      display: grid;
+      gap: 6px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .action-log-item {
+      display: grid;
+      gap: 2px;
+      padding: 8px 10px;
+      border-left: 4px solid var(--teal);
+      border-radius: 8px;
+      background: var(--paper);
+      font-size: 0.88rem;
+    }
+
+    .action-log-item small {
+      color: var(--ink-soft);
+    }
+
+    .age-groups {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 10px;
+    }
+
+    .age-groups .field-label {
+      margin: 0 6px 0 0;
+    }
   </style>
 </head>
 <body>
@@ -2121,6 +2177,11 @@
 
     <div id="scenariosPanel" role="tabpanel" aria-labelledby="tabScenarios">
       <p id="studyError" class="review-box" role="alert" hidden></p>
+      <div class="age-groups" role="group" aria-label="Patient age group">
+        <span class="field-label">Patients</span>
+        <button class="mode-button age-button" type="button" data-age="adult" aria-pressed="true">Adults</button>
+        <button class="mode-button age-button" type="button" data-age="paediatric" aria-pressed="false">Children</button>
+      </div>
       <div class="modes" role="group" aria-label="Kind of case">
         <button class="mode-button" type="button" data-mode="chat" aria-pressed="true">Chat cases</button>
         <button class="mode-button" type="button" data-mode="written" aria-pressed="false">Written cases</button>
@@ -2139,6 +2200,7 @@
         <div id="scenarioMeta" class="scenario-meta">Loading scenarios...</div>
         <div id="sessionInfo" class="session-info" hidden></div>
         <button id="endButton" class="secondary" type="button" hidden>End and evaluate</button>
+        <button id="leaveButton" class="secondary" type="button" hidden>Leave this case</button>
         <button id="healthButton" class="secondary" type="button">Test model connection</button>
         <div id="healthResult" class="health-result" role="status" hidden></div>
         <div class="notice">
@@ -2210,8 +2272,14 @@
           <div><span>Hints used</span><strong id="hintCount">0</strong></div>
         </div>
         <div class="clinical-actions">
-          <div class="eyebrow">Clinical actions</div>
-          <div id="actionList" class="action-list">
+          <div class="eyebrow">What do you do?</div>
+          <form id="actionForm" class="action-form">
+            <label class="sr-only" for="actionInput">Type one nursing action</label>
+            <input id="actionInput" type="text" maxlength="300" autocomplete="off" placeholder="One action at a time, for example: take a full set of observations">
+            <button id="actionSubmit" class="secondary" type="submit">Do it</button>
+          </form>
+          <p class="action-help">Type what you assess, give or who you call, with doses where they apply. Each action takes clinical time.</p>
+          <div id="actionList" class="action-log">
             <p class="history-empty">Start a session to assess and treat the patient.</p>
           </div>
         </div>
@@ -2356,6 +2424,12 @@
       <section id="integratedPanel" class="panel study-panel" hidden>
         <h2>Integrated questions</h2>
         <p class="muted-note">Comparisons, multiple choice and true or false. Choices are marked straight away; written answers get feedback.</p>
+        <div class="study-picker">
+          <div class="start-field">
+            <label class="field-label" for="integratedCondition">Condition</label>
+            <select id="integratedCondition"></select>
+          </div>
+        </div>
         <div id="integratedList"></div>
       </section>
     </div>
@@ -2399,7 +2473,8 @@
       hintAskOpen: false,
       monitor: null,
       actions: [],
-      actionsTaken: []
+      actionsTaken: [],
+      actionLog: []
     };
 
     const els = {
@@ -2578,6 +2653,12 @@
       els.sendButton.disabled = !canChat;
       els.endButton.hidden = !hasSession || !active;
       els.endButton.disabled = state.busy;
+      const leave = document.getElementById("leaveButton");
+      if (leave) {
+        leave.hidden = !hasSession || !active;
+        leave.disabled = state.busy;
+      }
+      renderActions();
       els.hintButton.hidden =
         !hasSession || !active || !state.hintsEnabled || guidelineOnly;
       els.hintButton.disabled =
@@ -2760,7 +2841,16 @@
     }
 
     function renderActions() {
-      els.actionList.innerHTML = "";
+      // A log of what the student did, in their own words. The options are never listed:
+      // a list would give the answers away.
+      const form = document.getElementById("actionForm");
+      const canAct = Boolean(state.sessionId) && !state.archived && state.status === "active";
+      if (form) {
+        form.hidden = !canAct;
+        form.querySelector("input").disabled = state.busy;
+        form.querySelector("button").disabled = state.busy;
+      }
+      els.actionList.replaceChildren();
       if (!state.sessionId || state.archived) {
         const note = document.createElement("p");
         note.className = "history-empty";
@@ -2768,47 +2858,22 @@
         els.actionList.append(note);
         return;
       }
-
-      if (!state.actions.length) {
+      if (!state.actionLog.length) {
         const note = document.createElement("p");
         note.className = "history-empty";
-        note.textContent = "No clinical actions are available.";
+        note.textContent = "No actions yet.";
         els.actionList.append(note);
         return;
       }
-
-      state.actions.forEach((action) => {
-        const done = state.actionsTaken.includes(action.id);
-        const unavailable = action.available === false;
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = `action-button${done ? " done" : ""}`;
-        button.disabled =
-          state.busy ||
-          state.status !== "active" ||
-          unavailable ||
-          (done && !action.repeatable);
-        button.addEventListener("click", () => performAction(action.id));
-
-        const top = document.createElement("span");
-        top.className = "action-top";
-        const label = document.createElement("strong");
-        label.textContent = action.label;
-        const timing = document.createElement("span");
-        timing.textContent = done ? "done" : formatMinutes(action.minutes);
-        top.append(label, timing);
-
-        const description = document.createElement("small");
-        if (done) {
-          description.className = "action-done";
-          description.textContent = action.repeatable ? "Completed - can repeat" : "Completed";
-        } else if (unavailable) {
-          description.textContent = action.unavailable_reason || "Not available for this patient.";
-        } else {
-          description.textContent = action.description;
-        }
-        button.append(top, description);
-        els.actionList.append(button);
+      state.actionLog.forEach((entry) => {
+        const item = document.createElement("div");
+        item.className = "action-log-item";
+        const what = document.createElement("strong");
+        what.textContent = entry.text;
+        const outcome = document.createElement("small");
+        outcome.textContent = `${entry.minutes} min - ${entry.result}`;
+        item.append(what, outcome);
+        els.actionList.append(item);
       });
     }
 
@@ -3376,8 +3441,8 @@
       }
     }
 
-    async function performAction(actionId) {
-      if (!state.sessionId || state.busy || state.status !== "active") {
+    async function performAction(text) {
+      if (!state.sessionId || state.busy || state.status !== "active" || !text) {
         return;
       }
       hideError();
@@ -3387,9 +3452,15 @@
         const response = await api(`/session/${state.sessionId}/action`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action_id: actionId })
+          body: JSON.stringify({ text })
         });
         state.actionsTaken = response.actions_taken || [];
+        state.actionLog.push({
+          text: response.action_label,
+          result: response.result,
+          minutes: Math.round(response.monitor ? response.monitor.clinical_minutes : 0)
+        });
+        renderActions();
         state.turns = response.student_turns;
         state.turnsRemaining = response.turns_remaining;
         state.status = response.status;
@@ -3632,6 +3703,7 @@
       state.monitor = null;
       state.actions = [];
       state.actionsTaken = [];
+      state.actionLog = [];
 
       hideError();
       hideHint();
@@ -3678,7 +3750,10 @@
 
     async function loadScenarios() {
       try {
-        const scenarios = await api("/scenarios");
+        const all = await api("/scenarios");
+        state.allScenarios = all;
+        const group = (typeof study !== "undefined" && study.ageGroup) || "adult";
+        const scenarios = all.filter((scenario) => (scenario.age_group || "adult") === group);
         state.scenarios = scenarios;
         els.scenarioSelect.innerHTML = "";
         scenarios.forEach((scenario) => {
@@ -3715,6 +3790,18 @@
     els.startForm.addEventListener("submit", startSession);
     els.composer.addEventListener("submit", sendMessage);
     els.endButton.addEventListener("click", endSession);
+    document.getElementById("leaveButton").addEventListener("click", () => {
+      if (window.confirm("Leave this case without an evaluation? You can then pick another case.")) newSession();
+    });
+    document.getElementById("actionForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const input = document.getElementById("actionInput");
+      const text = input.value.trim();
+      if (!text) return;
+      await performAction(text);
+      input.value = "";
+      input.focus();
+    });
     els.healthButton.addEventListener("click", checkModelHealth);
     els.hintButton.addEventListener("click", handleHintClick);
     els.hintAsk.addEventListener("submit", submitGuidelineQuestion);
@@ -3880,7 +3967,31 @@
         selectTab(studyEls.tabs[next].id === "tabLearning" ? "learning" : "scenarios", true);
       });
     });
+    studyEls.modeButtons = studyEls.modeButtons.filter((button) => button.dataset.mode);
     studyEls.modeButtons.forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+    study.ageGroup = "adult";
+
+    function setAgeGroup(group) {
+      if (state.sessionId && state.status === "active") {
+        studyError("Leave or end the current chat case first.");
+        return;
+      }
+      study.ageGroup = group;
+      for (const button of document.querySelectorAll(".age-button")) {
+        button.setAttribute("aria-pressed", String(button.dataset.age === group));
+      }
+      // The ACC 200 written cases and integrated questions are adult critical care.
+      const adultOnly = group !== "adult";
+      for (const button of studyEls.modeButtons) {
+        if (button.dataset.mode !== "chat") button.disabled = adultOnly;
+        if (button.dataset.mode !== "chat") button.title = adultOnly ? "Adult critical care (ACC 200) only" : "";
+      }
+      if (adultOnly && study.mode !== "chat") setMode("chat");
+      loadScenarios();
+    }
+
+    document.querySelectorAll(".age-button").forEach((button) =>
+      button.addEventListener("click", () => setAgeGroup(button.dataset.age)));
     window.addEventListener("hashchange", () => selectTab(location.hash === "#learning" ? "learning" : "scenarios"));
 
     // --- Learning tab ---
@@ -4209,11 +4320,27 @@
     // --- integrated questions ---
 
     async function loadIntegrated() {
-      if (study.integratedLoaded) return;
+      const select = document.getElementById("integratedCondition");
+      if (!study.integratedLoaded) {
+        try {
+          const data = await api("/v1/learning/conditions");
+          select.replaceChildren(...data.items.map((item) => h("option", { value: item.id, text: item.title })));
+          select.addEventListener("change", () => showIntegrated(select.value));
+          study.integratedLoaded = true;
+        } catch (error) {
+          studyError(error.message);
+          return;
+        }
+      }
+      if (select.value) showIntegrated(select.value);
+    }
+
+    async function showIntegrated(conditionId) {
       try {
-        const data = await api("/v1/integrated-questions");
-        studyEls.integratedList.replaceChildren(...data.items.map(integratedCard));
-        study.integratedLoaded = true;
+        const data = await api(`/v1/integrated-questions?condition=${encodeURIComponent(conditionId)}`);
+        studyEls.integratedList.replaceChildren(...(data.items.length
+          ? data.items.map(integratedCard)
+          : [h("p", { className: "muted-note", text: "No integrated questions for this condition yet." })]));
       } catch (error) {
         studyError(error.message);
       }

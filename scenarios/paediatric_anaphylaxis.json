@@ -1,0 +1,446 @@
+{
+  "id": "paediatric_anaphylaxis",
+  "order": 11,
+  "age_group": "paediatric",
+  "title": "Child with a sudden reaction after eating",
+  "setting": "Primary care clinic next to a creche, late morning",
+  "difficulty": "Intermediate",
+  "description": "A father runs in with his 4-year-old son, who became swollen and wheezy soon after eating at creche.",
+  "speaker": {
+    "name": "Sipho Ndlovu",
+    "role": "the father of the patient",
+    "language": "English; he also speaks isiXhosa",
+    "style": "Panicked and breathless from running. He needs calm, short questions."
+  },
+  "patient": {
+    "name": "Kagiso Ndlovu",
+    "age": 4,
+    "age_unit": "years",
+    "sex": "male",
+    "occupation": "Attends creche",
+    "living_situation": "Lives with both parents"
+  },
+  "presenting_complaint": "Lips and eyes swelling, itchy rash, wheeze and vomiting within minutes of eating a sandwich.",
+  "opening_line": "Please help, his face is swelling and he is breathing funny. It started after he ate at the creche.",
+  "personality": "Frightened but follows instructions when they are clear.",
+  "case_file": {
+    "history": {
+      "onset": "About 15 minutes ago, a few minutes after he ate a peanut butter sandwich at creche.",
+      "food": "Peanut butter sandwich. He has never eaten peanuts before as far as the father knows.",
+      "skin": "Raised itchy red weals all over his body, and his lips and eyelids are swollen.",
+      "breathing": "He is wheezing and his voice sounds hoarse.",
+      "gut": "He vomited twice on the way.",
+      "alertness": "He is quieter than usual and wants to lie down.",
+      "past_medical_history": "Eczema. No asthma diagnosed.",
+      "medications": "None.",
+      "allergies": "No known allergies until today.",
+      "immunisations": "Up to date.",
+      "weight": "About 16 kilograms."
+    },
+    "risk_factors": [
+      "new food exposure (peanut)",
+      "eczema",
+      "airway swelling",
+      "wheeze",
+      "drowsiness"
+    ],
+    "baseline_vitals": {
+      "heart_rate": 160,
+      "systolic_bp": 72,
+      "diastolic_bp": 40,
+      "spo2": 90,
+      "respiratory_rate": 40,
+      "pain_score": 3,
+      "temperature": 36.9
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 8,
+        "systolic_bp": -6,
+        "diastolic_bp": -4,
+        "spo2": -3,
+        "respiratory_rate": 3,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 5,
+      "acceleration_multiplier": 1.8
+    },
+    "escalation_target_minutes": 5,
+    "required_actions": [
+      "adrenaline_im",
+      "oxygen"
+    ],
+    "critical_actions": [
+      "call_ambulance"
+    ],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "Onset and timing",
+        "triggers": [
+          "when",
+          "start",
+          "how long",
+          "since"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "food",
+        "label": "What he ate",
+        "triggers": [
+          "eat",
+          "food",
+          "sandwich",
+          "peanut",
+          "nut"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "skin",
+        "label": "Skin and swelling",
+        "triggers": [
+          "rash",
+          "itch",
+          "swell",
+          "lips",
+          "eyes",
+          "skin",
+          "hives"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "breathing",
+        "label": "Breathing and voice",
+        "triggers": [
+          "breath",
+          "wheez",
+          "voice",
+          "hoarse",
+          "cough",
+          "noise"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "gut",
+        "label": "Vomiting",
+        "triggers": [
+          "vomit",
+          "sick",
+          "stomach",
+          "diarrhoea"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "alertness",
+        "label": "Alertness",
+        "triggers": [
+          "sleepy",
+          "drowsy",
+          "alert",
+          "quiet",
+          "conscious"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "past_medical_history",
+        "label": "Past medical history",
+        "triggers": [
+          "medical history",
+          "eczema",
+          "asthma",
+          "illness"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": [
+          "allerg"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications",
+        "triggers": [
+          "medication",
+          "medicine"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "weight",
+        "label": "Weight",
+        "triggers": [
+          "weight",
+          "weigh",
+          "kg",
+          "kilogram"
+        ],
+        "weight": 1,
+        "required": true
+      }
+    ]
+  },
+  "ground_truth": {
+    "diagnosis": "Anaphylactic shock in a child after peanut exposure",
+    "forbidden_patient_terms": [
+      "anaphylaxis",
+      "anaphylactic",
+      "allergic reaction",
+      "shock"
+    ],
+    "differentials": [
+      "anaphylaxis",
+      "severe asthma",
+      "food-induced urticaria without anaphylaxis"
+    ],
+    "red_flags": [
+      "lip and eyelid swelling",
+      "hoarse voice",
+      "wheeze",
+      "low blood pressure",
+      "drowsiness",
+      "vomiting"
+    ],
+    "expected_actions": [
+      "give adrenaline 0.01 milligrams per kilogram of the 1 in 1 000 solution intramuscularly into the outer thigh (0.15 milligrams for a 16-kilogram child; maximum 0.5 milligrams), and repeat after 5 minutes if there is no improvement",
+      "call for help and arrange an ambulance at once",
+      "lie the child flat with the legs raised, or sitting if breathing is worse; do not let him stand or walk",
+      "give high-flow oxygen",
+      "give a crystalloid fluid bolus of 10 to 20 millilitres per kilogram intravenously or intraosseously for shock, and reassess",
+      "nebulised salbutamol for persistent wheeze after adrenaline",
+      "antihistamine and steroid only after adrenaline, as second-line treatment",
+      "observe in hospital, document the allergy and arrange an adrenaline auto-injector and teaching"
+    ]
+  },
+  "clinical_actions": {
+    "vitals": {
+      "minutes": 2,
+      "result": "Weight 16 kg. Swollen lips and eyelids. Widespread weals. Wheeze in both lungs. Capillary refill 4 seconds."
+    },
+    "ecg": {
+      "available": false,
+      "unavailable_reason": "Not available.",
+      "minutes": 5,
+      "result": "Not available."
+    },
+    "aspirin": {
+      "unsafe": true,
+      "result": "Aspirin given.",
+      "warning": "Aspirin is not given to children for this problem; it risks Reye syndrome and bleeding."
+    },
+    "oxygen": {
+      "result": "High-flow oxygen by face mask.",
+      "effects": {
+        "spo2": 3
+      }
+    },
+    "iv_access": {
+      "result": "Access obtained and bloods taken."
+    },
+    "adrenaline_im": {
+      "label": "Adrenaline",
+      "description": "Intramuscular adrenaline.",
+      "minutes": 1,
+      "category": "treatment",
+      "repeatable": true,
+      "keywords": [
+        "adrenaline",
+        "epinephrine",
+        "epipen",
+        "epi-pen",
+        "auto-injector"
+      ],
+      "result": "Given.",
+      "effects": {
+        "systolic_bp": 14,
+        "spo2": 4,
+        "heart_rate": -10,
+        "respiratory_rate": -4
+      },
+      "deterioration_factor": 0.2
+    },
+    "fluid_bolus": {
+      "label": "Fluid bolus",
+      "description": "Crystalloid bolus.",
+      "minutes": 5,
+      "category": "treatment",
+      "repeatable": true,
+      "keywords": [
+        "bolus",
+        "saline",
+        "ringer",
+        "fluid",
+        "crystalloid",
+        "sodium chloride"
+      ],
+      "result": "Bolus running.",
+      "effects": {
+        "systolic_bp": 6,
+        "heart_rate": -4
+      }
+    },
+    "positioning": {
+      "label": "Positioning",
+      "description": "Lie flat with legs raised.",
+      "minutes": 1,
+      "category": "treatment",
+      "keywords": [
+        "lie flat",
+        "legs up",
+        "legs raised",
+        "elevate the legs",
+        "lie him",
+        "supine"
+      ],
+      "result": "Done.",
+      "effects": {
+        "systolic_bp": 3
+      }
+    },
+    "salbutamol_nebuliser": {
+      "label": "Salbutamol nebuliser",
+      "description": "Nebulised bronchodilator.",
+      "minutes": 3,
+      "category": "treatment",
+      "keywords": [
+        "salbutamol",
+        "nebuli",
+        "ventolin"
+      ],
+      "result": "Nebuliser running.",
+      "effects": {
+        "spo2": 1
+      }
+    },
+    "antihistamine": {
+      "label": "Antihistamine or steroid",
+      "description": "Second-line medicines.",
+      "minutes": 1,
+      "category": "treatment",
+      "keywords": [
+        "chlorphenamine",
+        "promethazine",
+        "antihistamine",
+        "cetirizine",
+        "hydrocortisone",
+        "steroid",
+        "prednisolone"
+      ],
+      "result": "Given."
+    },
+    "call_ambulance": {
+      "result": "Ambulance requested urgently. Estimated arrival 15 minutes."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR and coming now."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Airway swelling and hoarse voice",
+        "triggers": [
+          "voice",
+          "hoarse",
+          "lips",
+          "swell",
+          "tongue"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Wheeze",
+        "triggers": [
+          "wheez",
+          "breath"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Low blood pressure or poor perfusion",
+        "triggers": [
+          "pressure",
+          "capillary",
+          "pale",
+          "cold"
+        ],
+        "actions": [
+          "vitals"
+        ]
+      },
+      {
+        "flag": "Drowsiness",
+        "triggers": [
+          "sleepy",
+          "drowsy",
+          "alert"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Urgent escalation",
+        "triggers": [
+          "ambulance",
+          "doctor",
+          "help",
+          "transfer"
+        ],
+        "actions": [
+          "call_ambulance",
+          "escalate_doctor"
+        ]
+      }
+    ]
+  },
+  "hints": [
+    "Ask what he ate and when, and look at his lips, skin and breathing.",
+    "Swelling, wheeze and low blood pressure after a new food: this is an emergency.",
+    "One drug comes first, intramuscularly, at a weight-based dose. Then call for help and position him.",
+    "Reassess after 5 minutes; plan the next dose, fluids, oxygen and transfer."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Recognise anaphylaxis: sudden skin and airway swelling, wheeze and low blood pressure after an allergen.",
+      "Give intramuscular adrenaline 0.01 milligrams per kilogram (0.15 milligrams for 16 kilograms) into the outer thigh at once; repeat after 5 minutes if needed.",
+      "Call for help and an ambulance; lie him flat with the legs raised (sitting if breathing is worse).",
+      "High-flow oxygen; a 10 to 20 millilitres per kilogram crystalloid bolus for shock, reassessing after each bolus.",
+      "Second-line antihistamine and steroid only after adrenaline; nebulised salbutamol for persistent wheeze.",
+      "Admit for observation, document the allergy, and arrange an auto-injector with family teaching."
+    ],
+    "model_answer": "Kagiso is 4 years old and 16 kg, with anaphylactic shock 15 minutes after eating peanut butter: swollen lips and eyelids, weals, wheeze, a hoarse voice, drowsiness, a pulse of 160 and a blood pressure of 72/40. Give adrenaline 0.15 milligrams (0.15 millilitres of 1 in 1 000) intramuscularly into the outer thigh now and repeat after 5 minutes if he is not better. Call for help and an ambulance, lie him flat with his legs raised, give high-flow oxygen, and give a 10 to 20 millilitres per kilogram crystalloid bolus. Antihistamine and steroid come only after adrenaline. Observe in hospital, record the allergy and teach the family to use an auto-injector.",
+    "reflection_questions": [
+      "How did you work out the adrenaline dose for this child?",
+      "Why must he not stand up or walk?",
+      "Why are antihistamines never given instead of adrenaline?"
+    ],
+    "references": [
+      "National Department of Health. Standard Treatment Guidelines and Essential Medicines List for South Africa: Paediatric Hospital Level. Latest edition.",
+      "Advanced Paediatric Life Support (APLS): The Practical Approach. Latest edition.",
+      "World Health Organization. Pocket Book of Hospital Care for Children. 2nd edition."
+    ],
+    "review_note": "Draft paediatric case written for the app. Doses and steps follow common paediatric emergency practice and need clinician review against the current South African guidelines before teaching use."
+  },
+  "learning_objectives": [
+    "Recognise anaphylaxis in a child",
+    "Calculate and give intramuscular adrenaline by weight",
+    "Position, oxygenate and resuscitate a child in shock"
+  ]
+}

@@ -187,8 +187,9 @@ def build_router(
     # --- integrated questions (no session; rate-limited) ---------------------------------
 
     @router.get("/integrated-questions")
-    async def integrated() -> dict[str, Any]:
-        return {"items": repository.integrated_view()}
+    async def integrated(condition: str | None = None) -> dict[str, Any]:
+        # The same condition list as the Learning tab: questions for one condition at a time.
+        return {"items": repository.integrated_view(condition)}
 
     @router.post("/integrated-questions/{question_id}/answer", dependencies=[Depends(limit_turn)])
     async def integrated_answer(question_id: str, body: IntegratedBody) -> dict[str, Any]:

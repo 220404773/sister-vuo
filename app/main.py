@@ -14,7 +14,6 @@ from .clinical import (
     ActionAlreadyDone,
     ActionUnavailable,
     UnknownAction,
-    action_options,
     hints_enabled,
 )
 from .config import Settings, get_settings
@@ -365,7 +364,8 @@ def create_app(
             difficulty=session.difficulty,  # type: ignore[arg-type]
             hints_enabled=hints_enabled(session.difficulty),
             monitor=await manager.monitor(session.id),
-            actions=action_options(session.scenario),
+            # The web chat takes typed actions; listing the options would give the answers away.
+            actions=[],
             guideline=session.guideline.view() if session.guideline else None,
         )
 
@@ -403,7 +403,10 @@ def create_app(
         request: Request,
     ) -> ActionResponse:
         manager: SessionManager = request.app.state.manager
-        outcome = await manager.action(session_id, payload.action_id)
+        if payload.text is not None:
+            outcome = await manager.action_text(session_id, payload.text)
+        else:
+            outcome = await manager.action(session_id, payload.action_id or "")
         return ActionResponse(
             session_id=outcome.session_id,
             action_id=outcome.action_id,

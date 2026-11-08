@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 Score = Annotated[int, Field(ge=0, le=5)]
 Difficulty = Literal["Beginner", "Intermediate", "Advanced"]
@@ -35,15 +35,26 @@ class MessageRequest(BaseModel):
 
 
 class ActionRequest(BaseModel):
-    action_id: str = Field(min_length=1, max_length=40)
+    """Either a known action id (WhatsApp commands) or the action as the student typed it."""
 
-    @field_validator("action_id")
+    action_id: str | None = Field(default=None, min_length=1, max_length=40)
+    text: str | None = Field(default=None, min_length=1, max_length=300)
+
+    @field_validator("action_id", "text")
     @classmethod
-    def clean_action_id(cls, value: str) -> str:
+    def clean_value(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         value = value.strip()
         if not value:
-            raise ValueError("action_id must not be empty")
+            raise ValueError("must not be empty")
         return value
+
+    @model_validator(mode="after")
+    def one_of(self) -> ActionRequest:
+        if (self.action_id is None) == (self.text is None):
+            raise ValueError("Send either action_id or text.")
+        return self
 
 
 class ScenarioSummary(BaseModel):
@@ -54,6 +65,7 @@ class ScenarioSummary(BaseModel):
     description: str
     patient_label: str
     learning_objectives: list[str]
+    age_group: str = "adult"
 
 
 class VitalsView(BaseModel):

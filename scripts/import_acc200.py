@@ -77,17 +77,17 @@ def to_record(case: dict) -> dict:
 def to_integrated(data: dict) -> dict:
     questions = [
         {"id": item["id"], "kind": "compare", "prompt": item["question"],
-         "columns": item["columns"], "rows": item["rows"]}
+         "columns": item["columns"], "rows": item["rows"], "conditions": item.get("conditions", [])}
         for item in data.get("compare", [])
     ]
     questions += [
         {"id": item["id"], "kind": "mcq", "prompt": item["question"], "options": item["options"],
-         "answer": item["answer"], "reason": item["reason"]}
+         "answer": item["answer"], "reason": item["reason"], "conditions": item.get("conditions", [])}
         for item in data.get("multiple_choice", [])
     ]
     questions += [
         {"id": item["id"], "kind": "true_false", "prompt": item["statement"], "answer": item["answer"],
-         "justification": item["justification"]}
+         "justification": item["justification"], "conditions": item.get("conditions", [])}
         for item in data.get("true_false", [])
     ]
     return {"schema_version": SCHEMA_VERSION, "questions": questions,

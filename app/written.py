@@ -116,6 +116,8 @@ def validate_integrated(data: Any) -> None:
             raise ValueError(f"integrated question {item.get('id')!r}: bad id or kind")
         if kind == "mcq" and not (0 <= int(item.get("answer", -1)) < len(item.get("options", []))):
             raise ValueError(f"integrated question {item['id']}: answer is not an option")
+        if not isinstance(item.get("conditions", []), list):
+            raise ValueError(f"integrated question {item['id']}: conditions must be a list")
         if kind == "true_false" and not isinstance(item.get("answer"), bool):
             raise ValueError(f"integrated question {item['id']}: answer must be true or false")
     _check_no_mark_keys(data, "integrated")
@@ -246,10 +248,13 @@ class WrittenCaseRepository:
             "references": list(record.get("references", [])),
         }
 
-    def integrated_view(self) -> list[dict[str, Any]]:
+    def integrated_view(self, condition_id: str | None = None) -> list[dict[str, Any]]:
         items = []
         for item in self.integrated:
-            view = {"id": item["id"], "kind": item["kind"], "prompt": item["prompt"]}
+            if condition_id and condition_id not in item.get("conditions", []):
+                continue
+            view = {"id": item["id"], "kind": item["kind"], "prompt": item["prompt"],
+                    "conditions": list(item.get("conditions", []))}
             if item["kind"] == "mcq":
                 view["options"] = [{"key": "ABCDEFGH"[i], "text": text} for i, text in enumerate(item["options"])]
             if item["kind"] == "compare":

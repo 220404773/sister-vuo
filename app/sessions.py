@@ -17,9 +17,11 @@ from .clinical import (
     ActionRecord,
     ActionUnavailable,
     action_option,
+    age_group,
     auto_hints_enabled,
     compute_monitor,
     hints_enabled,
+    match_action,
     normalize_difficulty,
     perform_action,
     vitals_result,
@@ -273,6 +275,7 @@ class ScenarioRepository:
             description=str(scenario["description"]),
             patient_label=label,
             learning_objectives=[str(item) for item in scenario["learning_objectives"]],
+            age_group=age_group(scenario),
         )
 
 
@@ -683,7 +686,41 @@ class SessionManager:
                 hint=hint,
             )
 
-    async def action(self, session_id: str, action_id: str) -> ActionResult:
+    async def action_text(self, session_id: str, text: str) -> ActionResult:
+        """An action the student typed. A recognised action runs and is timed; anything else
+        is still recorded for the debrief. The reply never lists or names the options."""
+        session = self.get(session_id)
+        action_id = match_action(session.scenario, text)
+        if action_id is not None:
+            option = action_option(session.scenario, action_id)
+            repeat = any(item.action_id == action_id for item in session.actions) and not option.repeatable
+            if option.available and not repeat:
+                return await self.action(session_id, action_id, typed_text=text)
+        async with session.lock:
+            if session.status != "active":
+                raise SessionCompleted(
+                    "This session has already ended. Start a new session to continue."
+                )
+            session.clinical_minutes += 1.0
+            self._event(session, "action", "nurse", text, "Recorded; not simulated.")
+            self.transcripts.log(
+                session.id, "noted_action", text=text, matched=action_id,
+                clinical_minutes=session.clinical_minutes,
+            )
+            return ActionResult(
+                session_id=session.id,
+                action_id="noted",
+                action_label=text,
+                result="Recorded.",
+                warning=None,
+                monitor=self._monitor(session),
+                status=session.status,
+                student_turns=session.student_turns,
+                turns_remaining=max(0, self.max_turns - session.student_turns),
+                actions_taken=list(dict.fromkeys(item.action_id for item in session.actions)),
+            )
+
+    async def action(self, session_id: str, action_id: str, typed_text: str | None = None) -> ActionResult:
         session = self.get(session_id)
         async with session.lock:
             if session.status != "active":
@@ -719,7 +756,10 @@ class SessionManager:
                     record.result = f"{record.result} {extra}"
 
             kind = "vitals" if action_id == "vitals" else "escalation" if action_id in ESCALATION_ACTIONS else "action"
-            self._event(session, kind, "nurse", option.label, record.result)
+            # The timeline keeps the student's own words, so the evaluator judges what they wrote.
+            title = typed_text or option.label
+            detail = f"{option.label}: {record.result}" if typed_text else record.result
+            self._event(session, kind, "nurse", title, detail)
             self.transcripts.log(
                 session.id,
                 "clinical_action",
@@ -742,12 +782,20 @@ class SessionManager:
                 )
 
             actions_taken = list(dict.fromkeys(item.action_id for item in session.actions))
+            shown_result, shown_warning = record.result, record.warning
+            if typed_text is not None:
+                # Typed actions: findings for assessments and tests, otherwise just "Recorded",
+                # so the reply never completes the student's plan (doses, next steps). Safety
+                # warnings go to the debrief instead.
+                findings = option.category in ("assessment", "investigation")
+                shown_result = record.result if findings else "Recorded."
+                shown_warning = None
             return ActionResult(
                 session_id=session.id,
                 action_id=action_id,
-                action_label=option.label,
-                result=record.result,
-                warning=record.warning,
+                action_label=typed_text or option.label,
+                result=shown_result,
+                warning=shown_warning,
                 monitor=monitor,
                 status=session.status,
                 student_turns=session.student_turns,

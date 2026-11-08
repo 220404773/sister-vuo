@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -214,6 +215,43 @@ def _clamp(metric: str, value: float) -> float:
     return max(low, min(high, value))
 
 
+def patient_age_years(scenario: dict[str, Any]) -> float | None:
+    patient = scenario.get("patient", {})
+    try:
+        age = float(patient.get("age"))
+    except (TypeError, ValueError):
+        return None
+    unit = str(patient.get("age_unit", "years")).lower()
+    if unit.startswith("month"):
+        return age / 12
+    if unit.startswith("week"):
+        return age / 52
+    if unit.startswith("day"):
+        return age / 365
+    return age
+
+
+def age_group(scenario: dict[str, Any]) -> str:
+    """'paediatric' or 'adult': the scenario's own setting, or from the patient's age."""
+    explicit = str(scenario.get("age_group", "")).lower()
+    if explicit in ("adult", "paediatric"):
+        return explicit
+    years = patient_age_years(scenario)
+    return "paediatric" if years is not None and years < 13 else "adult"
+
+
+def vital_band(scenario: dict[str, Any]) -> dict[str, float]:
+    """Alarm limits by age (approximate, after APLS-style paediatric ranges)."""
+    years = patient_age_years(scenario)
+    if years is None or years >= 12:
+        return {"hr_high": 130, "hr_low": 50, "rr_high": 30, "sbp_low": 90}
+    if years < 1:
+        return {"hr_high": 180, "hr_low": 100, "rr_high": 60, "sbp_low": 65}
+    if years < 5:
+        return {"hr_high": 160, "hr_low": 80, "rr_high": 40, "sbp_low": 70 + 2 * years}
+    return {"hr_high": 140, "hr_low": 60, "rr_high": 30, "sbp_low": 70 + 2 * years}
+
+
 def compute_monitor(
     scenario: dict[str, Any],
     clinical_minutes: float,
@@ -270,30 +308,38 @@ def compute_monitor(
         if target_minutes is not None
         else escalation_target_minutes(scenario, difficulty)
     )
+    # Alarms state readings only, like a real monitor; they never tell the student what to do.
+    # Limits follow the patient's age, so a normal infant heart rate does not alarm.
+    band = vital_band(scenario)
     alerts: list[str] = []
     if values["spo2"] < 90:
-        alerts.append("Severe hypoxia: give oxygen and escalate now")
+        alerts.append("Severe hypoxia: oxygen saturation below 90%")
     elif values["spo2"] < 94:
         alerts.append("Hypoxia: oxygen saturation below 94%")
-    if values["systolic_bp"] < 90:
-        alerts.append("Hypotension: systolic BP below 90 mmHg")
-    if values["heart_rate"] >= 130:
+    if values["systolic_bp"] < band["sbp_low"]:
+        alerts.append(f"Hypotension: systolic BP below {band['sbp_low']:.0f} mmHg")
+    if values["heart_rate"] >= band["hr_high"]:
         alerts.append("Marked tachycardia")
-    if values["heart_rate"] <= 50:
+    if values["heart_rate"] <= band["hr_low"]:
         alerts.append("Bradycardia")
-    if values["respiratory_rate"] >= 30:
+    if values["respiratory_rate"] >= band["rr_high"]:
         alerts.append("Marked tachypnoea")
     if values["temperature"] >= 38.0:
         alerts.append("Fever")
-    if escalation_minutes is None and clinical_minutes >= target:
+    if (
+        escalation_minutes is None
+        and clinical_minutes >= target
+        and normalize_difficulty(difficulty) == "Beginner"
+    ):
+        # A coaching prompt, so only the guided level shows it.
         alerts.append("Escalation is overdue: call for help now")
 
     critical = (
         values["spo2"] < 90
-        or values["systolic_bp"] < 90
-        or values["heart_rate"] >= 140
-        or values["heart_rate"] <= 45
-        or values["respiratory_rate"] >= 35
+        or values["systolic_bp"] < band["sbp_low"]
+        or values["heart_rate"] >= band["hr_high"] + 10
+        or values["heart_rate"] <= band["hr_low"] - 5
+        or values["respiratory_rate"] >= band["rr_high"] + 5
     )
     if critical:
         status = "critical"
@@ -399,6 +445,60 @@ def monitor_text(monitor: MonitorView) -> str:
     if monitor.alerts:
         lines.append("Alerts: " + "; ".join(monitor.alerts))
     return "\n".join(lines)
+
+
+# Words that identify a typed action. A scenario can add its own under clinical_actions.<id>.keywords.
+ACTION_KEYWORDS: dict[str, tuple[str, ...]] = {
+    "vitals": ("observation", "vital", "obs", "blood pressure", "pulse", "heart rate",
+               "oxygen saturation", "saturation", "oximet", "respiratory rate", "temperature",
+               "capillary refill", "weigh", "measure", "assess"),
+    "ecg": ("ecg", "electrocardiogram", "12-lead", "12 lead", "twelve-lead", "twelve lead",
+            "rhythm strip", "cardiac monitor"),
+    "oxygen": ("oxygen", "o2", "nasal prong", "non-rebreather", "rebreather", "face mask", "high flow",
+               "high-flow"),
+    "aspirin": ("aspirin", "acetylsalicylic", "disprin", "ecotrin"),
+    "iv_access": ("cannula", "iv access", "intravenous access", "drip", "iv line", "intravenous line",
+                  "venous access", "intraosseous", "bloods", "blood test", "take blood", "line in"),
+    "call_ambulance": ("ambulance", "ems", "emergency service", "10177", "transfer", "refer to hospital",
+                       "refer urgently", "urgent referral"),
+    "escalate_doctor": ("doctor", "medical officer", "physician", "paediatrician", "pediatrician",
+                        "registrar", "senior", "sbar", "escalate", "call for help", "team leader"),
+    "pregnancy_test": ("pregnancy test", "hcg", "pregnant test", "urine pregnancy"),
+}
+_NEGATION = re.compile(r"\b(do not|don't|dont|avoid|withhold|without|no need|not give|never|hold off)\b")
+
+
+def _keyword_hits(text: str, keywords: list[str]) -> int:
+    hits = 0
+    for keyword in keywords:
+        pattern = r"(?<![a-z0-9])" + re.escape(keyword)
+        if len(keyword) <= 3:
+            pattern += r"(?![a-z0-9])"
+        if re.search(pattern, text):
+            hits += 1
+    return hits
+
+
+def match_action(scenario: dict[str, Any], text: str) -> str | None:
+    """The action a typed sentence describes, or None. One action per sentence; a negated
+    sentence ("do not give aspirin") is never treated as doing it."""
+    lowered = " ".join(text.lower().split())
+    if not lowered or _NEGATION.search(lowered):
+        return None
+    overrides = _scenario_actions(scenario)
+    # Scenario-specific actions first, so "salbutamol by oxygen-driven nebuliser" is the
+    # nebuliser, not plain oxygen, when the scores tie.
+    ordered = [item for item in overrides if item not in CORE_ACTIONS] + list(CORE_ACTIONS)
+    best, best_hits = None, 0
+    for action_id in ordered:
+        override = overrides.get(action_id, {})
+        keywords = list(ACTION_KEYWORDS.get(action_id, ()))
+        if isinstance(override, dict):
+            keywords += [str(word).lower() for word in override.get("keywords", [])]
+        hits = _keyword_hits(lowered, keywords)
+        if hits > best_hits:
+            best, best_hits = action_id, hits
+    return best
 
 
 def action_command_map() -> dict[str, str]:

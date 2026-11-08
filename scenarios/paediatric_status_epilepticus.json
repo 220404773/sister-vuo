@@ -1,0 +1,423 @@
+{
+  "id": "paediatric_status_epilepticus",
+  "order": 13,
+  "age_group": "paediatric",
+  "title": "Toddler who will not stop fitting",
+  "setting": "Primary care clinic, morning",
+  "difficulty": "Intermediate",
+  "description": "A mother carries in her 2-year-old son, who has been fitting for about 10 minutes and has a fever.",
+  "speaker": {
+    "name": "Palesa Mahlangu",
+    "role": "the mother of the patient",
+    "language": "English; she also speaks Setswana",
+    "style": "Very distressed and crying. She calms a little when someone takes charge."
+  },
+  "patient": {
+    "name": "Neo Mahlangu",
+    "age": 30,
+    "age_unit": "months",
+    "sex": "male",
+    "occupation": "Not applicable",
+    "living_situation": "Lives with his parents"
+  },
+  "presenting_complaint": "Jerking of all four limbs for about 10 minutes, with a fever and a cough since yesterday.",
+  "opening_line": "Sister, he is shaking and won't wake up! It started at home, it is not stopping!",
+  "personality": "Overwhelmed; she answers best when questions are short.",
+  "case_file": {
+    "history": {
+      "onset": "The jerking started at home about 10 minutes ago and has not stopped.",
+      "fever": "He has had a fever and a cough since yesterday; she gave paracetamol syrup this morning.",
+      "previous_seizures": "He had one short fit with a fever last year that stopped by itself.",
+      "injury": "No fall or head injury.",
+      "ingestion": "No tablets or chemicals at home that he could have taken.",
+      "rash_and_neck": "She has not noticed a rash.",
+      "past_medical_history": "Born at term, healthy.",
+      "medications": "Paracetamol syrup this morning.",
+      "allergies": "No known allergies.",
+      "immunisations": "Up to date.",
+      "weight": "About 13 kilograms."
+    },
+    "risk_factors": [
+      "seizure longer than 5 minutes",
+      "fever",
+      "low oxygen saturation"
+    ],
+    "baseline_vitals": {
+      "heart_rate": 168,
+      "systolic_bp": 108,
+      "diastolic_bp": 68,
+      "spo2": 88,
+      "respiratory_rate": 30,
+      "pain_score": 0,
+      "temperature": 39.4
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 6,
+        "systolic_bp": 2,
+        "diastolic_bp": 1,
+        "spo2": -3,
+        "respiratory_rate": -2,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 10,
+      "acceleration_multiplier": 1.5
+    },
+    "escalation_target_minutes": 5,
+    "required_actions": [
+      "airway",
+      "oxygen",
+      "benzodiazepine",
+      "glucose_check"
+    ],
+    "critical_actions": [
+      "call_ambulance"
+    ],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "How long the seizure has lasted",
+        "triggers": [
+          "how long",
+          "when",
+          "start",
+          "minutes"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "fever",
+        "label": "Fever and illness",
+        "triggers": [
+          "fever",
+          "temperature",
+          "hot",
+          "cough",
+          "sick"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "previous_seizures",
+        "label": "Previous seizures",
+        "triggers": [
+          "before",
+          "previous",
+          "fit",
+          "seizure",
+          "epilepsy"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "injury",
+        "label": "Head injury",
+        "triggers": [
+          "fall",
+          "injury",
+          "head",
+          "hit"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "ingestion",
+        "label": "Possible ingestion",
+        "triggers": [
+          "tablet",
+          "poison",
+          "swallow",
+          "chemical",
+          "medicine"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "rash_and_neck",
+        "label": "Rash",
+        "triggers": [
+          "rash",
+          "spots",
+          "neck"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications",
+        "triggers": [
+          "medication",
+          "syrup",
+          "paracetamol"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": [
+          "allerg"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "weight",
+        "label": "Weight",
+        "triggers": [
+          "weight",
+          "weigh",
+          "kg",
+          "kilogram"
+        ],
+        "weight": 1,
+        "required": true
+      }
+    ]
+  },
+  "ground_truth": {
+    "diagnosis": "Convulsive status epilepticus with fever in a toddler",
+    "forbidden_patient_terms": [
+      "status epilepticus",
+      "febrile convulsion",
+      "epilepsy"
+    ],
+    "differentials": [
+      "prolonged febrile seizure",
+      "meningitis or encephalitis",
+      "hypoglycaemia",
+      "head injury",
+      "poisoning"
+    ],
+    "red_flags": [
+      "seizure longer than 5 minutes",
+      "low oxygen saturation",
+      "fever",
+      "not waking"
+    ],
+    "expected_actions": [
+      "time the seizure; protect the airway, place in the recovery position, suction and give high-flow oxygen",
+      "check the blood glucose; if below 3 mmol/L give 10 percent dextrose 2 millilitres per kilogram",
+      "give a benzodiazepine: buccal or intranasal midazolam 0.3 milligrams per kilogram (about 4 milligrams for 13 kilograms; maximum 10 milligrams), or intravenous lorazepam 0.1 milligrams per kilogram, or rectal diazepam 0.5 milligrams per kilogram",
+      "repeat the benzodiazepine once after 5 to 10 minutes if still fitting",
+      "second line if still fitting: levetiracetam 40 to 60 milligrams per kilogram intravenously, or phenytoin 20 milligrams per kilogram over 20 minutes with monitoring",
+      "call for help and arrange urgent transfer; treat the fever and look for meningitis"
+    ]
+  },
+  "clinical_actions": {
+    "vitals": {
+      "minutes": 2,
+      "result": "Weight 13 kg. Generalised jerking, eyes rolled up, saliva in the mouth. No rash seen."
+    },
+    "ecg": {
+      "available": false,
+      "unavailable_reason": "Not available.",
+      "minutes": 5,
+      "result": "Not available."
+    },
+    "aspirin": {
+      "unsafe": true,
+      "result": "Aspirin given.",
+      "warning": "Aspirin is not given to children for this problem; it risks Reye syndrome and bleeding."
+    },
+    "oxygen": {
+      "result": "High-flow oxygen by face mask.",
+      "effects": {
+        "spo2": 4
+      }
+    },
+    "iv_access": {
+      "result": "Cannula sited at the second attempt; bloods taken."
+    },
+    "airway": {
+      "label": "Airway and position",
+      "description": "Recovery position and suction.",
+      "minutes": 1,
+      "category": "treatment",
+      "keywords": [
+        "recovery position",
+        "on his side",
+        "side",
+        "suction",
+        "airway",
+        "jaw thrust",
+        "head tilt"
+      ],
+      "result": "Done.",
+      "effects": {
+        "spo2": 2
+      }
+    },
+    "glucose_check": {
+      "label": "Blood glucose",
+      "description": "Capillary glucose.",
+      "minutes": 1,
+      "category": "assessment",
+      "repeatable": true,
+      "keywords": [
+        "glucose",
+        "sugar",
+        "hgt",
+        "glucometer",
+        "finger prick",
+        "dextrostix"
+      ],
+      "result": "Capillary glucose 4.9 mmol/L."
+    },
+    "benzodiazepine": {
+      "label": "Benzodiazepine",
+      "description": "First-line anticonvulsant.",
+      "minutes": 2,
+      "category": "treatment",
+      "repeatable": true,
+      "keywords": [
+        "midazolam",
+        "buccal",
+        "intranasal",
+        "diazepam",
+        "lorazepam",
+        "benzodiazepine",
+        "valium",
+        "dormicum"
+      ],
+      "result": "Given.",
+      "effects": {
+        "spo2": 2,
+        "heart_rate": -6
+      },
+      "deterioration_factor": 0.5
+    },
+    "second_line": {
+      "label": "Second-line anticonvulsant",
+      "description": "Levetiracetam or phenytoin.",
+      "minutes": 10,
+      "category": "treatment",
+      "keywords": [
+        "levetiracetam",
+        "keppra",
+        "phenytoin",
+        "phenobarb",
+        "valproate"
+      ],
+      "result": "Infusion running.",
+      "effects": {
+        "heart_rate": -8
+      },
+      "deterioration_factor": 0.3
+    },
+    "antipyretic": {
+      "label": "Antipyretic",
+      "description": "Paracetamol.",
+      "minutes": 1,
+      "category": "treatment",
+      "keywords": [
+        "paracetamol",
+        "antipyretic",
+        "panado",
+        "ibuprofen"
+      ],
+      "result": "Given."
+    },
+    "call_ambulance": {
+      "result": "Ambulance requested urgently. Estimated arrival 20 minutes."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR and on the way."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Seizure longer than 5 minutes",
+        "triggers": [
+          "how long",
+          "minutes",
+          "start"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Low oxygen saturation",
+        "triggers": [
+          "saturation",
+          "oxygen",
+          "blue"
+        ],
+        "actions": [
+          "vitals"
+        ]
+      },
+      {
+        "flag": "Hypoglycaemia excluded",
+        "triggers": [
+          "glucose",
+          "sugar"
+        ],
+        "actions": [
+          "glucose_check"
+        ]
+      },
+      {
+        "flag": "Possible meningitis",
+        "triggers": [
+          "rash",
+          "neck",
+          "fever"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Urgent escalation",
+        "triggers": [
+          "ambulance",
+          "doctor",
+          "help",
+          "transfer"
+        ],
+        "actions": [
+          "call_ambulance",
+          "escalate_doctor"
+        ]
+      }
+    ]
+  },
+  "hints": [
+    "How long has he been fitting? Protect him and his airway first.",
+    "Give oxygen and check the glucose.",
+    "After 5 minutes of fitting a first-line drug is due; work out the dose from his weight.",
+    "If he is still fitting 5 to 10 minutes later, plan the next step and call for help."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Time the seizure; airway, recovery position, suction and high-flow oxygen.",
+      "Check glucose; 10 percent dextrose 2 millilitres per kilogram if below 3 mmol/L.",
+      "Buccal or intranasal midazolam 0.3 milligrams per kilogram (about 4 milligrams for 13 kilograms), repeat once after 5 to 10 minutes.",
+      "Second line: levetiracetam 40 to 60 milligrams per kilogram or phenytoin 20 milligrams per kilogram over 20 minutes.",
+      "Call for help and transfer; treat the fever and consider meningitis."
+    ],
+    "model_answer": "Neo is 30 months old and 13 kg, fitting for more than 10 minutes with a fever of 39.4 and a saturation of 88 percent: convulsive status epilepticus. Protect the airway, place him on his side, suction and give high-flow oxygen. Check the glucose (4.9 mmol/L, normal). Give buccal midazolam 0.3 milligrams per kilogram (about 4 milligrams) now and repeat once after 5 to 10 minutes if he is still fitting; then levetiracetam 40 to 60 milligrams per kilogram or phenytoin 20 milligrams per kilogram. Call for help and an ambulance, treat the fever and look for meningitis.",
+    "reflection_questions": [
+      "Why does a seizure longer than 5 minutes need treatment?",
+      "How did you calculate the midazolam dose?",
+      "What would make you think of meningitis?"
+    ],
+    "references": [
+      "National Department of Health. Standard Treatment Guidelines and Essential Medicines List for South Africa: Paediatric Hospital Level. Latest edition.",
+      "Advanced Paediatric Life Support (APLS): The Practical Approach. Latest edition.",
+      "World Health Organization. Pocket Book of Hospital Care for Children. 2nd edition."
+    ],
+    "review_note": "Draft paediatric case written for the app. Doses and steps follow common paediatric emergency practice and need clinician review against the current South African guidelines before teaching use."
+  },
+  "learning_objectives": [
+    "Manage the airway in a fitting child",
+    "Give first- and second-line anticonvulsants by weight",
+    "Exclude hypoglycaemia and consider infection"
+  ]
+}

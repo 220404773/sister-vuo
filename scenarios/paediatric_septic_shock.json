@@ -1,0 +1,436 @@
+{
+  "id": "paediatric_septic_shock",
+  "order": 14,
+  "age_group": "paediatric",
+  "title": "Floppy infant with a fever and a rash",
+  "setting": "Primary care clinic, afternoon",
+  "difficulty": "Advanced",
+  "description": "A mother brings her 9-month-old daughter, who is hot, floppy and has a new rash.",
+  "speaker": {
+    "name": "Busisiwe Zulu",
+    "role": "the mother of the patient",
+    "language": "isiZulu and English",
+    "style": "Very worried and tired after a night without sleep."
+  },
+  "patient": {
+    "name": "Lindiwe Zulu",
+    "age": 9,
+    "age_unit": "months",
+    "sex": "female",
+    "occupation": "Not applicable",
+    "living_situation": "Lives with her mother and two older brothers"
+  },
+  "presenting_complaint": "Fever since last night, refusing feeds, floppy, and dark spots on the legs since this morning.",
+  "opening_line": "Nurse, my baby is very hot and she is just lying there. And now there are these dark spots on her legs.",
+  "personality": "Cooperative; she worries she waited too long.",
+  "case_file": {
+    "history": {
+      "onset": "Fever started last night. This morning she was floppy and the spots appeared.",
+      "feeding": "She refuses the breast since this morning and has had only a few sips.",
+      "urine_output": "One small wet nappy since last night.",
+      "rash": "Small dark red and purple spots on the legs and tummy that do not fade when pressed.",
+      "alertness": "She is floppy, cries weakly and does not look at her mother.",
+      "vomiting": "She vomited twice.",
+      "past_medical_history": "Born at term, healthy.",
+      "medications": "Paracetamol syrup last night.",
+      "allergies": "No known allergies.",
+      "immunisations": "Up to date for age.",
+      "weight": "About 8 kilograms at her last clinic visit."
+    },
+    "risk_factors": [
+      "infant",
+      "non-blanching rash",
+      "lethargy",
+      "poor perfusion",
+      "poor feeding"
+    ],
+    "baseline_vitals": {
+      "heart_rate": 192,
+      "systolic_bp": 62,
+      "diastolic_bp": 34,
+      "spo2": 93,
+      "respiratory_rate": 56,
+      "pain_score": 3,
+      "temperature": 39.6
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 6,
+        "systolic_bp": -5,
+        "diastolic_bp": -3,
+        "spo2": -2,
+        "respiratory_rate": 3,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 10,
+      "acceleration_multiplier": 1.6
+    },
+    "escalation_target_minutes": 5,
+    "required_actions": [
+      "vitals",
+      "oxygen",
+      "iv_access",
+      "antibiotics",
+      "fluid_bolus"
+    ],
+    "critical_actions": [
+      "call_ambulance"
+    ],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "Onset",
+        "triggers": [
+          "when",
+          "start",
+          "how long",
+          "since"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "feeding",
+        "label": "Feeding",
+        "triggers": [
+          "feed",
+          "breast",
+          "drink",
+          "eat",
+          "bottle"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "urine_output",
+        "label": "Wet nappies",
+        "triggers": [
+          "nappy",
+          "urine",
+          "wet"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "rash",
+        "label": "Rash",
+        "triggers": [
+          "rash",
+          "spots",
+          "glass",
+          "press",
+          "fade"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "alertness",
+        "label": "Alertness",
+        "triggers": [
+          "floppy",
+          "sleepy",
+          "alert",
+          "cry",
+          "wake"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "vomiting",
+        "label": "Vomiting",
+        "triggers": [
+          "vomit",
+          "sick"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications",
+        "triggers": [
+          "medication",
+          "syrup",
+          "paracetamol"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": [
+          "allerg"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "immunisations",
+        "label": "Immunisations",
+        "triggers": [
+          "immunisation",
+          "vaccine"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "weight",
+        "label": "Weight",
+        "triggers": [
+          "weight",
+          "weigh",
+          "kg",
+          "kilogram"
+        ],
+        "weight": 1,
+        "required": true
+      }
+    ]
+  },
+  "ground_truth": {
+    "diagnosis": "Septic shock with a non-blanching rash (probable meningococcal disease) in an infant",
+    "forbidden_patient_terms": [
+      "meningococcal",
+      "meningitis",
+      "septic shock",
+      "sepsis"
+    ],
+    "differentials": [
+      "meningococcal septicaemia",
+      "other bacterial sepsis",
+      "meningitis",
+      "severe dehydration"
+    ],
+    "red_flags": [
+      "non-blanching rash",
+      "floppy and weak cry",
+      "fast heart rate",
+      "low blood pressure",
+      "poor feeding and few wet nappies"
+    ],
+    "expected_actions": [
+      "airway, high-flow oxygen, and intravenous or intraosseous access within 5 minutes",
+      "check the glucose; if below 3 mmol/L give 10 percent dextrose 2 millilitres per kilogram",
+      "give ceftriaxone 100 milligrams per kilogram (800 milligrams for 8 kilograms) intravenously, intraosseously or intramuscularly at once, within the first hour",
+      "give a balanced crystalloid bolus of 10 to 20 millilitres per kilogram over 5 to 10 minutes and reassess after each bolus (crackles, enlarged liver), up to 40 to 60 millilitres per kilogram in the first hour where intensive care support is available",
+      "fluid-refractory shock: adrenaline infusion 0.05 to 0.3 micrograms per kilogram per minute",
+      "call for help and arrange urgent transfer to paediatric intensive care; infection-control precautions and notify the disease"
+    ]
+  },
+  "clinical_actions": {
+    "vitals": {
+      "minutes": 2,
+      "result": "Weight 8 kg. Capillary refill 5 seconds, cold mottled legs. Non-blanching purple spots on legs and abdomen. Weak cry."
+    },
+    "ecg": {
+      "available": false,
+      "unavailable_reason": "Not available.",
+      "minutes": 5,
+      "result": "Not available."
+    },
+    "aspirin": {
+      "unsafe": true,
+      "result": "Aspirin given.",
+      "warning": "Aspirin is not given to children for this problem; it risks Reye syndrome and bleeding."
+    },
+    "oxygen": {
+      "result": "High-flow oxygen by face mask.",
+      "effects": {
+        "spo2": 3
+      }
+    },
+    "iv_access": {
+      "result": "Access obtained (intraosseous in the left tibia after two failed cannula attempts); blood culture and bloods taken.",
+      "keywords": [
+        "intraosseous",
+        "io"
+      ]
+    },
+    "glucose_check": {
+      "label": "Blood glucose",
+      "description": "Capillary glucose.",
+      "minutes": 1,
+      "category": "assessment",
+      "repeatable": true,
+      "keywords": [
+        "glucose",
+        "sugar",
+        "hgt",
+        "glucometer",
+        "finger prick",
+        "dextrostix"
+      ],
+      "result": "Capillary glucose 2.6 mmol/L."
+    },
+    "dextrose": {
+      "label": "Dextrose",
+      "description": "Dextrose bolus.",
+      "minutes": 2,
+      "category": "treatment",
+      "keywords": [
+        "dextrose",
+        "10 percent",
+        "10%"
+      ],
+      "result": "Given."
+    },
+    "antibiotics": {
+      "label": "Antibiotics",
+      "description": "Intravenous antibiotics.",
+      "minutes": 2,
+      "category": "treatment",
+      "keywords": [
+        "ceftriaxone",
+        "antibiotic",
+        "cefotaxime",
+        "penicillin",
+        "rocephin"
+      ],
+      "result": "Given.",
+      "deterioration_factor": 0.7
+    },
+    "fluid_bolus": {
+      "label": "Fluid bolus",
+      "description": "Crystalloid bolus.",
+      "minutes": 8,
+      "category": "treatment",
+      "repeatable": true,
+      "keywords": [
+        "bolus",
+        "saline",
+        "ringer",
+        "fluid",
+        "crystalloid",
+        "sodium chloride",
+        "balanced"
+      ],
+      "result": "Bolus given.",
+      "effects": {
+        "systolic_bp": 6,
+        "heart_rate": -8
+      }
+    },
+    "inotrope": {
+      "label": "Inotrope",
+      "description": "Adrenaline infusion.",
+      "minutes": 5,
+      "category": "treatment",
+      "keywords": [
+        "adrenaline infusion",
+        "inotrope",
+        "noradrenaline",
+        "dopamine",
+        "adrenaline"
+      ],
+      "result": "Infusion running.",
+      "effects": {
+        "systolic_bp": 8
+      }
+    },
+    "call_ambulance": {
+      "result": "Urgent transfer to paediatric intensive care requested. Estimated arrival 30 minutes."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR and coming now."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Non-blanching rash",
+        "triggers": [
+          "rash",
+          "spots",
+          "glass",
+          "press",
+          "fade"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Floppy with a weak cry",
+        "triggers": [
+          "floppy",
+          "cry",
+          "alert",
+          "wake"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Poor perfusion",
+        "triggers": [
+          "capillary",
+          "cold",
+          "mottled",
+          "pressure"
+        ],
+        "actions": [
+          "vitals"
+        ]
+      },
+      {
+        "flag": "Low glucose",
+        "triggers": [
+          "glucose",
+          "sugar"
+        ],
+        "actions": [
+          "glucose_check"
+        ]
+      },
+      {
+        "flag": "Urgent escalation",
+        "triggers": [
+          "ambulance",
+          "doctor",
+          "help",
+          "transfer"
+        ],
+        "actions": [
+          "call_ambulance",
+          "escalate_doctor"
+        ]
+      }
+    ]
+  },
+  "hints": [
+    "Ask about feeding, wet nappies and the rash. Does it fade when pressed?",
+    "Look at her perfusion and check the glucose.",
+    "Access fast (consider intraosseous), antibiotics now, and a weight-based fluid bolus with reassessment.",
+    "Call for help early and plan transfer to intensive care."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Recognise septic shock with a non-blanching rash: fever, floppiness, fast heart rate, poor perfusion and low pressure.",
+      "Airway, high-flow oxygen, intravenous or intraosseous access within 5 minutes; blood culture and glucose.",
+      "Treat glucose below 3 mmol/L with 10 percent dextrose 2 millilitres per kilogram.",
+      "Ceftriaxone 100 milligrams per kilogram at once.",
+      "Crystalloid bolus 10 to 20 millilitres per kilogram, reassessing after each; adrenaline infusion if fluid-refractory.",
+      "Urgent paediatric intensive care transfer, infection control and notification."
+    ],
+    "model_answer": "Lindiwe is 9 months old and 8 kg, with septic shock and a non-blanching purpuric rash, most likely meningococcal disease: fever 39.6, heart rate 192, blood pressure 62/34, capillary refill 5 seconds, floppy with a weak cry. Give high-flow oxygen, get intravenous or intraosseous access, take a blood culture and check the glucose (2.6 mmol/L: give 10 percent dextrose 16 millilitres). Give ceftriaxone 800 milligrams at once and a 10 to 20 millilitres per kilogram (80 to 160 millilitres) crystalloid bolus, reassessing after each bolus. Call for help, arrange urgent transfer to paediatric intensive care, use infection-control precautions and notify the disease.",
+    "reflection_questions": [
+      "What does a rash that does not fade on pressure tell you?",
+      "How did you calculate the bolus and the antibiotic dose?",
+      "Which signs would make you stop giving fluid boluses?"
+    ],
+    "references": [
+      "National Department of Health. Standard Treatment Guidelines and Essential Medicines List for South Africa: Paediatric Hospital Level. Latest edition.",
+      "Advanced Paediatric Life Support (APLS): The Practical Approach. Latest edition.",
+      "World Health Organization. Pocket Book of Hospital Care for Children. 2nd edition."
+    ],
+    "review_note": "Draft paediatric case written for the app. Doses and steps follow common paediatric emergency practice and need clinician review against the current South African guidelines before teaching use."
+  },
+  "learning_objectives": [
+    "Recognise septic shock in an infant",
+    "Give weight-based fluids, glucose and antibiotics",
+    "Escalate to intensive care early"
+  ]
+}

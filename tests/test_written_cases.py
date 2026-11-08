@@ -299,3 +299,50 @@ def test_page_has_exactly_two_tabs_and_new_code_never_uses_inner_html():
     assert ">Learning</button>" in html and ">Clinical Scenarios</button>" in html
     new_code = html[html.index("// Learning and Clinical Scenarios tabs"):]
     assert ".innerHTML" not in new_code and "insertAdjacentHTML" not in new_code
+
+
+# Chat cases: typed actions ------------------------------------------------------------------
+
+def test_typed_actions_are_recognised_timed_and_never_complete_the_plan(client):
+    started = client.post("/session/start", json={"scenario_id": "chest_pain"}).json()
+    sid, headers = started["session_id"], {"X-Session-Token": started["session_token"]}
+    url = f"/session/{sid}/action"
+    vitals = client.post(url, headers=headers, json={"text": "Take a full set of observations"}).json()
+    assert vitals["action_id"] == "vitals" and vitals["result"].startswith("Observations recorded")
+    aspirin = client.post(url, headers=headers, json={"text": "Give aspirin 300 milligrams chewed"}).json()
+    assert aspirin["action_id"] == "aspirin" and aspirin["result"] == "Recorded."
+    assert aspirin["action_label"] == "Give aspirin 300 milligrams chewed"
+    escalate = client.post(url, headers=headers, json={"text": "Call the doctor using SBAR"}).json()
+    assert escalate["monitor"]["escalated"] is True
+    noted = client.post(url, headers=headers, json={"text": "Reassure the patient and explain"}).json()
+    assert noted["action_id"] == "noted" and noted["result"] == "Recorded."
+    negated = client.post(url, headers=headers, json={"text": "Do not give aspirin"}).json()
+    assert negated["action_id"] == "noted"
+    assert client.post(url, headers=headers, json={}).status_code == 422
+    snapshot = client.get(f"/session/{sid}", headers=headers).json()
+    titles = [event["title"] for event in snapshot["timeline"]]
+    assert "Give aspirin 300 milligrams chewed" in titles, "the evaluator sees the student's own words"
+
+
+def test_monitor_alarms_state_readings_and_follow_age():
+    from app.clinical import compute_monitor, vital_band
+
+    infant = {"patient": {"age": 9, "age_unit": "months"},
+              "case_file": {"baseline_vitals": {"heart_rate": 150, "systolic_bp": 80, "diastolic_bp": 45,
+                                                "spo2": 85, "respiratory_rate": 45, "temperature": 37}}}
+    monitor = compute_monitor(infant, 0, 0, [], "Intermediate", None, target_minutes=1)
+    assert "Marked tachycardia" not in monitor.alerts, "150 is not an alarm in a 9-month-old"
+    assert all("escalate" not in alert.lower() and "call for help" not in alert.lower() for alert in monitor.alerts)
+    assert vital_band({"patient": {"age": 40}})["hr_high"] == 130
+
+
+def test_scenarios_are_tagged_adult_or_paediatric(client):
+    groups = {item["id"]: item["age_group"] for item in client.get("/scenarios").json()}
+    assert groups["chest_pain"] == "adult" and groups["paediatric_dehydration"] == "paediatric"
+    assert sum(1 for group in groups.values() if group == "paediatric") >= 6
+
+
+def test_integrated_questions_filter_by_condition(written):
+    client, _, _ = written
+    assert len(client.get("/v1/integrated-questions").json()["items"]) == 3
+    assert client.get("/v1/integrated-questions", params={"condition": "nope"}).json()["items"] == []

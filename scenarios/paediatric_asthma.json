@@ -1,0 +1,441 @@
+{
+  "id": "paediatric_asthma",
+  "order": 10,
+  "age_group": "paediatric",
+  "title": "Child with a severe asthma attack",
+  "setting": "Community health centre, evening",
+  "difficulty": "Intermediate",
+  "description": "A mother brings her 6-year-old daughter, who is struggling to breathe and can only say a few words.",
+  "speaker": {
+    "name": "Zanele Mokoena",
+    "role": "the mother of the patient",
+    "language": "English; she also speaks Sesotho",
+    "style": "Frightened and talks quickly. She keeps looking at her daughter and asks if she will be all right."
+  },
+  "patient": {
+    "name": "Amahle Mokoena",
+    "age": 6,
+    "age_unit": "years",
+    "sex": "female",
+    "occupation": "Grade R learner",
+    "living_situation": "Lives with her mother and grandmother"
+  },
+  "presenting_complaint": "Wheeze and breathlessness getting worse since this afternoon; the blue pump is not helping.",
+  "opening_line": "Sister, Amahle can't breathe properly. I gave her the blue pump many times and it is not working.",
+  "personality": "Anxious but cooperative. She answers clearly when asked one question at a time.",
+  "case_file": {
+    "history": {
+      "onset": "A cold started two days ago. The wheeze began this afternoon and got much worse in the last two hours.",
+      "reliever_use": "She has had the salbutamol pump about ten times today, without a spacer, and it no longer helps.",
+      "speech_and_effort": "She can only say two or three words at a time and is sitting forward, using her neck muscles.",
+      "previous_attacks": "Asthma since age three. One admission last winter, never to intensive care.",
+      "controller": "She has a brown steroid pump but the family ran out a month ago.",
+      "triggers": "Cold weather, a cold, and paraffin heater smoke at home.",
+      "past_medical_history": "Eczema as a baby. No other illness.",
+      "medications": "Salbutamol pump as needed. Beclometasone pump (finished a month ago).",
+      "allergies": "No known drug allergies.",
+      "immunisations": "Up to date.",
+      "weight": "She weighed 20 kilograms at the clinic last month."
+    },
+    "risk_factors": [
+      "poor response to repeated salbutamol",
+      "can only say a few words",
+      "previous admission",
+      "stopped controller medication",
+      "paraffin smoke exposure"
+    ],
+    "baseline_vitals": {
+      "heart_rate": 148,
+      "systolic_bp": 102,
+      "diastolic_bp": 64,
+      "spo2": 89,
+      "respiratory_rate": 44,
+      "pain_score": 2,
+      "temperature": 37.3
+    },
+    "vitals_deterioration": {
+      "per_10_minutes": {
+        "heart_rate": 6,
+        "systolic_bp": -2,
+        "diastolic_bp": -1,
+        "spo2": -2,
+        "respiratory_rate": 2,
+        "pain_score": 0
+      },
+      "accelerate_after_minutes": 15,
+      "acceleration_multiplier": 1.5
+    },
+    "escalation_target_minutes": 10,
+    "required_actions": [
+      "vitals",
+      "oxygen",
+      "salbutamol_nebuliser"
+    ],
+    "critical_actions": [
+      "call_ambulance"
+    ],
+    "disclosure": [
+      {
+        "topic": "onset",
+        "label": "Onset and course",
+        "triggers": [
+          "when",
+          "start",
+          "how long",
+          "since",
+          "began"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "reliever_use",
+        "label": "Reliever use and response",
+        "triggers": [
+          "pump",
+          "inhaler",
+          "salbutamol",
+          "blue",
+          "puff",
+          "spacer",
+          "how many"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "speech_and_effort",
+        "label": "Speech and breathing effort",
+        "triggers": [
+          "talk",
+          "speak",
+          "words",
+          "breath",
+          "effort",
+          "struggl"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "previous_attacks",
+        "label": "Previous severe attacks and admissions",
+        "triggers": [
+          "before",
+          "admission",
+          "hospital",
+          "intensive",
+          "icu",
+          "previous"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "controller",
+        "label": "Controller medication",
+        "triggers": [
+          "brown",
+          "steroid",
+          "preventer",
+          "controller",
+          "daily"
+        ],
+        "weight": 2,
+        "required": true
+      },
+      {
+        "topic": "triggers",
+        "label": "Triggers",
+        "triggers": [
+          "trigger",
+          "smoke",
+          "cold",
+          "heater",
+          "paraffin",
+          "pets",
+          "dust"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "past_medical_history",
+        "label": "Past medical history",
+        "triggers": [
+          "medical history",
+          "illness",
+          "eczema",
+          "condition"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "medications",
+        "label": "Medications",
+        "triggers": [
+          "medication",
+          "medicine",
+          "tablet",
+          "syrup"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "allergies",
+        "label": "Allergies",
+        "triggers": [
+          "allerg"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "immunisations",
+        "label": "Immunisations",
+        "triggers": [
+          "immunisation",
+          "vaccine",
+          "vaccination"
+        ],
+        "weight": 1,
+        "required": true
+      },
+      {
+        "topic": "weight",
+        "label": "Weight",
+        "triggers": [
+          "weight",
+          "weigh",
+          "kg",
+          "kilogram"
+        ],
+        "weight": 1,
+        "required": true
+      }
+    ]
+  },
+  "ground_truth": {
+    "diagnosis": "Acute severe (life-threatening features developing) asthma in a child",
+    "forbidden_patient_terms": [
+      "severe asthma",
+      "status asthmaticus",
+      "life-threatening",
+      "asthma attack"
+    ],
+    "differentials": [
+      "acute severe asthma",
+      "pneumonia",
+      "foreign body",
+      "anaphylaxis"
+    ],
+    "red_flags": [
+      "can only say a few words",
+      "oxygen saturation below 92 percent",
+      "using accessory muscles",
+      "poor response to bronchodilator",
+      "previous admission",
+      "exhaustion or silent chest"
+    ],
+    "expected_actions": [
+      "assess airway, breathing and circulation, work of breathing, speech and oxygen saturation",
+      "give oxygen by face mask to keep the saturation at 94 to 98 percent",
+      "give salbutamol 5 milligrams (2.5 milligrams if under 5 years) by oxygen-driven nebuliser, every 20 minutes for three doses or continuously",
+      "add ipratropium bromide 250 micrograms nebulised every 20 minutes for three doses",
+      "give prednisolone 1 to 2 milligrams per kilogram by mouth (maximum 40 milligrams) or hydrocortisone 4 milligrams per kilogram intravenously",
+      "if not improving, magnesium sulphate 40 milligrams per kilogram intravenously over 20 minutes (maximum 2 grams)",
+      "escalate to the doctor and arrange urgent transfer to hospital",
+      "avoid sedatives and do not delay treatment for peak flow or an X-ray"
+    ]
+  },
+  "clinical_actions": {
+    "vitals": {
+      "minutes": 3,
+      "result": "Weight 20 kg. Speaks two or three words. Neck muscle use and recession. Wheeze in both lungs, quiet at the bases."
+    },
+    "ecg": {
+      "available": false,
+      "unavailable_reason": "Not available.",
+      "minutes": 5,
+      "result": "Not available."
+    },
+    "aspirin": {
+      "unsafe": true,
+      "result": "Aspirin given.",
+      "warning": "Aspirin is not given to children for this problem; it risks Reye syndrome and bleeding."
+    },
+    "oxygen": {
+      "result": "Oxygen by face mask.",
+      "effects": {
+        "spo2": 3
+      }
+    },
+    "iv_access": {
+      "result": "Cannula sited and bloods taken."
+    },
+    "salbutamol_nebuliser": {
+      "label": "Salbutamol nebuliser",
+      "description": "Nebulised bronchodilator.",
+      "minutes": 3,
+      "category": "treatment",
+      "repeatable": true,
+      "keywords": [
+        "salbutamol",
+        "ventolin",
+        "nebuli",
+        "bronchodilator",
+        "spacer",
+        "asthavent"
+      ],
+      "result": "Nebuliser running.",
+      "effects": {
+        "spo2": 2,
+        "respiratory_rate": -3,
+        "heart_rate": 4
+      },
+      "deterioration_factor": 0.6
+    },
+    "ipratropium": {
+      "label": "Ipratropium",
+      "description": "Nebulised anticholinergic.",
+      "minutes": 1,
+      "category": "treatment",
+      "keywords": [
+        "ipratropium",
+        "atrovent"
+      ],
+      "result": "Given.",
+      "effects": {
+        "spo2": 1
+      }
+    },
+    "steroid": {
+      "label": "Steroid",
+      "description": "Systemic corticosteroid.",
+      "minutes": 1,
+      "category": "treatment",
+      "keywords": [
+        "prednisolone",
+        "prednisone",
+        "hydrocortisone",
+        "steroid",
+        "dexamethasone"
+      ],
+      "result": "Given."
+    },
+    "magnesium": {
+      "label": "Magnesium sulphate",
+      "description": "Intravenous magnesium.",
+      "minutes": 20,
+      "category": "treatment",
+      "keywords": [
+        "magnesium"
+      ],
+      "result": "Infusion running.",
+      "effects": {
+        "spo2": 2,
+        "respiratory_rate": -2
+      }
+    },
+    "call_ambulance": {
+      "result": "Ambulance requested for urgent transfer. Estimated arrival 25 minutes."
+    },
+    "escalate_doctor": {
+      "result": "Doctor informed using SBAR and on the way."
+    }
+  },
+  "rubric": {
+    "red_flags": [
+      {
+        "flag": "Can only say a few words",
+        "triggers": [
+          "talk",
+          "speak",
+          "words",
+          "sentence"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Low oxygen saturation",
+        "triggers": [
+          "saturation",
+          "oxygen",
+          "spo2",
+          "sats"
+        ],
+        "actions": [
+          "vitals"
+        ]
+      },
+      {
+        "flag": "Poor response to the reliever",
+        "triggers": [
+          "pump",
+          "salbutamol",
+          "inhaler",
+          "how many"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Previous severe attack or admission",
+        "triggers": [
+          "admission",
+          "hospital",
+          "before",
+          "intensive"
+        ],
+        "actions": []
+      },
+      {
+        "flag": "Urgent escalation",
+        "triggers": [
+          "ambulance",
+          "doctor",
+          "refer",
+          "transfer"
+        ],
+        "actions": [
+          "call_ambulance",
+          "escalate_doctor"
+        ]
+      }
+    ]
+  },
+  "hints": [
+    "Ask how she is talking, how often she used the blue pump, and whether it helped.",
+    "Check her saturation and breathing effort. Below 92 percent with few words is a severe attack.",
+    "Start oxygen and a nebulised bronchodilator now; think about the steroid and who you must call.",
+    "Reassess after each nebuliser and explain the plan to her mother."
+  ],
+  "debrief": {
+    "ideal_approach": [
+      "Recognise a severe attack from the speech, effort, saturation and poor response to the reliever.",
+      "Give oxygen to a saturation of 94 to 98 percent and start oxygen-driven nebulised salbutamol with ipratropium.",
+      "Give a systemic steroid early (prednisolone 1 to 2 milligrams per kilogram, maximum 40 milligrams).",
+      "Reassess after every nebuliser; if not improving, magnesium sulphate 40 milligrams per kilogram intravenously and urgent transfer.",
+      "Escalate early and arrange transfer; never sedate a child with asthma.",
+      "Before discharge or transfer, restart the controller, teach spacer use and remove smoke triggers."
+    ],
+    "model_answer": "Amahle is 6 years old and 20 kg, with a severe asthma attack: she can say only a few words, uses her neck muscles, has a saturation of 89 percent and has not responded to repeated salbutamol. Give oxygen to 94 to 98 percent, salbutamol 5 milligrams with ipratropium 250 micrograms by oxygen-driven nebuliser every 20 minutes, and prednisolone 40 milligrams by mouth. If she does not improve, give magnesium sulphate 40 milligrams per kilogram (800 milligrams) intravenously over 20 minutes. Escalate to the doctor and arrange urgent transfer, reassessing after each nebuliser.",
+    "reflection_questions": [
+      "Which signs told you this attack was severe?",
+      "How does the salbutamol dose differ between a child under 5 and an older child?",
+      "Why are sedatives dangerous in a child with asthma?"
+    ],
+    "references": [
+      "National Department of Health. Standard Treatment Guidelines and Essential Medicines List for South Africa: Paediatric Hospital Level. Latest edition.",
+      "Advanced Paediatric Life Support (APLS): The Practical Approach. Latest edition.",
+      "World Health Organization. Pocket Book of Hospital Care for Children. 2nd edition."
+    ],
+    "review_note": "Draft paediatric case written for the app. Doses and steps follow common paediatric emergency practice and need clinician review against the current South African guidelines before teaching use."
+  },
+  "learning_objectives": [
+    "Recognise a severe asthma attack in a child",
+    "Give weight-based bronchodilator and steroid doses",
+    "Escalate early and reassess after each treatment"
+  ]
+}
