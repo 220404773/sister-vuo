@@ -146,17 +146,7 @@
       min-width: 210px;
     }
 
-    .start-bar #studentName {
-      width: 190px;
-    }
 
-    .start-bar #startButton {
-      width: auto;
-      margin-top: 0;
-      padding: 0 20px;
-      white-space: nowrap;
-      min-height: 44px;
-    }
 
     .layout {
       display: grid;
@@ -299,33 +289,31 @@
       padding: 13px 16px;
     }
 
-    #healthButton {
-      width: 100%;
-      margin-top: 10px;
-      padding: 11px 14px;
-    }
-
-    .health-result {
-      margin-top: 10px;
-      padding: 11px 13px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      color: var(--ink-soft);
-      background: var(--paper);
-      font-size: 0.8rem;
-      overflow-wrap: anywhere;
-    }
-
-    .health-result.ok {
-      border-color: #b7ddd3;
+    .start-panel {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 16px;
       background: var(--teal-soft);
-      color: var(--teal-dark);
     }
 
-    .health-result.fail {
-      border-color: #f2c7c0;
-      background: var(--danger-bg);
-      color: var(--danger);
+    .start-panel .field-label {
+      margin: 0;
+    }
+
+    .start-panel input {
+      width: 100%;
+      min-height: 44px;
+      box-sizing: border-box;
+    }
+
+    .start-panel #startButton {
+      width: 100%;
+      min-height: 46px;
+      margin: 4px 0 0;
+      font-size: 1rem;
     }
 
     .session-info {
@@ -1492,9 +1480,7 @@
       }
 
       .start-bar #scenarioSelect,
-      .start-bar #difficultySelect,
-      .start-bar #studentName,
-      .start-bar #startButton {
+      .start-bar #difficultySelect {
         width: 100%;
         max-width: none;
         min-width: 0;
@@ -2259,8 +2245,6 @@
         padding-right: 36px;
       }
       .topbar .start-bar .start-field { flex: 0 0 auto; }
-      .topbar .start-bar .start-field:has(#studentName) { flex: 0 1 150px; min-width: 120px; }
-      .topbar .start-bar #studentName { width: 100%; }
       .topbar .brand p { white-space: nowrap; }
       .topbar .badge { display: none; }
 
@@ -2359,6 +2343,17 @@
       .layout > .setup-panel > *,
       .layout > .clinical-panel > * { flex-shrink: 0; }
       .setup-panel > #leaveButton { min-height: 44px; }
+      /* Name and Start stay in view at the bottom of the column, however long the case text. */
+      .setup-panel > #startPanel {
+        position: sticky;
+        bottom: -22px;
+        z-index: 2;
+        margin: 16px -22px -22px;
+        border-width: 1px 0 0;
+        border-radius: 0 0 var(--radius) var(--radius);
+        padding: 14px 22px 18px;
+        box-shadow: 0 -10px 24px rgba(18, 48, 57, 0.08);
+      }
       .setup-panel > #sessionInfo { order: -3; margin-top: 0; }
       .setup-panel > #endButton { order: -2; margin-top: 10px; }
       .setup-panel > #leaveButton { order: -1; margin: 8px 0 18px; }
@@ -2476,11 +2471,6 @@
             <option value="Advanced">Advanced - no hints, faster deterioration</option>
           </select>
         </div>
-        <div class="start-field">
-          <label class="field-label" for="studentName">Your name <span>optional</span></label>
-          <input id="studentName" type="text" maxlength="80" autocomplete="off" placeholder="Student name">
-        </div>
-        <button id="startButton" class="primary" type="submit">Start session</button>
       </form>
       <div class="badge">Education simulation</div>
     </header>
@@ -2539,8 +2529,11 @@
         <div id="sessionInfo" class="session-info" hidden></div>
         <button id="endButton" class="secondary" type="button" hidden>End and evaluate</button>
         <button id="leaveButton" class="secondary" type="button" hidden>Leave this case</button>
-        <button id="healthButton" class="secondary" type="button">Test model connection</button>
-        <div id="healthResult" class="health-result" role="status" hidden></div>
+        <div id="startPanel" class="start-panel">
+          <label class="field-label" for="studentName">Your name <span>optional</span></label>
+          <input id="studentName" form="startForm" type="text" maxlength="80" autocomplete="off" placeholder="Student name">
+          <button id="startButton" form="startForm" class="primary" type="submit">Start session</button>
+        </div>
         <div class="notice">
           This is a fictional educational simulation. Do not enter real patient information.
           Feedback is for learning only and is not clinical advice.
@@ -2831,8 +2824,6 @@
       startForm: document.getElementById("startForm"),
       startButton: document.getElementById("startButton"),
       endButton: document.getElementById("endButton"),
-      healthButton: document.getElementById("healthButton"),
-      healthResult: document.getElementById("healthResult"),
       sessionInfo: document.getElementById("sessionInfo"),
       historyList: document.getElementById("historyList"),
       clearHistory: document.getElementById("clearHistory"),
@@ -2994,6 +2985,8 @@
       els.scenarioSelect.disabled = hasSession || state.busy;
       els.difficultySelect.disabled = hasSession || state.busy;
       els.studentName.disabled = hasSession || state.busy;
+      const startPanel = document.getElementById("startPanel");
+      if (startPanel) startPanel.hidden = hasSession;
       els.composer.hidden = !hasSession || !active;
       els.messageInput.disabled = !canChat;
       els.sendButton.disabled = !canChat;
@@ -3969,38 +3962,6 @@
       }
     }
 
-    async function checkModelHealth() {
-      if (state.busy) {
-        return;
-      }
-      hideError();
-      els.healthButton.disabled = true;
-      els.healthResult.hidden = false;
-      els.healthResult.className = "health-result";
-      els.healthResult.textContent = "Testing the model connection...";
-      try {
-        const data = await api("/health?probe=true");
-        const llm = data.llm || {};
-        if (llm.ok) {
-          els.healthResult.className = "health-result ok";
-          els.healthResult.textContent =
-            `Model reachable: ${llm.model || "configured model"} replied in ${llm.latency_ms} ms.`;
-        } else {
-          els.healthResult.className = "health-result fail";
-          const issues = Array.isArray(data.llm_config_issues) && data.llm_config_issues.length
-            ? ` ${data.llm_config_issues.join(" ")}`
-            : "";
-          els.healthResult.textContent =
-            `Model unavailable: ${llm.error || "unknown error"}${issues}`;
-        }
-      } catch (error) {
-        els.healthResult.className = "health-result fail";
-        els.healthResult.textContent = `Health check failed: ${error.message}`;
-      } finally {
-        els.healthButton.disabled = false;
-      }
-    }
-
     function viewArchived(entry) {
       state.sessionId = null;
       state.sessionToken = null;
@@ -4159,7 +4120,6 @@
       input.value = "";
       input.focus();
     });
-    els.healthButton.addEventListener("click", checkModelHealth);
     els.hintButton.addEventListener("click", handleHintClick);
     els.hintAsk.addEventListener("submit", submitGuidelineQuestion);
     els.newSessionButton.addEventListener("click", newSession);

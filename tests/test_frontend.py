@@ -121,19 +121,21 @@ def test_header_holds_brand_start_bar_then_badge() -> None:
         for el in start_bar.descendants()
         if el.attrs.get("id") in {"scenarioSelect", "difficultySelect", "studentName", "startButton"}
     ]
-    assert order == ["scenarioSelect", "difficultySelect", "studentName", "startButton"]
+    # The header holds the case choice; the name and Start sit in the left column.
+    assert order == ["scenarioSelect", "difficultySelect"]
 
 
-def test_moved_controls_appear_once_and_leave_the_setup_panel() -> None:
+def test_name_and_start_replace_the_model_check_in_the_setup_panel() -> None:
     html = read_ui()
     document = parse_ui()
     setup_panel = find_all(document, "aside", "setup-panel")[0]
     for element_id in ("scenarioSelect", "difficultySelect", "studentName", "startButton"):
         assert html.count(f'id="{element_id}"') == 1
-        node = find_by_id(document, element_id)[0]
-        assert not setup_panel.contains(node)
-    assert html.count('id="healthButton"') == 1
-    assert setup_panel.contains(find_by_id(document, "healthButton")[0])
+    for element_id in ("scenarioSelect", "difficultySelect"):
+        assert not setup_panel.contains(find_by_id(document, element_id)[0])
+    for element_id in ("studentName", "startButton"):
+        assert setup_panel.contains(find_by_id(document, element_id)[0])
+    assert 'id="healthButton"' not in html, "the model check was removed from the page"
 
 
 def test_scenario_is_a_required_field_inside_the_header_form() -> None:
@@ -141,8 +143,11 @@ def test_scenario_is_a_required_field_inside_the_header_form() -> None:
     scenario = find_by_id(document, "scenarioSelect")[0]
     start_form = find_by_id(document, "startForm")[0]
     assert scenario.attrs.get("required") is not None
-    for element_id in ("scenarioSelect", "difficultySelect", "studentName", "startButton"):
+    for element_id in ("scenarioSelect", "difficultySelect"):
         assert start_form.contains(find_by_id(document, element_id)[0])
+    # The name and Start live in the left column but still submit the header form.
+    for element_id in ("studentName", "startButton"):
+        assert find_by_id(document, element_id)[0].attrs.get("form") == "startForm"
 
 
 def test_moved_controls_keep_their_labels_and_attributes() -> None:

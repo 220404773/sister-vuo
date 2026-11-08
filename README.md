@@ -233,7 +233,7 @@ The student sees a specific message:
 | HTTP 400 or 422 | Points at `LLM_MODEL` and `LLM_JSON_MODE`, and includes the provider message |
 | Redirect or non-JSON body | Says the base URL is probably wrong or points at a landing page |
 
-Every request has a timeout (`LLM_TIMEOUT_SECONDS`, default 60) and one automatic retry for timeouts, connection failures, HTTP 429, and HTTP 5xx. Click **Test model connection** in the UI, or call `/health?probe=true`, to verify the full path without starting a session.
+Every request has a timeout (`LLM_TIMEOUT_SECONDS`, default 60) and one automatic retry for timeouts, connection failures, HTTP 429, and HTTP 5xx. Call `/health?probe=true` (for example `curl http://127.0.0.1:8000/health?probe=true`) to verify the full path without starting a session.
 
 ## Evaluation output
 

@@ -19,6 +19,10 @@ from .conftest import FakeLLM, FakeWhatsApp
 from .test_frontend import find_all, find_by_id, parse_ui, read_ui
 
 MOVED = ("difficultySelect", "studentName", "startButton")
+# Since the model check was removed, the name and Start sit in the left column (where the
+# check was) and still submit the header form through form="startForm".
+IN_HEADER = ("difficultySelect",)
+IN_LEFT_COLUMN = ("studentName", "startButton")
 DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"]
 
 
@@ -81,25 +85,27 @@ def test_ac01_topbar_holds_brand_then_start_bar_then_badge() -> None:
         for node in start_bar.descendants()
         if node.attrs.get("id") in set(MOVED)
     ]
-    assert [node.attrs["id"] for node in controls] == list(MOVED)
+    assert [node.attrs["id"] for node in controls] == list(IN_HEADER)
 
 
 # --- AC-02: one of each id, health stays left, moved controls leave the panel -
 
 
-def test_ac02_ids_are_unique_and_only_health_and_scenario_stay_left() -> None:
+def test_ac02_ids_are_unique_and_name_and_start_replace_the_model_check() -> None:
     html = read_ui()
     document = parse_ui()
     setup_panel = find_all(document, "aside", "setup-panel")[0]
 
-    for element_id in (*MOVED, "scenarioSelect", "healthButton"):
+    for element_id in (*MOVED, "scenarioSelect"):
         nodes = find_by_id(document, element_id)
         assert len(nodes) == 1, element_id
         assert html.count(f'id="{element_id}"') == 1, element_id
 
-    for element_id in MOVED:
+    for element_id in IN_HEADER:
         assert not setup_panel.contains(find_by_id(document, element_id)[0])
-    assert setup_panel.contains(find_by_id(document, "healthButton")[0])
+    for element_id in IN_LEFT_COLUMN:
+        assert setup_panel.contains(find_by_id(document, element_id)[0])
+    assert 'id="healthButton"' not in html
     assert not setup_panel.contains(find_by_id(document, "scenarioSelect")[0])
 
 
@@ -115,8 +121,10 @@ def test_ac03_scenario_validates_through_the_header_form() -> None:
     assert "required" in scenario.attrs
     assert "form" not in start_form.attrs
     assert start_form.contains(scenario)
-    for element_id in MOVED:
+    for element_id in IN_HEADER:
         assert start_form.contains(find_by_id(document, element_id)[0])
+    for element_id in IN_LEFT_COLUMN:
+        assert find_by_id(document, element_id)[0].attrs.get("form") == "startForm"
 
 
 # --- AC-04 / FR-02: labels, options, limits and placeholder are unchanged ----
@@ -160,11 +168,7 @@ def test_ac05_media_queries_wrap_then_stack_with_44px_targets() -> None:
 
     assert "flex-wrap: wrap" in _declarations(tablet, ".start-bar")
     assert "flex-direction: column" in _declarations(phone, ".start-bar")
-    for selector in (
-        ".start-bar #difficultySelect",
-        ".start-bar #studentName",
-        ".start-bar #startButton",
-    ):
+    for selector in (".start-bar #difficultySelect",):
         assert "min-height: 44px" in _declarations(phone, selector)
 
 
@@ -333,11 +337,7 @@ def test_round2_560px_controls_stack_full_width_with_44px_targets() -> None:
     phone = _media_block(css, "max-width: 560px")
 
     assert "width: 100%" in _declarations(phone, ".start-bar .start-field")
-    for selector in (
-        ".start-bar #difficultySelect",
-        ".start-bar #studentName",
-        ".start-bar #startButton",
-    ):
+    for selector in (".start-bar #difficultySelect",):
         declarations = _declarations(phone, selector)
         assert "width: 100%" in declarations
         assert "min-width: 0" in declarations
@@ -367,8 +367,8 @@ def test_fr04_connection_end_and_panels_stay_in_place() -> None:
         "scenarioMeta",
         "sessionInfo",
         "endButton",
-        "healthButton",
-        "healthResult",
+        "studentName",
+        "startButton",
         "historyList",
         "clearHistory",
     ):
@@ -393,4 +393,4 @@ def test_fr05_moved_controls_have_no_inline_event_handlers() -> None:
     start_form = find_by_id(document, "startForm")[0]
     start_button = find_by_id(document, "startButton")[0]
     assert start_button.attrs.get("type") == "submit"
-    assert start_form.contains(start_button)
+    assert start_form.attrs.get("id") == start_button.attrs.get("form") == "startForm"
