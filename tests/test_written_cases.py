@@ -346,3 +346,12 @@ def test_integrated_questions_filter_by_condition(written):
     client, _, _ = written
     assert len(client.get("/v1/integrated-questions").json()["items"]) == 3
     assert client.get("/v1/integrated-questions", params={"condition": "nope"}).json()["items"] == []
+
+
+def test_learning_and_integrated_questions_are_locked_during_a_case():
+    html = (Path(__file__).resolve().parents[1] / "app" / "static" / "index.html").read_text(encoding="utf-8")
+    select_tab = html[html.index("function selectTab("):html.index("function setMode(")]
+    assert 'name === "learning" && caseInProgress()' in select_tab
+    set_mode = html[html.index("function setMode("):html.index("function syncStartBar(")]
+    assert 'mode === "integrated" && caseInProgress()' in set_mode
+    assert 'id="leaveButton"' in html and 'id="writtenLeave"' in html

@@ -1575,6 +1575,11 @@
       cursor: pointer;
     }
 
+    .tab[aria-disabled="true"] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
     .tab[aria-selected="true"] {
       background: var(--teal);
       color: var(--white);
@@ -2415,6 +2420,7 @@
 
           <div class="submit-row">
             <button id="writtenSubmit" class="primary" type="button">Submit answers</button>
+            <button id="writtenLeave" class="secondary" type="button">Leave this case</button>
             <span class="muted-note">After you submit, the answers cannot be changed.</span>
           </div>
         </div>
@@ -2657,6 +2663,11 @@
       if (leave) {
         leave.hidden = !hasSession || !active;
         leave.disabled = state.busy;
+      }
+      try {
+        syncCaseLocks();
+      } catch (error) {
+        // The tab code loads after this; it syncs itself once it starts.
       }
       renderActions();
       els.hintButton.hidden =
@@ -3914,7 +3925,30 @@
 
     // --- tabs (WAI-ARIA tablist: arrows, Home and End move between tabs) ---
 
+    function caseInProgress() {
+      const chatActive = Boolean(state.sessionId) && state.status === "active" && !state.archived;
+      const writtenActive = Boolean(study.written) && !study.written.submitted;
+      return chatActive || writtenActive;
+    }
+
+    function syncCaseLocks() {
+      const locked = caseInProgress();
+      const learningTab = document.getElementById("tabLearning");
+      learningTab.setAttribute("aria-disabled", String(locked));
+      learningTab.title = locked ? "Finish or leave the case you started first" : "";
+      const integrated = studyEls.modeButtons.find((button) => button.dataset.mode === "integrated");
+      if (integrated) {
+        integrated.disabled = locked || study.ageGroup !== "adult";
+        integrated.title = locked ? "Finish or leave the case you started first" : integrated.title;
+      }
+    }
+
     function selectTab(name, focus = false) {
+      if (name === "learning" && caseInProgress()) {
+        studyError("Finish or leave the case you started before you open Learning.");
+        if (location.hash === "#learning") history.replaceState(null, "", "#scenarios");
+        return;
+      }
       study.tab = name;
       for (const tab of studyEls.tabs) {
         const selected = (tab.id === "tabLearning") === (name === "learning");
@@ -3931,6 +3965,10 @@
     }
 
     function setMode(mode) {
+      if (mode === "integrated" && caseInProgress()) {
+        studyError("Finish or leave the case you started before you open the integrated questions.");
+        return;
+      }
       study.mode = mode;
       for (const button of studyEls.modeButtons) {
         button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
@@ -3986,6 +4024,7 @@
         if (button.dataset.mode !== "chat") button.disabled = adultOnly;
         if (button.dataset.mode !== "chat") button.title = adultOnly ? "Adult critical care (ACC 200) only" : "";
       }
+      syncCaseLocks();
       if (adultOnly && study.mode !== "chat") setMode("chat");
       loadScenarios();
     }
@@ -4168,6 +4207,7 @@
         studyEls.writtenResult.hidden = true;
         studyEls.writtenWork.hidden = false;
         studyEls.writtenSubmit.disabled = false;
+        syncCaseLocks();
         studyEls.scenarioBox.scrollIntoView({ block: "start", behavior: "smooth" });
       } catch (error) {
         studyError(error.message);
@@ -4220,6 +4260,7 @@
         const result = await api(`/v1/written-cases/sessions/${study.written.sessionId}/submit`,
           jsonPost({ answers }, writtenHeaders({ "Idempotency-Key": newKey() })));
         study.written.submitted = true;
+        syncCaseLocks();
         for (const field of studyEls.writtenWork.querySelectorAll("textarea, input, select, button")) field.disabled = true;
         renderWrittenResult(result);
       } catch (error) {
@@ -4302,6 +4343,7 @@
         studyEls.writtenWork.hidden = true;
         studyEls.writtenResult.hidden = true;
         study.written = null;
+        syncCaseLocks();
         studyEls.writtenSelect.focus();
       });
       parts.push(h("div", { className: "submit-row" }, [again]));
@@ -4316,6 +4358,14 @@
     studyEls.q1Add.addEventListener("click", () => studyEls.q1Table.append(answerRow(study.written.columns.q1)));
     studyEls.q2AddGroup.addEventListener("click", () => addGroup(study.written.columns.q2, "", 2));
     studyEls.writtenSubmit.addEventListener("click", submitWritten);
+    document.getElementById("writtenLeave").addEventListener("click", () => {
+      if (!window.confirm("Leave this case without submitting? Your answers will be lost.")) return;
+      study.written = null;
+      studyEls.writtenWork.hidden = true;
+      studyEls.writtenResult.hidden = true;
+      syncCaseLocks();
+      studyEls.writtenSelect.focus();
+    });
 
     // --- integrated questions ---
 
@@ -4445,6 +4495,7 @@
 
     selectTab(location.hash === "#learning" ? "learning" : "scenarios");
     setMode("chat");
+    syncCaseLocks();
   </script>
 </body>
 </html>
