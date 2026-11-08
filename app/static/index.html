@@ -2243,9 +2243,18 @@
         justify-content: flex-end;
       }
 
-      .topbar .start-bar #scenarioSelect { min-width: 0; width: 260px; }
-      .topbar .start-bar #difficultySelect { min-width: 0; width: 250px; }
-      .topbar .start-bar #studentName { width: 170px; }
+      .topbar .start-bar #scenarioSelect,
+      .topbar .start-bar #difficultySelect {
+        field-sizing: content;  /* as wide as the chosen text, so nothing is cut off */
+        width: auto;
+        min-width: 220px;
+        max-width: none;
+        padding-right: 36px;
+      }
+      .topbar .start-bar .start-field { flex: 0 0 auto; }
+      .topbar .start-bar .start-field:has(#studentName) { flex: 0 1 150px; min-width: 120px; }
+      .topbar .start-bar #studentName { width: 100%; }
+      .topbar .brand p { white-space: nowrap; }
       .topbar .badge { display: none; }
 
       /* Navigation: one line under the title. */
@@ -2312,7 +2321,7 @@
 
       /* Chat cases: three columns that fill the height. */
       .layout {
-        grid-template-columns: 280px minmax(0, 1fr) 340px;
+        grid-template-columns: 360px minmax(0, 1fr) 340px;
         align-items: stretch;
       }
 
@@ -2352,7 +2361,7 @@
       .chat-head > :first-child { flex: 1 1 260px; min-width: 0; }
 
       @media (max-width: 1499px) {
-        .layout { grid-template-columns: 250px minmax(0, 1fr) 320px; }
+        .layout { grid-template-columns: 320px minmax(0, 1fr) 320px; }
       }
 
       /* Learning and integrated questions: a condition list beside the content. */
