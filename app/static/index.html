@@ -1549,6 +1549,457 @@
         padding: 20px 16px;
       }
     }
+
+    /* --- Tabs: Learning | Clinical Scenarios --- */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin: 0 0 18px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .tab {
+      min-height: 44px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--ink-soft);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .tab:focus-visible,
+    .mode-button:focus-visible {
+      outline: 3px solid var(--teal-dark);
+      outline-offset: 2px;
+    }
+
+    .modes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 16px;
+    }
+
+    .mode-button {
+      min-height: 40px;
+      padding: 0 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--ink-soft);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mode-button[aria-pressed="true"] {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      color: var(--teal-dark);
+    }
+
+    .study-panel {
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .study-panel h2 {
+      margin: 0 0 6px;
+      font-size: 1.25rem;
+    }
+
+    .study-panel h3 {
+      margin: 22px 0 8px;
+      font-size: 1.02rem;
+      color: var(--teal-dark);
+    }
+
+    .study-picker {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 12px;
+      margin: 12px 0 4px;
+    }
+
+    .study-picker .start-field {
+      flex: 1 1 260px;
+      max-width: 460px;
+    }
+
+    .study-picker select,
+    .study-panel textarea,
+    .study-panel input[type="text"] {
+      width: 100%;
+      min-height: 44px;
+    }
+
+    .muted-note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 6px 0 0;
+    }
+
+    .draft-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.75rem;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    .review-box {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border: 1px solid #f0d9a6;
+      border-radius: 14px;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.9rem;
+    }
+
+    .review-box ul {
+      margin: 6px 0 0;
+      padding-left: 18px;
+    }
+
+    .pair-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pair-list li {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+    }
+
+    .pair-list strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Scenario box */
+    .scenario-box {
+      margin: 16px 0;
+      padding: 16px 18px;
+      border: 2px solid var(--teal);
+      border-radius: 18px;
+      background: var(--teal-soft);
+    }
+
+    .scenario-box p {
+      margin: 0 0 12px;
+      line-height: 1.55;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0 0;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: var(--white);
+      border: 1px solid var(--line-strong);
+      font-size: 0.88rem;
+    }
+
+    .chip b {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .chip-heading {
+      margin: 16px 0 0;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    /* Ask for more information */
+    .ask-row {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .ask-log {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .ask-log li {
+      padding: 10px 12px;
+      border-left: 4px solid var(--teal);
+      border-radius: 8px;
+      background: var(--paper);
+      font-size: 0.92rem;
+    }
+
+    .ask-log li.not-available {
+      border-left-color: var(--line-strong);
+      color: var(--muted);
+    }
+
+    .ask-log .ask-q {
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    /* Answer tables */
+    .answer-table {
+      display: grid;
+      gap: 10px;
+    }
+
+    .answer-head,
+    .answer-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) 44px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .answer-head {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .answer-row textarea {
+      min-height: 72px;
+      resize: vertical;
+      padding: 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      font: inherit;
+    }
+
+    .row-remove {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--danger);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .abbr-flag {
+      grid-column: 1 / -1;
+      margin: -4px 0 0;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.85rem;
+    }
+
+    .group-card {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 16px;
+    }
+
+    .group-card input[type="text"] {
+      font-weight: 700;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+    }
+
+    .table-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .table-actions button,
+    .study-panel .inline-button {
+      width: auto;
+      min-height: 40px;
+      margin: 0;
+      padding: 0 14px;
+    }
+
+    .submit-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .submit-row button {
+      width: auto;
+      margin: 0;
+      padding: 0 22px;
+    }
+
+    /* Result */
+    .result-title {
+      margin: 0 0 4px;
+      font-size: 1.4rem;
+      color: var(--teal-dark);
+    }
+
+    .score-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 10px;
+      margin: 10px 0 14px;
+    }
+
+    .score-big {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .domain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .domain-item {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .domain-item .bar {
+      height: 8px;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: var(--line);
+      overflow: hidden;
+    }
+
+    .domain-item .bar span {
+      display: block;
+      height: 100%;
+      background: var(--teal);
+    }
+
+    .model-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    .model-table th,
+    .model-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .model-table th {
+      background: var(--paper);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-met { background: var(--teal-soft); color: var(--teal-dark); }
+    .status-partial { background: var(--amber-bg); color: var(--amber); }
+    .status-missed { background: var(--danger-bg); color: var(--danger); }
+
+    .integrated-card {
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .integrated-card fieldset {
+      margin: 8px 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .integrated-card label.option {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 6px 0;
+    }
+
+    .integrated-result {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--paper);
+    }
+
+    .integrated-result.correct { background: var(--teal-soft); }
+    .integrated-result.wrong { background: var(--danger-bg); }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    @media (max-width: 720px) {
+      .tabs { width: 100%; }
+      .tab { flex: 1 1 0; padding: 0 10px; }
+      .study-panel { padding: 16px; }
+      .ask-row { grid-template-columns: 1fr; }
+      .answer-head { display: none; }
+      .answer-row {
+        grid-template-columns: minmax(0, 1fr) 44px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .answer-row textarea:nth-of-type(2) { grid-column: 1 / 2; }
+      .answer-row .row-remove { grid-column: 2; grid-row: 1; }
+      .submit-row button { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -1582,6 +2033,31 @@
       </form>
       <div class="badge">Education simulation</div>
     </header>
+
+    <nav class="tabs" role="tablist" aria-label="Sister Vuo sections">
+      <button id="tabLearning" class="tab" type="button" role="tab" aria-selected="false" aria-controls="learningPanel" tabindex="-1">Learning</button>
+      <button id="tabScenarios" class="tab" type="button" role="tab" aria-selected="true" aria-controls="scenariosPanel" tabindex="0">Clinical Scenarios</button>
+    </nav>
+
+    <section id="learningPanel" class="panel study-panel" role="tabpanel" aria-labelledby="tabLearning" hidden>
+      <h2>Learning</h2>
+      <p class="muted-note">Pick a condition to study what it is, its pathophysiology, the clinical manifestations, the tests, how to interpret them, and the clinical actions with their rationale.</p>
+      <div class="study-picker">
+        <div class="start-field">
+          <label class="field-label" for="conditionSelect">Condition</label>
+          <select id="conditionSelect"></select>
+        </div>
+      </div>
+      <div id="learningContent" aria-live="polite"></div>
+    </section>
+
+    <div id="scenariosPanel" role="tabpanel" aria-labelledby="tabScenarios">
+      <p id="studyError" class="review-box" role="alert" hidden></p>
+      <div class="modes" role="group" aria-label="Kind of case">
+        <button class="mode-button" type="button" data-mode="chat" aria-pressed="true">Chat cases</button>
+        <button class="mode-button" type="button" data-mode="written" aria-pressed="false">Written cases</button>
+        <button class="mode-button" type="button" data-mode="integrated" aria-pressed="false" hidden>Integrated questions</button>
+      </div>
 
     <main class="layout">
       <aside class="panel setup-panel">
@@ -1758,6 +2234,64 @@
       </section>
     </main>
 
+
+      <section id="writtenPanel" class="panel study-panel" hidden>
+        <h2>Written cases</h2>
+        <p class="muted-note">Read the scenario, ask for more information if you need it, then complete both tables. Write every term in full. The condition is revealed when you submit.</p>
+        <div class="study-picker">
+          <div class="start-field">
+            <label class="field-label" for="writtenSelect">Case</label>
+            <select id="writtenSelect"></select>
+          </div>
+          <button id="writtenStart" class="primary inline-button" type="button">Start case</button>
+        </div>
+        <div id="writtenWork" hidden>
+          <div id="scenarioBox" class="scenario-box" aria-label="Scenario"></div>
+
+          <h3>Ask for more information</h3>
+          <p class="muted-note">Answers come only from this case's records. The diagnosis is not available here.</p>
+          <form id="askForm" class="ask-row">
+            <div>
+              <label class="field-label" for="askTopic">About</label>
+              <select id="askTopic">
+                <option value="auto">Any</option>
+                <option value="history">History</option>
+                <option value="examination">Examination</option>
+                <option value="investigations">Investigations</option>
+                <option value="observations">Repeat observations</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="askInput">Question</label>
+              <input id="askInput" type="text" maxlength="500" autocomplete="off" placeholder="For example: What is the urine output?">
+            </div>
+            <button id="askButton" class="secondary inline-button" type="submit">Ask</button>
+          </form>
+          <ul id="askLog" class="ask-log" aria-live="polite"></ul>
+
+          <h3 id="q1Text"></h3>
+          <div id="q1Table" class="answer-table"></div>
+          <div class="table-actions"><button id="q1Add" class="secondary" type="button">Add row</button></div>
+
+          <h3 id="q2Text"></h3>
+          <div id="q2Groups" class="answer-table"></div>
+          <div class="table-actions"><button id="q2AddGroup" class="secondary" type="button">Add heading</button></div>
+
+          <div class="submit-row">
+            <button id="writtenSubmit" class="primary" type="button">Submit answers</button>
+            <span class="muted-note">After you submit, the answers cannot be changed.</span>
+          </div>
+        </div>
+        <div id="writtenResult" hidden></div>
+      </section>
+
+      <section id="integratedPanel" class="panel study-panel" hidden>
+        <h2>Integrated questions</h2>
+        <p class="muted-note">Comparisons, multiple choice and true or false. Choices are marked straight away; written answers get feedback.</p>
+        <div id="integratedList"></div>
+      </section>
+    </div>
+
     <footer class="page-footer">
       Sister Vuo uses a fictional patient and a separate evaluator model. Nothing here is a real clinical record.
     </footer>
@@ -1911,6 +2445,8 @@
     }
 
     function showKeyForm() {
+      // The key form lives in the chat view, so bring it into sight from any tab.
+      if (typeof showChatMode === "function") showChatMode();
       els.keyForm.hidden = false;
       els.apiKeyInput.focus();
     }
@@ -3137,6 +3673,571 @@
     updateControls();
     loadScenarios();
     setInterval(pollMonitor, 15000);
+
+    // ---------------------------------------------------------------------------------
+    // Learning and Clinical Scenarios tabs, written cases and integrated questions.
+    // Every piece of server or student text is set with textContent, never innerHTML.
+    // ---------------------------------------------------------------------------------
+
+    function h(tag, attrs = {}, children = []) {
+      const node = document.createElement(tag);
+      for (const [name, value] of Object.entries(attrs)) {
+        if (value === null || value === undefined || value === false) continue;
+        if (name === "text") node.textContent = value;
+        else if (name === "className") node.className = value;
+        else node.setAttribute(name, value === true ? "" : value);
+      }
+      for (const child of [].concat(children)) {
+        if (child) node.append(child);
+      }
+      return node;
+    }
+
+    const study = {
+      tab: "scenarios",
+      mode: "chat",
+      conditionsLoaded: false,
+      writtenLoaded: false,
+      integratedLoaded: false,
+      written: null
+    };
+
+    const studyEls = {
+      tabs: [document.getElementById("tabLearning"), document.getElementById("tabScenarios")],
+      learningPanel: document.getElementById("learningPanel"),
+      scenariosPanel: document.getElementById("scenariosPanel"),
+      modeButtons: [...document.querySelectorAll(".mode-button")],
+      chatLayout: document.querySelector("main.layout"),
+      startBar: document.getElementById("startForm"),
+      conditionSelect: document.getElementById("conditionSelect"),
+      learningContent: document.getElementById("learningContent"),
+      writtenPanel: document.getElementById("writtenPanel"),
+      writtenSelect: document.getElementById("writtenSelect"),
+      writtenStart: document.getElementById("writtenStart"),
+      writtenWork: document.getElementById("writtenWork"),
+      writtenResult: document.getElementById("writtenResult"),
+      scenarioBox: document.getElementById("scenarioBox"),
+      askForm: document.getElementById("askForm"),
+      askTopic: document.getElementById("askTopic"),
+      askInput: document.getElementById("askInput"),
+      askLog: document.getElementById("askLog"),
+      q1Text: document.getElementById("q1Text"),
+      q1Table: document.getElementById("q1Table"),
+      q1Add: document.getElementById("q1Add"),
+      q2Text: document.getElementById("q2Text"),
+      q2Groups: document.getElementById("q2Groups"),
+      q2AddGroup: document.getElementById("q2AddGroup"),
+      writtenSubmit: document.getElementById("writtenSubmit"),
+      integratedPanel: document.getElementById("integratedPanel"),
+      integratedList: document.getElementById("integratedList")
+    };
+
+    function studyError(message) {
+      const target = study.tab === "learning" ? null : document.getElementById("studyError");
+      if (!target) return;
+      target.textContent = message;
+      target.hidden = false;
+      clearTimeout(studyError.timer);
+      studyError.timer = setTimeout(() => { target.hidden = true; }, 8000);
+    }
+
+    function jsonPost(body, extraHeaders = {}) {
+      return {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...extraHeaders },
+        body: JSON.stringify(body)
+      };
+    }
+
+    function writtenHeaders(extra = {}) {
+      return { "X-Session-Token": study.written ? study.written.token : "", ...extra };
+    }
+
+    function newKey() {
+      return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now() + Math.random());
+    }
+
+    // --- tabs (WAI-ARIA tablist: arrows, Home and End move between tabs) ---
+
+    function selectTab(name, focus = false) {
+      study.tab = name;
+      for (const tab of studyEls.tabs) {
+        const selected = (tab.id === "tabLearning") === (name === "learning");
+        tab.setAttribute("aria-selected", String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        if (selected && focus) tab.focus();
+      }
+      studyEls.learningPanel.hidden = name !== "learning";
+      studyEls.scenariosPanel.hidden = name !== "scenarios";
+      const hash = name === "learning" ? "#learning" : "#scenarios";
+      if (location.hash !== hash) history.replaceState(null, "", hash);
+      syncStartBar();
+      if (name === "learning") loadConditions();
+    }
+
+    function setMode(mode) {
+      study.mode = mode;
+      for (const button of studyEls.modeButtons) {
+        button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+      }
+      studyEls.chatLayout.hidden = mode !== "chat";
+      studyEls.writtenPanel.hidden = mode !== "written";
+      studyEls.integratedPanel.hidden = mode !== "integrated";
+      syncStartBar();
+      if (mode === "written") loadWrittenCases();
+      if (mode === "integrated") loadIntegrated();
+    }
+
+    function syncStartBar() {
+      // The header start bar belongs to the chat cases only.
+      if (studyEls.startBar) studyEls.startBar.hidden = !(study.tab === "scenarios" && study.mode === "chat");
+    }
+
+    function showChatMode() {
+      selectTab("scenarios");
+      setMode("chat");
+    }
+
+    studyEls.tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => selectTab(tab.id === "tabLearning" ? "learning" : "scenarios"));
+      tab.addEventListener("keydown", (event) => {
+        const last = studyEls.tabs.length - 1;
+        let next = null;
+        if (event.key === "ArrowRight") next = index === last ? 0 : index + 1;
+        if (event.key === "ArrowLeft") next = index === 0 ? last : index - 1;
+        if (event.key === "Home") next = 0;
+        if (event.key === "End") next = last;
+        if (next === null) return;
+        event.preventDefault();
+        selectTab(studyEls.tabs[next].id === "tabLearning" ? "learning" : "scenarios", true);
+      });
+    });
+    studyEls.modeButtons.forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+    window.addEventListener("hashchange", () => selectTab(location.hash === "#learning" ? "learning" : "scenarios"));
+
+    // --- Learning tab ---
+
+    async function loadConditions() {
+      if (study.conditionsLoaded) return;
+      try {
+        const data = await api("/v1/learning/conditions");
+        studyEls.conditionSelect.replaceChildren(
+          ...data.items.map((item) => h("option", { value: item.id, text: item.title }))
+        );
+        study.conditionsLoaded = true;
+        if (data.items.length) showCondition(data.items[0].id);
+        else studyEls.learningContent.replaceChildren(h("p", { className: "muted-note", text: "No conditions are available yet." }));
+      } catch (error) {
+        studyEls.learningContent.replaceChildren(h("p", { className: "muted-note", text: error.message }));
+      }
+    }
+
+    const sectionTitles = {
+      what_it_is: "What the condition is",
+      pathophysiology: "Pathophysiology",
+      manifestations: "Clinical manifestations",
+      diagnostics: "Diagnostic tests",
+      interpretation: "Interpretation of the manifestations and results",
+      actions: "Clinical actions and rationale"
+    };
+
+    async function showCondition(id) {
+      try {
+        const data = await api(`/v1/learning/conditions/${encodeURIComponent(id)}`);
+        const parts = [h("h2", { text: data.title })];
+        for (const section of data.sections) {
+          const heading = h("h3", { text: sectionTitles[section.id] || section.id });
+          if (section.review_flag) heading.append(h("span", { className: "draft-badge", text: "Draft for review", title: section.review_note || "" }));
+          parts.push(heading);
+          if (section.text) parts.push(h("p", { text: section.text }));
+          if (Array.isArray(section.items)) {
+            let lastHeading = null;
+            const list = h("ul", { className: "pair-list" });
+            for (const item of section.items) {
+              if (item.heading && item.heading !== lastHeading) {
+                lastHeading = item.heading;
+                list.append(h("li", { className: "group-label" }, [h("strong", { text: item.heading })]));
+              }
+              const first = item.text || item.action || item.test || "";
+              const second = item.pathophysiology || item.rationale || item.interpretation || "";
+              list.append(h("li", {}, [
+                second ? h("strong", { text: first }) : h("span", { text: first }),
+                second ? h("span", { text: second }) : null
+              ]));
+            }
+            parts.push(list);
+          }
+        }
+        if (data.review_flags && data.review_flags.length) {
+          parts.push(h("div", { className: "review-box" }, [
+            h("strong", { text: "Awaiting clinician review" }),
+            h("ul", {}, data.review_flags.map((note) => h("li", { text: note })))
+          ]));
+        }
+        studyEls.learningContent.replaceChildren(...parts);
+      } catch (error) {
+        studyEls.learningContent.replaceChildren(h("p", { className: "muted-note", text: error.message }));
+      }
+    }
+
+    studyEls.conditionSelect.addEventListener("change", () => showCondition(studyEls.conditionSelect.value));
+
+    // --- written cases ---
+
+    async function loadWrittenCases() {
+      if (study.writtenLoaded) return;
+      try {
+        const data = await api("/v1/cases");
+        const written = data.items.filter((item) => item.kind === "written");
+        studyEls.writtenSelect.replaceChildren(...written.map((item) => h("option", { value: item.id, text: item.label })));
+        studyEls.writtenStart.disabled = written.length === 0;
+        study.writtenLoaded = true;
+      } catch (error) {
+        studyError(error.message);
+      }
+    }
+
+    function answerRow(columns, values = ["", ""]) {
+      const row = h("div", { className: "answer-row" });
+      const left = h("textarea", { "aria-label": columns[0], maxlength: "2000" });
+      const right = h("textarea", { "aria-label": columns[1], maxlength: "2000" });
+      left.value = values[0];
+      right.value = values[1];
+      const remove = h("button", { className: "row-remove", type: "button", "aria-label": "Remove this row", text: "×" });
+      remove.addEventListener("click", () => {
+        const table = row.parentElement;
+        if (table.querySelectorAll(".answer-row").length > 1) row.remove();
+      });
+      for (const area of [left, right]) area.addEventListener("change", () => checkAbbreviations(row));
+      row.append(left, right, remove);
+      return row;
+    }
+
+    function tableHead(columns) {
+      return h("div", { className: "answer-head", "aria-hidden": "true" }, [
+        h("span", { text: columns[0] }), h("span", { text: columns[1] }), h("span")
+      ]);
+    }
+
+    function addGroup(columns, heading = "", rows = 2) {
+      const card = h("div", { className: "group-card" });
+      const title = h("input", { type: "text", maxlength: "200", placeholder: "Heading, for example: Restore the circulation", "aria-label": "Heading" });
+      title.value = heading;
+      const table = h("div", { className: "answer-table" }, [tableHead(columns)]);
+      for (let i = 0; i < rows; i += 1) table.append(answerRow(columns));
+      const addRow = h("button", { className: "secondary", type: "button", text: "Add row" });
+      addRow.addEventListener("click", () => table.append(answerRow(columns)));
+      const removeGroup = h("button", { className: "secondary", type: "button", text: "Remove heading" });
+      removeGroup.addEventListener("click", () => {
+        if (studyEls.q2Groups.querySelectorAll(".group-card").length > 1) card.remove();
+      });
+      card.append(title, table, h("div", { className: "table-actions" }, [addRow, removeGroup]));
+      studyEls.q2Groups.append(card);
+    }
+
+    async function checkAbbreviations(row) {
+      if (!study.written || study.written.submitted) return;
+      const areas = [...row.querySelectorAll("textarea")];
+      const texts = areas.map((area) => area.value);
+      row.querySelector(".abbr-flag")?.remove();
+      if (!texts.join("").trim()) return;
+      try {
+        const data = await api(`/v1/written-cases/sessions/${study.written.sessionId}/abbreviations`,
+          jsonPost({ texts }, writtenHeaders()));
+        if (!data.flags.length) return;
+        const terms = [...new Set(data.flags.map((flag) => flag.suggestion ? `${flag.term} (${flag.suggestion})` : flag.term))];
+        row.append(h("p", { className: "abbr-flag", role: "status", text: `Write in full: ${terms.join(", ")}` }));
+      } catch (error) {
+        // The check is advisory; a failure never blocks the student.
+      }
+    }
+
+    function renderScenario(scenario) {
+      const box = studyEls.scenarioBox;
+      const parts = [h("p", { text: scenario.text })];
+      const chips = (title, items) => {
+        if (!items || !items.length) return;
+        parts.push(h("p", { className: "chip-heading", text: title }));
+        parts.push(h("div", { className: "chip-row" }, items.map((item) =>
+          h("span", { className: "chip" }, [h("b", { text: `${item.label}: ` }), document.createTextNode(item.value)]))));
+      };
+      chips("Monitored", scenario.monitored);
+      chips("Arterial blood gas", scenario.abg);
+      chips("Blood results", scenario.bloods);
+      if (scenario.ventilator) chips("Ventilator", [{ label: "Settings", value: scenario.ventilator }]);
+      if (scenario.imaging) chips("Imaging", [{ label: "Finding", value: scenario.imaging }]);
+      box.replaceChildren(...parts);
+    }
+
+    async function startWritten() {
+      const caseId = studyEls.writtenSelect.value;
+      if (!caseId) return;
+      studyEls.writtenStart.disabled = true;
+      try {
+        const data = await api(`/v1/written-cases/${encodeURIComponent(caseId)}/sessions`, jsonPost({}));
+        study.written = { sessionId: data.session_id, token: data.session_token, submitted: false, columns: {} };
+        const [q1, q2] = data.case.questions;
+        study.written.columns = { q1: q1.columns, q2: q2.columns };
+        renderScenario(data.case.scenario);
+        studyEls.askLog.replaceChildren();
+        studyEls.q1Text.textContent = q1.text;
+        studyEls.q2Text.textContent = q2.text;
+        studyEls.q1Table.replaceChildren(tableHead(q1.columns));
+        for (let i = 0; i < 5; i += 1) studyEls.q1Table.append(answerRow(q1.columns));
+        studyEls.q2Groups.replaceChildren();
+        addGroup(q2.columns, "", 3);
+        studyEls.writtenResult.hidden = true;
+        studyEls.writtenWork.hidden = false;
+        studyEls.writtenSubmit.disabled = false;
+        studyEls.scenarioBox.scrollIntoView({ block: "start", behavior: "smooth" });
+      } catch (error) {
+        studyError(error.message);
+      } finally {
+        studyEls.writtenStart.disabled = false;
+      }
+    }
+
+    async function askQuestion(event) {
+      event.preventDefault();
+      const question = studyEls.askInput.value.trim();
+      if (!question || !study.written) return;
+      try {
+        const data = await api(`/v1/written-cases/sessions/${study.written.sessionId}/ask`,
+          jsonPost({ question, topic: studyEls.askTopic.value }, writtenHeaders({ "Idempotency-Key": newKey() })));
+        const item = h("li", { className: data.source === "case_data" ? "" : "not-available" }, [
+          h("div", { className: "ask-q", text: question }),
+          h("div", { text: data.answer })
+        ]);
+        studyEls.askLog.append(item);
+        studyEls.askInput.value = "";
+      } catch (error) {
+        studyError(error.message);
+      }
+    }
+
+    function collectAnswers() {
+      const rows = (table) => [...table.querySelectorAll(":scope > .answer-row")].map((row) => {
+        const [left, right] = row.querySelectorAll("textarea");
+        return { left: left.value.trim(), right: right.value.trim() };
+      }).filter((row) => row.left || row.right);
+      const groups = [...studyEls.q2Groups.querySelectorAll(".group-card")].map((card) => ({
+        heading: card.querySelector("input").value.trim(),
+        rows: rows(card.querySelector(".answer-table"))
+      })).filter((group) => group.heading || group.rows.length);
+      return { q1: { rows: rows(studyEls.q1Table) }, q2: { groups } };
+    }
+
+    async function submitWritten() {
+      if (!study.written || study.written.submitted) return;
+      const answers = collectAnswers();
+      if (!answers.q1.rows.length && !answers.q2.groups.length) {
+        studyError("Write at least one answer before you submit.");
+        return;
+      }
+      if (!window.confirm("Submit your answers? You cannot change them afterwards.")) return;
+      studyEls.writtenSubmit.disabled = true;
+      studyEls.writtenSubmit.textContent = "Marking...";
+      try {
+        const result = await api(`/v1/written-cases/sessions/${study.written.sessionId}/submit`,
+          jsonPost({ answers }, writtenHeaders({ "Idempotency-Key": newKey() })));
+        study.written.submitted = true;
+        for (const field of studyEls.writtenWork.querySelectorAll("textarea, input, select, button")) field.disabled = true;
+        renderWrittenResult(result);
+      } catch (error) {
+        studyEls.writtenSubmit.disabled = false;
+        studyError(error.message);
+      } finally {
+        studyEls.writtenSubmit.textContent = "Submit answers";
+      }
+    }
+
+    const statusText = { met: "Covered", partial: "Partly covered", missed: "Missed" };
+
+    function modelTable(columns, rows, statusFor) {
+      return h("div", { className: "table-scroll" }, [h("table", { className: "model-table" }, [
+        h("thead", {}, [h("tr", {}, [h("th", { text: columns[0] }), h("th", { text: columns[1] }), h("th", { text: "Your answer" })])]),
+        h("tbody", {}, rows.map((row, index) => {
+          const status = statusFor(index);
+          return h("tr", {}, [
+            h("td", { text: row.left }), h("td", { text: row.right }),
+            h("td", {}, [status ? h("span", { className: `status-badge status-${status}`, text: statusText[status] }) : null])
+          ]);
+        }))
+      ])]);
+    }
+
+    function listCard(title, items) {
+      if (!items || !items.length) return null;
+      return h("div", {}, [h("h3", { text: title }), h("ul", {}, items.map((item) => h("li", { text: item })))]);
+    }
+
+    function renderWrittenResult(result) {
+      const { reveal, evaluation } = result;
+      const statusOf = new Map((evaluation.row_status || []).map((row) =>
+        [`${row.question}:${row.group_index ?? ""}:${row.row_index}`, row.status]));
+      const parts = [
+        h("p", { className: "chip-heading", text: "The condition was" }),
+        h("h2", { className: "result-title", text: reveal.condition_title })
+      ];
+      if (evaluation.status === "complete") {
+        parts.push(h("div", { className: "score-line" }, [
+          h("span", { className: "score-big", text: `${evaluation.overall.toFixed(1)} / 5` }),
+          h("span", { className: "muted-note", text: "Overall, the average of six domains" })
+        ]));
+        parts.push(h("div", { className: "domain-grid" }, evaluation.domains.map((domain) =>
+          h("div", { className: "domain-item" }, [
+            h("div", {}, [h("strong", { text: `${domain.score}/5 ` }), document.createTextNode(domain.label)]),
+            h("div", { className: "bar", "aria-hidden": "true" }, [h("span", { style: `width:${domain.score * 20}%` })])
+          ]))));
+        if (evaluation.feedback) parts.push(h("h3", { text: "Feedback" }), h("p", { text: evaluation.feedback }));
+        parts.push(listCard("What went well", evaluation.strengths));
+        parts.push(listCard("What was missed", evaluation.missed));
+        parts.push(listCard("Unsafe choices", evaluation.unsafe_actions));
+        parts.push(listCard("Serious errors", evaluation.critical_errors));
+      } else {
+        const retry = h("button", { className: "secondary inline-button", type: "button", text: "Try the evaluation again" });
+        retry.addEventListener("click", async () => {
+          retry.disabled = true;
+          try {
+            const again = await api(`/v1/written-cases/sessions/${study.written.sessionId}/evaluate`,
+              jsonPost({}, writtenHeaders({ "Idempotency-Key": newKey() })));
+            renderWrittenResult({ ...result, evaluation: again });
+          } catch (error) {
+            retry.disabled = false;
+            studyError(error.message);
+          }
+        });
+        parts.push(h("p", { text: evaluation.feedback }), retry);
+      }
+      const model = reveal.model_answer;
+      const columns = study.written.columns;
+      parts.push(h("h3", { text: "Model answer: clinical manifestations" }));
+      parts.push(modelTable(columns.q1, model.q1.rows, (i) => statusOf.get(`q1::${i}`)));
+      parts.push(h("h3", { text: model.q2.ordered ? "Model answer: management, in order" : "Model answer: management" }));
+      model.q2.groups.forEach((group, g) => {
+        parts.push(h("p", { className: "chip-heading", text: group.heading }));
+        parts.push(modelTable(columns.q2, group.rows, (i) => statusOf.get(`q2:${g}:${i}`)));
+      });
+      const again = h("button", { className: "primary inline-button", type: "button", text: "Start another case" });
+      again.addEventListener("click", () => {
+        studyEls.writtenWork.hidden = true;
+        studyEls.writtenResult.hidden = true;
+        study.written = null;
+        studyEls.writtenSelect.focus();
+      });
+      parts.push(h("div", { className: "submit-row" }, [again]));
+      parts.push(h("p", { className: "muted-note", text: "Simulation feedback for nursing education. It may be incomplete or incorrect and must not be used for real clinical decisions." }));
+      studyEls.writtenResult.replaceChildren(...parts.filter(Boolean));
+      studyEls.writtenResult.hidden = false;
+      studyEls.writtenResult.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+
+    studyEls.writtenStart.addEventListener("click", startWritten);
+    studyEls.askForm.addEventListener("submit", askQuestion);
+    studyEls.q1Add.addEventListener("click", () => studyEls.q1Table.append(answerRow(study.written.columns.q1)));
+    studyEls.q2AddGroup.addEventListener("click", () => addGroup(study.written.columns.q2, "", 2));
+    studyEls.writtenSubmit.addEventListener("click", submitWritten);
+
+    // --- integrated questions ---
+
+    async function loadIntegrated() {
+      if (study.integratedLoaded) return;
+      try {
+        const data = await api("/v1/integrated-questions");
+        studyEls.integratedList.replaceChildren(...data.items.map(integratedCard));
+        study.integratedLoaded = true;
+      } catch (error) {
+        studyError(error.message);
+      }
+    }
+
+    function integratedCard(item, index) {
+      const card = h("div", { className: "integrated-card" });
+      const name = `iq-${index}`;
+      card.append(h("p", {}, [h("strong", { text: `${index + 1}. ` }), document.createTextNode(item.prompt)]));
+      const result = h("div", { className: "integrated-result", role: "status", hidden: true });
+      let read;
+      if (item.kind === "mcq") {
+        const set = h("fieldset", {}, [h("legend", { className: "sr-only", text: "Options" })]);
+        for (const option of item.options) {
+          set.append(h("label", { className: "option" }, [
+            h("input", { type: "radio", name, value: option.key }), h("span", { text: `${option.key}. ${option.text}` })
+          ]));
+        }
+        card.append(set);
+        read = () => {
+          const picked = card.querySelector(`input[name="${name}"]:checked`);
+          return picked ? { choice: picked.value } : null;
+        };
+      } else if (item.kind === "true_false") {
+        const set = h("fieldset", {}, [h("legend", { className: "sr-only", text: "True or false" })]);
+        for (const [value, label] of [["true", "True"], ["false", "False"]]) {
+          set.append(h("label", { className: "option" }, [h("input", { type: "radio", name, value }), h("span", { text: label })]));
+        }
+        const why = h("textarea", { "aria-label": "One-line justification", maxlength: "2000", placeholder: "Justify your answer in one line" });
+        card.append(set, why);
+        read = () => {
+          const picked = card.querySelector(`input[name="${name}"]:checked`);
+          return picked ? { value: picked.value === "true", justification: why.value.trim() } : null;
+        };
+      } else {
+        if (item.features && item.features.length) {
+          card.append(h("p", { className: "muted-note", text: `Compare: ${item.columns.join(", ")}. Cover: ${item.features.join(", ")}.` }));
+        }
+        const text = h("textarea", { "aria-label": "Your answer", maxlength: "6000", rows: "6" });
+        card.append(text);
+        read = () => (text.value.trim() ? { text: text.value.trim() } : null);
+      }
+      const check = h("button", { className: "secondary inline-button", type: "button", text: "Check" });
+      check.addEventListener("click", async () => {
+        const body = read();
+        if (!body) {
+          studyError("Answer the question first.");
+          return;
+        }
+        check.disabled = true;
+        try {
+          const data = await api(`/v1/integrated-questions/${encodeURIComponent(item.id)}/answer`,
+            jsonPost(body, { "Idempotency-Key": newKey() }));
+          const parts = [];
+          if (data.correct !== null) parts.push(h("strong", { text: data.correct ? "Correct. " : "Not correct. " }));
+          const explanation = data.explanation || {};
+          if (explanation.answer) parts.push(document.createTextNode(`Answer: ${explanation.answer}. `));
+          if (explanation.reason) parts.push(document.createTextNode(explanation.reason));
+          if (data.justification_evaluation && data.justification_evaluation.feedback) {
+            parts.push(h("p", { text: data.justification_evaluation.feedback }));
+          }
+          if (explanation.rows) {
+            parts.push(modelTableWide(explanation.columns, explanation.rows));
+          }
+          result.className = `integrated-result ${data.correct === true ? "correct" : data.correct === false ? "wrong" : ""}`;
+          result.replaceChildren(...parts);
+          result.hidden = false;
+        } catch (error) {
+          studyError(error.message);
+        } finally {
+          check.disabled = false;
+        }
+      });
+      card.append(check, result);
+      return card;
+    }
+
+    function modelTableWide(columns, rows) {
+      return h("div", { className: "table-scroll" }, [h("table", { className: "model-table" }, [
+        h("thead", {}, [h("tr", {}, [h("th", { text: "Feature" }), ...columns.map((c) => h("th", { text: c }))])]),
+        h("tbody", {}, rows.map((row) => h("tr", {}, row.map((cell) => h("td", { text: cell })))))
+      ])]);
+    }
+
+    // Show the integrated mode only when the server has the questions.
+    api("/v1/cases").then((data) => {
+      const button = studyEls.modeButtons.find((b) => b.dataset.mode === "integrated");
+      if (button) button.hidden = !data.integrated_available;
+    }).catch(() => {});
+
+    selectTab(location.hash === "#learning" ? "learning" : "scenarios");
+    setMode("chat");
   </script>
 </body>
 </html>

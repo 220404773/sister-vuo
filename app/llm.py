@@ -776,6 +776,15 @@ class LLMService:
         )
         return sanitize_patient_reply(raw, scenario, last_student)
 
+    async def complete_json(self, messages: list[dict[str, str]]) -> str:
+        """One evaluator-style call (low temperature, JSON mode) for the written cases."""
+        return await self._chat(
+            messages,
+            temperature=0.2,
+            max_tokens=self.settings.evaluator_max_tokens,
+            json_mode=True,
+        )
+
     async def evaluate(
         self,
         scenario: dict[str, Any],

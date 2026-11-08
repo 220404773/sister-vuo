@@ -93,6 +93,13 @@ class Settings:
     static_dir: Path = PROJECT_ROOT / "app" / "static"
     guidelines_path: Path = field(default_factory=lambda: _env_path("GUIDELINES_PATH", "guidelines.json"))
     log_dir: Path = PROJECT_ROOT / "logs" / "transcripts"
+    # Written cases (ACC 200 format). The real records hold model answers, so they live in a
+    # private, gitignored folder; with none there, only the fictional example is served.
+    written_cases_path: Path = field(
+        default_factory=lambda: _env_path("WRITTEN_CASES_PATH", "scenarios/private")
+    )
+    written_example_path: Path = PROJECT_ROOT / "scenarios" / "written" / "example.json"
+    written_case_max_ask: int = field(default_factory=lambda: _env_int("WRITTEN_CASE_MAX_ASK", 12))
     whatsapp_verify_token: str = field(
         default_factory=lambda: os.getenv("WHATSAPP_VERIFY_TOKEN", "").strip()
     )

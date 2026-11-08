@@ -50,6 +50,8 @@ from .sessions import (
 )
 from .whatsapp import MessageDeduper, WhatsAppClient
 from .whatsapp import router as whatsapp_router
+from .written import WrittenCaseError, WrittenCaseRepository, WrittenSessionStore
+from .written_routes import build_router as build_written_router
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -152,6 +154,22 @@ def create_app(
     app.state.whatsapp = whatsapp
     app.state.whatsapp_dedupe = MessageDeduper()
     app.state.rate_limiter = rate_limiter
+    written_cases = WrittenCaseRepository(app_settings.written_cases_path, app_settings.written_example_path)
+    written_sessions = WrittenSessionStore(
+        ttl_seconds=app_settings.session_ttl_minutes * 60,
+        max_sessions=app_settings.max_active_sessions,
+        max_ask=app_settings.written_case_max_ask,
+    )
+    app.state.written_cases = written_cases
+    app.state.written_sessions = written_sessions
+
+    @app.exception_handler(WrittenCaseError)
+    async def handle_written_case(_: Request, exc: WrittenCaseError) -> JSONResponse:
+        # /v1 error envelope from the API spec; detail is kept so the existing UI helper reads it.
+        return JSONResponse(
+            status_code=exc.status,
+            content={"error": {"code": exc.code, "message": exc.message}, "detail": exc.message},
+        )
 
     @app.middleware("http")
     async def add_security_headers(request: Request, call_next: Any) -> Any:
@@ -253,6 +271,22 @@ def create_app(
         enforce_limit(rate_limiter.probe, client_host(request))
 
     protected_session = [Depends(require_api_key), Depends(require_session_token), Depends(limit_turn)]
+
+    prompt_dir = app_settings.prompt_dir
+    app.include_router(
+        build_written_router(
+            written_cases,
+            written_sessions,
+            llm,
+            {
+                "written": (prompt_dir / "written_evaluator.txt").read_text(encoding="utf-8"),
+                "integrated": (prompt_dir / "integrated_feedback.txt").read_text(encoding="utf-8"),
+            },
+            require_api_key,
+            limit_start,
+            limit_turn,
+        )
+    )
 
     @app.get("/", include_in_schema=False)
     async def index() -> FileResponse:

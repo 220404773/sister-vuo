@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "id": "example-hypovolaemia",
+  "number": 1,
+  "title": "Hypovolaemia from gastroenteritis (example case)",
+  "label": "Example written case",
+  "learning": {
+    "what_it_is": {
+      "text": "A fictional example. Hypovolaemia is a low circulating blood volume, here from fluid lost through vomiting and diarrhoea.",
+      "review_flag": true,
+      "review_note": "Example content for testing the app; not part of the ACC 200 set."
+    },
+    "pathophysiology": {
+      "text": "Fluid lost from the gut reduces the blood volume, so less blood returns to the heart and the stroke volume falls. The body speeds up the heart and narrows the vessels to keep the pressure up.",
+      "review_flag": true,
+      "review_note": "Example content."
+    },
+    "manifestations": {
+      "items": [
+        {
+          "text": "Tachycardia",
+          "pathophysiology": "The heart beats faster to keep the output up as the stroke volume falls."
+        }
+      ],
+      "review_flag": false,
+      "review_note": null
+    },
+    "diagnostics": {
+      "items": [
+        {
+          "test": "Urea, creatinine and electrolytes"
+        }
+      ],
+      "review_flag": false,
+      "review_note": null
+    },
+    "interpretation": {
+      "items": [
+        {
+          "text": "A raised urea compared with the creatinine suggests dehydration."
+        }
+      ],
+      "review_flag": false,
+      "review_note": null
+    },
+    "actions": {
+      "items": [
+        {
+          "heading": "Restore the volume",
+          "action": "Give a bolus of 0.9 percent sodium chloride and reassess",
+          "rationale": "Fluid replaces what was lost and restores the venous return."
+        }
+      ],
+      "review_flag": false,
+      "review_note": null
+    }
+  },
+  "scenario": {
+    "age": 40,
+    "sex": "female",
+    "text": "A 40-year-old woman has had vomiting and diarrhoea for two days. She is dizzy when she stands. Blood pressure 96/60 mmHg, heart rate 118 beats per minute, temperature 37.8 degrees Celsius.",
+    "monitored": [
+      {
+        "label": "Blood pressure",
+        "value": "96/60 mmHg"
+      },
+      {
+        "label": "Heart rate",
+        "value": "118 beats per minute"
+      },
+      {
+        "label": "Temperature",
+        "value": "37.8 degrees Celsius"
+      }
+    ],
+    "abg": null,
+    "bloods": [
+      {
+        "label": "Urea",
+        "value": "11 mmol/L"
+      }
+    ],
+    "ventilator": null,
+    "imaging": null
+  },
+  "hidden": {
+    "history": [
+      {
+        "keywords": [],
+        "answer": "She ate at a street stall two days ago. No medical history."
+      }
+    ],
+    "observations": [
+      {
+        "keywords": [],
+        "answer": "After 15 minutes: blood pressure 94/58 mmHg, heart rate 120 beats per minute."
+      }
+    ]
+  },
+  "model_answer": {
+    "q1": {
+      "rows": [
+        {
+          "left": "Tachycardia (118 beats per minute)",
+          "right": "Fluid loss lowers the stroke volume, so the heart beats faster to keep the cardiac output."
+        },
+        {
+          "left": "Dizziness on standing and low blood pressure",
+          "right": "With a low blood volume, standing pools blood in the legs and the brain receives less blood."
+        }
+      ]
+    },
+    "q2": {
+      "ordered": false,
+      "groups": [
+        {
+          "heading": "Restore the volume",
+          "rows": [
+            {
+              "left": "Insert an intravenous line and give 500 millilitres of 0.9 percent sodium chloride, then reassess",
+              "right": "Fluid replaces what was lost and restores the venous return."
+            },
+            {
+              "left": "Measure the urine output and repeat the observations",
+              "right": "Shows whether the fluid has restored perfusion."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "review_flags": [
+    {
+      "note": "Fictional example used by the tests and a fresh clone; not ACC 200 content."
+    }
+  ]
+}

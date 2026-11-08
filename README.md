@@ -105,6 +105,35 @@ Open `http://127.0.0.1:8000`. Interactive API documentation is at `http://127.0.
 
 The app starts even without LLM configuration so the UI and `/health` can be inspected. Session messages will return HTTP 503 until the LLM variables are set.
 
+## Learning and Clinical Scenarios tabs
+
+The page has two tabs.
+
+- **Learning**: pick a condition and read what it is, its pathophysiology, the clinical manifestations (each with its pathophysiology), the diagnostic tests, how to interpret them, and the clinical actions with their rationale. Sections marked "Draft for review" were written for the app and still need a clinician's check.
+- **Clinical Scenarios**: three kinds of case.
+  - **Chat cases**: the original simulation (talk to the patient, take actions, get a debrief).
+  - **Written cases**: the ACC 200 exam format. Read the scenario, ask for more information (answered word for word from the case's hidden data, never the diagnosis), fill in the manifestations table and the management table (add or remove rows and headings), and submit. Abbreviations you type are flagged so you can write them in full; units such as mmHg, mmol/L, PaCO2 and SpO2 are allowed. Submitting reveals the condition and the model answer, and the evaluator scores six domains from 0 to 5 (recognition, pathophysiology, use of the scenario data, management and prioritisation, rationale, safety; overall = the average) and marks every model-answer row as covered, partly covered or missed. No marks are used.
+  - **Integrated questions**: shock comparison, diabetic ketoacidosis against hyperosmolar hyperglycaemic state, multiple choice and true or false. Choices are marked in code; written answers get feedback from the evaluator.
+
+### Supplying the written cases (private)
+
+The written cases contain model answers, so they never go into git (the repository is public). They live in `scenarios/private/` (gitignored), or wherever `WRITTEN_CASES_PATH` points. Without them, only the fictional example in `scenarios/written/example.json` is served.
+
+Build them from the transcription of the ACC 200 paper:
+
+```powershell
+python scripts/import_acc200.py <path-to>	ranscription.json
+```
+
+The script writes one JSON file per condition plus `integrated.json` into `scenarios/private/`, refuses to write anywhere else, and lists every item that needs a clinician's review in `scenarios/private/review_report.md`. An invalid file is skipped at start-up with the reason in the log.
+
+On Render: open the service, go to **Environment > Secret Files**, add each JSON file from `scenarios/private/` with the same file name, and set `WRITTEN_CASES_PATH=/etc/secrets`. Render mounts secret files there.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `WRITTEN_CASES_PATH` | `scenarios/private` | Folder with the private written-case records |
+| `WRITTEN_CASE_MAX_ASK` | `12` | "Ask for more information" questions allowed per case |
+
 ## REST API
 
 ### Start a session
