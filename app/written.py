@@ -117,7 +117,7 @@ def validate_integrated(data: Any) -> None:
         if kind == "mcq" and not (0 <= int(item.get("answer", -1)) < len(item.get("options", []))):
             raise ValueError(f"integrated question {item['id']}: answer is not an option")
         if not isinstance(item.get("conditions", []), list):
-            raise ValueError(f"integrated question {item['id']}: conditions must be a list")
+            raise ValueError(f"integrated question {item['id']}: conditions must be a list")  # noqa: TRY004
         if kind == "true_false" and not isinstance(item.get("answer"), bool):
             raise ValueError(f"integrated question {item['id']}: answer must be true or false")
     _check_no_mark_keys(data, "integrated")
