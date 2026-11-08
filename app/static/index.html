@@ -1963,11 +1963,79 @@
       border: 0;
     }
 
+    .integrated-card .options {
+      display: grid;
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+
     .integrated-card label.option {
       display: flex;
-      gap: 8px;
-      align-items: flex-start;
-      padding: 6px 0;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      padding: 10px 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      background: var(--white);
+      cursor: pointer;
+    }
+
+    .integrated-card label.option:hover {
+      border-color: var(--teal);
+    }
+
+    /* Radio buttons must not take the page's full-width input styling. */
+    .integrated-card label.option input[type="radio"] {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      accent-color: var(--teal);
+    }
+
+    .integrated-card .option-key {
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .integrated-card label.option:not(.option-correct):not(.option-wrong):has(input:checked) {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      font-weight: 600;
+    }
+
+    .integrated-card label.option.option-correct {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .integrated-card label.option.option-wrong {
+      border-color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    .integrated-card label.option:has(input:disabled) {
+      cursor: default;
+    }
+
+    .integrated-card textarea {
+      width: 100%;
+      min-height: 72px;
+      padding: 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      font: inherit;
     }
 
     .integrated-result {
@@ -4158,10 +4226,12 @@
       const result = h("div", { className: "integrated-result", role: "status", hidden: true });
       let read;
       if (item.kind === "mcq") {
-        const set = h("fieldset", {}, [h("legend", { className: "sr-only", text: "Options" })]);
+        const set = h("fieldset", { className: "options" }, [h("legend", { className: "sr-only", text: "Options" })]);
         for (const option of item.options) {
-          set.append(h("label", { className: "option" }, [
-            h("input", { type: "radio", name, value: option.key }), h("span", { text: `${option.key}. ${option.text}` })
+          set.append(h("label", { className: "option", "data-key": option.key }, [
+            h("input", { type: "radio", name, value: option.key }),
+            h("span", { className: "option-key", "aria-hidden": "true", text: option.key }),
+            h("span", { text: option.text })
           ]));
         }
         card.append(set);
@@ -4170,9 +4240,9 @@
           return picked ? { choice: picked.value } : null;
         };
       } else if (item.kind === "true_false") {
-        const set = h("fieldset", {}, [h("legend", { className: "sr-only", text: "True or false" })]);
+        const set = h("fieldset", { className: "options" }, [h("legend", { className: "sr-only", text: "True or false" })]);
         for (const [value, label] of [["true", "True"], ["false", "False"]]) {
-          set.append(h("label", { className: "option" }, [h("input", { type: "radio", name, value }), h("span", { text: label })]));
+          set.append(h("label", { className: "option", "data-key": label }, [h("input", { type: "radio", name, value }), h("span", { text: label })]));
         }
         const why = h("textarea", { "aria-label": "One-line justification", maxlength: "2000", placeholder: "Justify your answer in one line" });
         card.append(set, why);
@@ -4209,6 +4279,16 @@
           }
           if (explanation.rows) {
             parts.push(modelTableWide(explanation.columns, explanation.rows));
+          }
+          if (data.correct !== null && explanation.answer) {
+            const rightKey = item.kind === "mcq" ? explanation.answer.charAt(0) : explanation.answer;
+            for (const option of card.querySelectorAll("label.option")) {
+              const picked = option.querySelector("input").checked;
+              option.classList.toggle("option-correct", option.dataset.key === rightKey);
+              option.classList.toggle("option-wrong", picked && option.dataset.key !== rightKey);
+              option.querySelector("input").disabled = true;
+            }
+            check.hidden = true;
           }
           result.className = `integrated-result ${data.correct === true ? "correct" : data.correct === false ? "wrong" : ""}`;
           result.replaceChildren(...parts);
