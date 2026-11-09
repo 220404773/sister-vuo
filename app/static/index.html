@@ -2252,6 +2252,10 @@
       .side-nav {
         grid-column: 1;
         grid-row: 2;
+        justify-self: start;
+        width: fit-content;
+        max-width: 100%;
+        box-sizing: border-box;
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
@@ -2488,9 +2492,9 @@
       </div>
       <div class="modes" role="group" aria-label="Kind of case">
         <span class="side-label">Case type</span>
-        <button class="mode-button" type="button" data-mode="chat" aria-pressed="true">Chat cases</button>
-        <button class="mode-button" type="button" data-mode="written" aria-pressed="false">Written cases</button>
-        <button class="mode-button" type="button" data-mode="integrated" aria-pressed="false" hidden>Integrated questions</button>
+        <button class="mode-button" type="button" data-mode="chat" aria-pressed="true">Chat Cases</button>
+        <button class="mode-button" type="button" data-mode="written" aria-pressed="false">Written Cases</button>
+        <button class="mode-button" type="button" data-mode="integrated" aria-pressed="false" hidden>Integrated Questions</button>
       </div>
       </div>
       <p class="side-note">Education simulation with fictional patients. Not clinical advice.</p>
@@ -2702,7 +2706,7 @@
 
 
       <section id="writtenPanel" class="panel study-panel" hidden>
-        <h2>Written cases</h2>
+        <h2>Written Cases</h2>
         <p class="muted-note">Read the scenario, ask for more information if you need it, then complete both tables. Write every term in full. The condition is revealed when you submit.</p>
         <div class="study-picker">
           <div class="start-field">
@@ -2757,7 +2761,7 @@
       </section>
 
       <section id="integratedPanel" class="panel study-panel" hidden>
-        <h2>Integrated questions</h2>
+        <h2>Integrated Questions</h2>
         <p class="muted-note">Comparisons, multiple choice and true or false. Choices are marked straight away; written answers get feedback.</p>
         <div class="study-picker">
           <div class="start-field">
